@@ -177,6 +177,34 @@ const games = [
     ]
   },
   {
+    id: "format-crafter",
+    title: "Format Crafter",
+    description: "Master designing outputs as tables, lists, scripts, and charts",
+    type: "lessons",
+    challenges: [{ id: "1", title: "Office Format Master", description: "Structure AI output for business", difficulty: "Intermediate" as const, objective: "Transform information into professional formats", hints: ["Specify exact format"], goodExamples: ["Professional example"], badExamples: ["Make agenda"], gameComponent: "FormatCrafterGame" }]
+  },
+  {
+    id: "precision-targeter",
+    title: "Precision Targeter", 
+    description: "Use exact constraints and delimiters for scoped AI output",
+    type: "lessons",
+    challenges: [{ id: "1", title: "Fitness Precision Trainer", description: "Master constraints and delimiters", difficulty: "Advanced" as const, objective: "Use precise constraints", hints: ["Add constraints"], goodExamples: ["Precise example"], badExamples: ["Give workout"], gameComponent: "PrecisionTargeterGame" }]
+  },
+  {
+    id: "perspective-shifter",
+    title: "Perspective Shifter",
+    description: "Prompt AI to adopt alternate viewpoints",
+    type: "lessons",
+    challenges: [{ id: "1", title: "Hollywood Perspective Master", description: "Learn viewpoint transformation", difficulty: "Intermediate" as const, objective: "Write from different perspectives", hints: ["Choose role"], goodExamples: ["Director example"], badExamples: ["Review movie"], gameComponent: "PerspectiveShifterGame" }]
+  },
+  {
+    id: "story-engine",
+    title: "Story Engine",
+    description: "Build narrative prompts with plot, structure, and tone",
+    type: "lessons", 
+    challenges: [{ id: "1", title: "Creative Story Engine", description: "Master narrative prompts", difficulty: "Advanced" as const, objective: "Combine genre, structure, tone", hints: ["Choose genre"], goodExamples: ["Story example"], badExamples: ["Write story"], gameComponent: "StoryEngineGame" }]
+  },
+  {
     id: "facts-framework",
     title: "FACTS Framework Games",
     description: "Master fact-checking and verification through gamified challenges",
