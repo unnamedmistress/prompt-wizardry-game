@@ -6,6 +6,9 @@ import { PromptBuilder } from "@/components/PromptBuilder";
 import { TruthDetective } from "@/components/games/TruthDetective";
 import { SourceHunter } from "@/components/games/SourceHunter";
 import { PromptEscape } from "@/components/games/PromptEscape";
+import { PromptBuilderGame } from "@/components/games/PromptBuilderGame";
+import { RoleMatcher } from "@/components/games/RoleMatcher";
+import { DetailDetective } from "@/components/games/DetailDetective";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-crystal.jpg";
@@ -20,6 +23,7 @@ interface Challenge {
   hints: string[];
   goodExamples: string[];
   badExamples: string[];
+  gameComponent?: string;
 }
 
 const games = [
@@ -42,7 +46,8 @@ const games = [
           "Include relevant details"
         ],
         goodExamples: ["You are a professional assistant. Write a polite email to reschedule a team meeting..."],
-        badExamples: ["Write email about meeting"]
+        badExamples: ["Write email about meeting"],
+        gameComponent: "PromptBuilderGame"
       },
       {
         id: "2", 
@@ -57,7 +62,8 @@ const games = [
           "Include the specific task"
         ],
         goodExamples: [],
-        badExamples: []
+        badExamples: [],
+        gameComponent: "RoleMatcher"
       },
       {
         id: "3",
@@ -72,7 +78,8 @@ const games = [
           "Add formatting requirements"
         ],
         goodExamples: [],
-        badExamples: []
+        badExamples: [],
+        gameComponent: "DetailDetective"
       }
     ]
   },
@@ -414,8 +421,54 @@ const Index = () => {
       );
     }
 
-    // Render prompting lessons
+    // Render prompting lessons with games
     if (currentChallenge) {
+      // Check if this challenge has a game component
+      if (currentChallenge.gameComponent) {
+        let GameComponent;
+        switch (currentChallenge.gameComponent) {
+          case "PromptBuilderGame":
+            GameComponent = PromptBuilderGame;
+            break;
+          case "RoleMatcher":
+            GameComponent = RoleMatcher;
+            break;
+          case "DetailDetective":
+            GameComponent = DetailDetective;
+            break;
+          default:
+            GameComponent = PromptBuilder;
+        }
+
+        return (
+          <div className="min-h-screen bg-muted/30 flex">
+            {/* Navigation Header */}
+            <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+              <div className="flex items-center justify-between px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-primary" />
+                  <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-sm text-muted-foreground">🏠 Home</span>
+                  <span className="text-sm font-medium text-primary">🎮 Games</span>
+                  <span className="text-sm text-muted-foreground">📈 Progress</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Main Game Area */}
+            <div className="flex-1 pt-20 p-6">
+              <GameComponent
+                onComplete={handleChallengeComplete}
+                onBack={handleBackToChallenges}
+              />
+            </div>
+          </div>
+        );
+      }
+
+      // Original lesson view with sidebar for challenges without games
     return (
       <div className="min-h-screen bg-muted/30 flex">
         {/* Navigation Header */}
