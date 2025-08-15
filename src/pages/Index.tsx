@@ -943,6 +943,7 @@ const Index = () => {
             {/* Main Game Area */}
             <div className="flex-1 pt-20 p-6">
               <GameComponent
+                challenge={currentChallenge}
                 onComplete={handleChallengeComplete}
                 onBack={handleBackToChallenges}
               />
