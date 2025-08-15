@@ -9,6 +9,9 @@ import { PromptEscape } from "@/components/games/PromptEscape";
 import { PromptBuilderGame } from "@/components/games/PromptBuilderGame";
 import { RoleMatcher } from "@/components/games/RoleMatcher";
 import { DetailDetective } from "@/components/games/DetailDetective";
+import { ToneController } from "@/components/games/ToneController";
+import { MultiTaskMaster } from "@/components/games/MultiTaskMaster";
+import { CreativeChallenge } from "@/components/games/CreativeChallenge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-crystal.jpg";
@@ -30,56 +33,146 @@ const games = [
   {
     id: "prompting-basics",
     title: "Prompting Fundamentals",
-    description: "Learn the core principles of effective AI prompting",
+    description: "Learn the core principles of effective AI prompting through fun, relatable scenarios",
     type: "lessons",
     challenges: [
       {
         id: "1",
         title: "Basic Prompt Structure",
-        description: "Learn the fundamental elements of a well-structured prompt",
+        description: "Master the building blocks of great prompts with fun scenarios",
         difficulty: "Beginner" as const,
-        objective: "Create a prompt that asks AI to write a professional email about a meeting reschedule",
+        objective: "Help someone call in sick to work with a convincing (but honest!) excuse",
         hints: [
-          "Start by giving the AI a role or context",
-          "Be specific about what you want",
-          "Mention the tone and format you prefer",
-          "Include relevant details"
+          "Start by giving the AI a role (like 'helpful assistant')",
+          "Be specific about the situation",
+          "Mention the tone you want (professional, casual, etc.)",
+          "Include important details like timing"
         ],
-        goodExamples: ["You are a professional assistant. Write a polite email to reschedule a team meeting..."],
-        badExamples: ["Write email about meeting"],
+        goodExamples: [
+          "You are a helpful assistant. Write a professional text message to my boss explaining I'm sick and can't come to work today. Use a polite but not overly formal tone, mention I have flu symptoms, and that I hope to return tomorrow.",
+          "Act as a professional communicator. Help me write an email to my manager about calling in sick. I have a bad migraine, need to rest today, and should be better by tomorrow. Keep it brief but sincere."
+        ],
+        badExamples: [
+          "Write sick message",
+          "Tell my boss I can't work",
+          "Make excuse for work"
+        ],
         gameComponent: "PromptBuilderGame"
       },
       {
         id: "2", 
-        title: "Adding Context & Role",
-        description: "Master the art of giving AI proper context and role definition",
+        title: "Context & Role Mastery",
+        description: "Learn how the right role transforms AI responses",
         difficulty: "Beginner" as const,
-        objective: "Create a prompt where AI acts as a cooking instructor explaining how to make pasta",
+        objective: "Get AI to help plan an epic birthday party for a 25-year-old who loves board games",
         hints: [
-          "Define who the AI should be",
-          "Set the audience level (beginner, expert, etc.)",
-          "Specify the communication style",
-          "Include the specific task"
+          "Choose the perfect role (party planner, friend, event coordinator)",
+          "Set the context (budget, guest count, preferences)",
+          "Specify the style of response you want",
+          "Include key constraints or requirements"
         ],
-        goodExamples: [],
-        badExamples: [],
+        goodExamples: [
+          "You are an experienced party planner. Help me plan a birthday party for my 25-year-old friend who loves board games. We have a $300 budget, 15 guests, and want it to be casual but memorable. Give me ideas for games, food, decorations, and activities.",
+          "Act as a creative event coordinator. I'm planning a board game themed birthday party for someone turning 25. Include suggestions for themed snacks, party games beyond board games, and how to make it Instagram-worthy."
+        ],
+        badExamples: [
+          "Plan a birthday party",
+          "Give me party ideas",
+          "What should I do for a birthday?"
+        ],
         gameComponent: "RoleMatcher"
       },
       {
         id: "3",
         title: "Specificity & Details",
-        description: "Learn how being specific dramatically improves AI responses",
+        description: "Transform vague requests into crystal-clear instructions",
         difficulty: "Intermediate" as const, 
-        objective: "Create a detailed prompt for AI to write a product description for a smart home device",
+        objective: "Get AI to help write the perfect dating app profile that's authentic and engaging",
         hints: [
-          "Include target audience",
-          "Specify key features to highlight",
-          "Mention desired length and tone",
-          "Add formatting requirements"
+          "Include specific details about personality and interests",
+          "Mention the target audience you want to attract",
+          "Specify the tone (witty, sincere, adventurous, etc.)",
+          "Add constraints like character limits or must-include elements"
         ],
-        goodExamples: [],
-        badExamples: [],
+        goodExamples: [
+          "You are a dating coach specializing in authentic profiles. Help me write a dating app bio that's 150 characters max. I'm 28, love hiking and cooking, work as a teacher, and want to attract someone who values humor and outdoor adventures. Make it witty but genuine.",
+          "Act as a relationship expert. Create a dating profile for someone who's introverted but loves deep conversations, enjoys reading sci-fi, plays guitar, and is looking for a meaningful connection rather than casual dating. Keep it engaging but not overly quirky."
+        ],
+        badExamples: [
+          "Write dating profile",
+          "Make me sound good on dating apps",
+          "Help with my bio"
+        ],
         gameComponent: "DetailDetective"
+      },
+      {
+        id: "4",
+        title: "Tone & Style Control",
+        description: "Master the art of getting exactly the right voice from AI",
+        difficulty: "Intermediate" as const,
+        objective: "Get AI to write a resignation letter that's professional but shows you're leaving for positive reasons",
+        hints: [
+          "Specify the exact tone (professional, grateful, optimistic)",
+          "Include the context (new opportunity, career growth, etc.)",
+          "Mention what to avoid (negativity, complaints, burning bridges)",
+          "Set the format and length requirements"
+        ],
+        goodExamples: [
+          "You are a career counselor. Help me write a resignation letter that's professional and positive. I'm leaving for a better opportunity, want to express gratitude for my experience, and maintain good relationships. Keep it to one page and include a 2-week notice.",
+          "Act as an HR professional. Write a resignation email that's warm but professional. I'm moving to a new city for family reasons, have enjoyed my 3 years here, and want to ensure a smooth transition. Avoid mentioning any workplace frustrations."
+        ],
+        badExamples: [
+          "Write resignation letter",
+          "Help me quit my job",
+          "I want to leave work"
+        ],
+        gameComponent: "ToneController"
+      },
+      {
+        id: "5",
+        title: "Complex Multi-Task Prompts",
+        description: "Combine multiple requirements into one powerful prompt",
+        difficulty: "Advanced" as const,
+        objective: "Get AI to plan a surprise proposal that's personal, memorable, and perfectly executed",
+        hints: [
+          "Break down all the components (location, timing, backup plans)",
+          "Include personal details that make it special",
+          "Specify what you need help with (planning vs. execution)",
+          "Add constraints like budget, privacy, weather considerations"
+        ],
+        goodExamples: [
+          "You are a romantic event planner with experience in proposals. Help me plan a surprise proposal for my partner who loves sunsets, quiet moments, and meaningful locations. We met at a coffee shop, she loves hiking, budget is $1000. I need location ideas, timing advice, backup weather plans, and a step-by-step timeline. Make it personal but not overly elaborate.",
+          "Act as a proposal consultant. Plan a marriage proposal for someone who values experiences over material things, loves their hometown, and is close to family. Include ideas for incorporating family, choosing the right moment, and making it feel authentic rather than performative. Consider seasonal factors and meaningful locations."
+        ],
+        badExamples: [
+          "Help me propose",
+          "Plan a proposal",
+          "How should I ask someone to marry me?"
+        ],
+        gameComponent: "MultiTaskMaster"
+      },
+      {
+        id: "6",
+        title: "Creative & Fun Prompts",
+        description: "Unlock AI's creative potential with imaginative scenarios",
+        difficulty: "Advanced" as const,
+        objective: "Get AI to help create a murder mystery dinner party that will blow your friends' minds",
+        hints: [
+          "Set the creative role (mystery writer, party planner, etc.)",
+          "Include constraints (number of people, complexity level)",
+          "Specify what you need (characters, plot, clues, timeline)",
+          "Mention the audience and their interests"
+        ],
+        goodExamples: [
+          "You are a mystery writer and party planner. Create a murder mystery dinner party for 8 friends who love puzzles and drama. Set it in the 1920s, include character descriptions with motives, clues that reveal throughout dinner, and a shocking but logical conclusion. Make it interactive but not too complex for first-time players.",
+          "Act as an escape room designer. Design a murder mystery experience for a dinner party with 6 people. Include props they can find around a house, red herrings, character backstories with secrets, and multiple possible suspects until the final reveal. Keep it fun and engaging rather than dark or disturbing."
+        ],
+        badExamples: [
+          "Create a murder mystery",
+          "Help with a party game",
+          "Make a mystery for dinner"
+        ],
+        gameComponent: "CreativeChallenge"
       }
     ]
   },
@@ -433,11 +526,20 @@ const Index = () => {
           case "RoleMatcher":
             GameComponent = RoleMatcher;
             break;
-          case "DetailDetective":
-            GameComponent = DetailDetective;
-            break;
-          default:
-            GameComponent = PromptBuilder;
+        case "DetailDetective":
+          GameComponent = DetailDetective;
+          break;
+        case "ToneController":
+          GameComponent = ToneController;
+          break;
+        case "MultiTaskMaster":
+          GameComponent = MultiTaskMaster;
+          break;
+        case "CreativeChallenge":
+          GameComponent = CreativeChallenge;
+          break;
+        default:
+          GameComponent = PromptBuilder;
         }
 
         return (
