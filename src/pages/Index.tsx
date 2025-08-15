@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { GameHeader } from "@/components/GameHeader";
 import { GameCard } from "@/components/GameCard";
 import { PromptBuilder } from "@/components/PromptBuilder";
@@ -121,6 +122,36 @@ const Index = () => {
   });
   const [completedChallengeIds, setCompletedChallengeIds] = useState<Set<string>>(new Set());
 
+  // Load saved progress from localStorage
+  useEffect(() => {
+    const savedPlayerData = localStorage.getItem('promptWizardry_playerData');
+    const savedCompletedChallenges = localStorage.getItem('promptWizardry_completedChallenges');
+    const savedGameState = localStorage.getItem('promptWizardry_gameState');
+
+    if (savedPlayerData) {
+      setPlayerData(JSON.parse(savedPlayerData));
+    }
+    if (savedCompletedChallenges) {
+      setCompletedChallengeIds(new Set(JSON.parse(savedCompletedChallenges)));
+    }
+    if (savedGameState && savedGameState !== 'playing') {
+      setGameState(savedGameState as "welcome" | "challenges");
+    }
+  }, []);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('promptWizardry_playerData', JSON.stringify(playerData));
+  }, [playerData]);
+
+  useEffect(() => {
+    localStorage.setItem('promptWizardry_completedChallenges', JSON.stringify([...completedChallengeIds]));
+  }, [completedChallengeIds]);
+
+  useEffect(() => {
+    localStorage.setItem('promptWizardry_gameState', gameState);
+  }, [gameState]);
+
   const handleStartGame = () => {
     setGameState("challenges");
   };
@@ -139,6 +170,10 @@ const Index = () => {
         completedChallenges: prev.completedChallenges + 1,
         level: Math.floor((prev.completedChallenges + 1) / 2) + 1
       }));
+      
+      toast(`Challenge completed! +${score} points`, {
+        description: `You've earned ${score} points and leveled up your prompting skills!`,
+      });
     }
     setGameState("challenges");
     setCurrentChallenge(null);
