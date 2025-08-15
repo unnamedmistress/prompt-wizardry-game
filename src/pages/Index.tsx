@@ -186,78 +186,44 @@ const Index = () => {
 
   if (gameState === "welcome") {
     return (
-      <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: `url(${heroImage})` }}
-          />
-          <div className="relative z-10 container mx-auto px-4 py-24">
-            <div className="max-w-4xl mx-auto text-center space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-6xl font-bold bg-gradient-mystical bg-clip-text text-transparent">
-                  Prompt Wizardry
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                  Master the ancient art of AI prompting through magical challenges. 
-                  Learn to craft spells that make AI do exactly what you want.
-                </p>
-              </div>
-              
-              <div className="flex justify-center gap-4">
-                <Button 
-                  variant="magical" 
-                  size="lg"
-                  onClick={handleStartGame}
-                  className="text-lg px-8 py-6"
-                >
-                  <Sparkles className="w-5 h-5 mr-2" />
-                  Begin Your Journey
-                </Button>
-              </div>
+      <div className="min-h-screen bg-background flex">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">Prompt Wizardry</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="text-sm text-muted-foreground">🏠 Home</span>
+              <span className="text-sm text-muted-foreground">🎮 Games</span>
+              <span className="text-sm text-muted-foreground">📈 Progress</span>
             </div>
           </div>
         </div>
 
-        {/* Features Section */}
-        <div className="container mx-auto px-4 py-16">
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="bg-gradient-card border-primary/20 text-center">
-              <CardHeader>
-                <BookOpen className="w-12 h-12 text-primary mx-auto mb-4" />
-                <CardTitle className="text-foreground">Learn by Doing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Interactive challenges that teach you practical prompting techniques through hands-on experience.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-card border-accent/20 text-center">
-              <CardHeader>
-                <Target className="w-12 h-12 text-accent mx-auto mb-4" />
-                <CardTitle className="text-foreground">Instant Feedback</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Get real-time analysis of your prompts with specific suggestions for improvement.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-card border-primary/20 text-center">
-              <CardHeader>
-                <Trophy className="w-12 h-12 text-primary mx-auto mb-4" />
-                <CardTitle className="text-foreground">Track Progress</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Level up your skills and unlock advanced techniques as you complete challenges.
-                </CardDescription>
-              </CardContent>
-            </Card>
+        {/* Main Content */}
+        <div className="flex-1 pt-20">
+          <div className="container mx-auto px-6 py-8">
+            <div className="max-w-4xl mx-auto text-center space-y-8">
+              <div className="space-y-4">
+                <h1 className="text-5xl font-bold text-foreground">
+                  Welcome to Prompt Wizardry!
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Master the art of AI prompting through interactive challenges. 
+                  Learn to craft prompts that get amazing results from AI.
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleStartGame}
+                size="lg"
+                className="text-lg px-8 py-4 bg-primary hover:bg-primary/90"
+              >
+                Start Learning
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -266,8 +232,92 @@ const Index = () => {
 
   if (gameState === "playing" && currentChallenge) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-muted/30 flex">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">Prompt Wizardry</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="text-sm text-muted-foreground">🏠 Home</span>
+              <span className="text-sm font-medium text-primary">🎮 Games</span>
+              <span className="text-sm text-muted-foreground">📈 Progress</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-80 bg-background border-r border-border pt-20 p-6 overflow-y-auto">
+          <div className="space-y-6">
+            {/* Challenge Info */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-primary" />
+                <h2 className="font-semibold text-foreground">{currentChallenge.title}</h2>
+              </div>
+              <p className="text-sm text-muted-foreground">{currentChallenge.description}</p>
+            </div>
+
+            {/* Lesson Content */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium text-foreground">Lesson</span>
+              </div>
+              <div className="space-y-3">
+                <p className="text-sm text-foreground font-medium">Objective:</p>
+                <p className="text-sm text-muted-foreground">{currentChallenge.objective}</p>
+              </div>
+            </div>
+
+            {/* Hints */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">Hints</span>
+              </div>
+              <div className="space-y-2">
+                {currentChallenge.hints.map((hint, index) => (
+                  <div key={index} className="p-2 bg-muted/50 rounded text-xs text-foreground">
+                    {hint}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Examples */}
+            {currentChallenge.goodExamples.length > 0 && (
+              <div className="space-y-4">
+                <span className="text-sm font-medium text-foreground">Examples</span>
+                <div className="space-y-2">
+                  {currentChallenge.goodExamples.map((example, index) => (
+                    <div key={index} className="p-2 bg-green-50 border border-green-200 rounded text-xs text-green-800">
+                      ✓ {example}
+                    </div>
+                  ))}
+                  {currentChallenge.badExamples.map((example, index) => (
+                    <div key={index} className="p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
+                      ✗ {example}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Button 
+              variant="outline" 
+              onClick={handleBackToChallenges}
+              className="w-full"
+            >
+              Back to Challenges
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Game Area */}
+        <div className="flex-1 pt-20 p-6">
           <PromptBuilder
             challenge={currentChallenge}
             onComplete={handleChallengeComplete}
@@ -279,38 +329,119 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <GameHeader
-          level={playerData.level}
-          score={playerData.score}
-          totalChallenges={challenges.length}
-          completedChallenges={playerData.completedChallenges}
-        />
+    <div className="min-h-screen bg-muted/30 flex">
+      {/* Navigation Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-primary" />
+            <span className="font-bold text-lg">Prompt Wizardry</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <span className="text-sm text-muted-foreground">🏠 Home</span>
+            <span className="text-sm font-medium text-primary">🎮 Games</span>
+            <span className="text-sm text-muted-foreground">📈 Progress</span>
+          </div>
+        </div>
+      </div>
 
+      {/* Progress Sidebar */}
+      <div className="w-80 bg-background border-r border-border pt-20 p-6">
         <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-foreground">Choose Your Challenge</h2>
+          <div className="space-y-2">
+            <h2 className="font-semibold text-foreground">Your Progress</h2>
+            <div className="text-sm text-muted-foreground">
+              Total Points: {playerData.score}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Level: {playerData.level}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Completed: {playerData.completedChallenges}/{challenges.length}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <span className="text-sm font-medium text-foreground">Challenges</span>
+            <div className="space-y-2">
+              {challenges.map((challenge, index) => {
+                const isCompleted = completedChallengeIds.has(challenge.id);
+                const isLocked = index > 0 && !completedChallengeIds.has(challenges[index - 1].id);
+                
+                return (
+                  <div 
+                    key={challenge.id}
+                    className={`p-2 text-xs rounded border cursor-pointer transition-colors ${
+                      isCompleted 
+                        ? 'bg-green-50 border-green-200 text-green-800' 
+                        : isLocked 
+                          ? 'bg-muted border-muted-foreground/20 text-muted-foreground cursor-not-allowed'
+                          : 'bg-background border-border text-foreground hover:bg-muted/50'
+                    }`}
+                    onClick={() => !isLocked && handleChallengeSelect(challenge)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>{challenge.title}</span>
+                      <span>
+                        {isCompleted ? '✓' : isLocked ? '🔒' : '○'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 pt-20 p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center space-y-6 mb-8">
+            <h1 className="text-3xl font-bold text-foreground">Choose Your Challenge</h1>
             <p className="text-muted-foreground">
               Select a challenge to practice your prompting skills
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             {challenges.map((challenge, index) => {
               const isCompleted = completedChallengeIds.has(challenge.id);
               const isLocked = index > 0 && !completedChallengeIds.has(challenges[index - 1].id);
               
               return (
-                <GameCard
+                <Card 
                   key={challenge.id}
-                  title={challenge.title}
-                  description={challenge.description}
-                  difficulty={challenge.difficulty}
-                  completed={isCompleted}
-                  locked={isLocked}
-                  onClick={() => handleChallengeSelect(challenge)}
-                />
+                  className={`cursor-pointer transition-all hover:shadow-md ${
+                    isCompleted 
+                      ? 'border-green-200 bg-green-50' 
+                      : isLocked 
+                        ? 'opacity-50 cursor-not-allowed' 
+                        : 'hover:border-primary/50'
+                  }`}
+                  onClick={() => !isLocked && handleChallengeSelect(challenge)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg">{challenge.title}</CardTitle>
+                      <div className="text-lg">
+                        {isCompleted ? '✓' : isLocked ? '🔒' : '○'}
+                      </div>
+                    </div>
+                    <CardDescription>{challenge.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        challenge.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                        challenge.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {challenge.difficulty}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
               );
             })}
           </div>
