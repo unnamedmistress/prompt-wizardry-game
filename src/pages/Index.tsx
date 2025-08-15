@@ -15,7 +15,7 @@ import { CreativeChallenge } from "@/components/games/CreativeChallenge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-crystal.jpg";
-import { Sparkles, BookOpen, Target, Trophy } from "lucide-react";
+import { Sparkles, BookOpen, Target, Trophy, CheckCircle } from "lucide-react";
 
 interface Challenge {
   id: string;
@@ -468,6 +468,359 @@ const Index = () => {
     );
   }
 
+  if (gameState === "challenges") {
+    const challenges = games.find(g => g.id === selectedGameCategory)?.challenges || [];
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 flex">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <button 
+                onClick={() => setGameState("welcome")}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                🏠 Home
+              </button>
+              <span className="text-sm font-medium text-primary">🎮 Lessons</span>
+              <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Sidebar */}
+        <div className="fixed left-0 top-20 h-full w-80 bg-card border-r border-border overflow-y-auto shadow-lg">
+          <div className="p-6">
+            <div className="space-y-6">
+              {/* Progress Stats */}
+              <div className="text-center space-y-3 p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg">
+                <div>
+                  <div className="text-3xl font-bold text-primary">Level {playerData.level}</div>
+                  <div className="text-sm text-muted-foreground">Prompt Master</div>
+                </div>
+                <div className="flex justify-center gap-4 text-xs">
+                  <div className="text-center">
+                    <div className="font-bold text-lg">{playerData.score}</div>
+                    <div className="text-muted-foreground">Points</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="font-bold text-lg">{completedChallengeIds.size}</div>
+                    <div className="text-muted-foreground">Completed</div>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                variant="outline" 
+                onClick={handleBackToGameSelect} 
+                className="w-full"
+              >
+                ← Choose Different Path
+              </Button>
+              
+              {/* Current Lesson Objective */}
+              {currentChallenge && (
+                <div className="space-y-3 p-4 bg-gradient-to-br from-green-50 to-blue-50 border border-green-200 rounded-lg">
+                  <h3 className="font-semibold text-base flex items-center gap-2 text-green-800">
+                    🎯 Current Objective
+                  </h3>
+                  <div className="text-sm text-green-700">
+                    <div className="font-medium mb-2">{currentChallenge.title}</div>
+                    <div className="text-sm">{currentChallenge.objective}</div>
+                  </div>
+                  
+                  {/* Lesson Content */}
+                  <div className="mt-4 space-y-3">
+                    <div className="text-sm">
+                      <h4 className="font-medium text-green-800 mb-2">📚 Lesson</h4>
+                      <div className="text-green-700 space-y-2">
+                        {currentChallenge.id === "1" && (
+                          <div>
+                            <div className="font-medium mb-1">Prompt structure affects:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Clarity:</strong> Clear vs. confusing responses</li>
+                              <li>• <strong>Accuracy:</strong> Relevant vs. off-topic answers</li>
+                              <li>• <strong>Tone:</strong> Professional vs. casual delivery</li>
+                              <li>• <strong>Format:</strong> Structured vs. rambling output</li>
+                            </ul>
+                          </div>
+                        )}
+                        {currentChallenge.id === "2" && (
+                          <div>
+                            <div className="font-medium mb-1">Role definition affects:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Expertise:</strong> Expert vs. beginner explanations</li>
+                              <li>• <strong>Language:</strong> Technical vs. simple terms</li>
+                              <li>• <strong>Perspective:</strong> Different viewpoints</li>
+                              <li>• <strong>Authority:</strong> Confident vs. uncertain tone</li>
+                            </ul>
+                          </div>
+                        )}
+                        {currentChallenge.id === "3" && (
+                          <div>
+                            <div className="font-medium mb-1">Specificity improves:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Relevance:</strong> Targeted responses</li>
+                              <li>• <strong>Completeness:</strong> All needs addressed</li>
+                              <li>• <strong>Actionability:</strong> Practical guidance</li>
+                              <li>• <strong>Efficiency:</strong> Less back-and-forth</li>
+                            </ul>
+                          </div>
+                        )}
+                        {currentChallenge.id === "4" && (
+                          <div>
+                            <div className="font-medium mb-1">Tone control affects:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Reception:</strong> How message is received</li>
+                              <li>• <strong>Relationship:</strong> Professional connections</li>
+                              <li>• <strong>Effectiveness:</strong> Achieving desired outcome</li>
+                              <li>• <strong>Context:</strong> Appropriate for situation</li>
+                            </ul>
+                          </div>
+                        )}
+                        {currentChallenge.id === "5" && (
+                          <div>
+                            <div className="font-medium mb-1">Multi-task prompts require:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Organization:</strong> Clear structure</li>
+                              <li>• <strong>Prioritization:</strong> Important items first</li>
+                              <li>• <strong>Constraints:</strong> Boundaries and limits</li>
+                              <li>• <strong>Integration:</strong> Connected components</li>
+                            </ul>
+                          </div>
+                        )}
+                        {currentChallenge.id === "6" && (
+                          <div>
+                            <div className="font-medium mb-1">Creative prompts need:</div>
+                            <ul className="text-xs space-y-1 ml-4">
+                              <li>• <strong>Inspiration:</strong> Creative role setting</li>
+                              <li>• <strong>Constraints:</strong> Focused creativity</li>
+                              <li>• <strong>Context:</strong> Rich background details</li>
+                              <li>• <strong>Freedom:</strong> Room for AI imagination</li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="text-sm">
+                      <h4 className="font-medium text-green-800 mb-2">💡 Examples</h4>
+                      <div className="space-y-2">
+                        {currentChallenge.goodExamples.length > 0 && (
+                          <div>
+                            <div className="text-xs font-medium text-green-700 mb-1">✅ Good:</div>
+                            {currentChallenge.goodExamples.map((example, index) => (
+                              <div key={index} className="text-xs text-green-600 bg-green-100 p-2 rounded border-l-2 border-green-400 mb-1">
+                                {example}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {currentChallenge.badExamples.length > 0 && (
+                          <div>
+                            <div className="text-xs font-medium text-red-700 mb-1">❌ Avoid:</div>
+                            {currentChallenge.badExamples.map((example, index) => (
+                              <div key={index} className="text-xs text-red-600 bg-red-100 p-2 rounded border-l-2 border-red-400 mb-1">
+                                {example}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Lesson List */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-base flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  Learning Path
+                </h3>
+                {challenges.map((challenge, index) => {
+                  const isCompleted = completedChallengeIds.has(challenge.id);
+                  // COMMENTED OUT LOCKING FOR DEVELOPMENT - WILL RE-ENABLE LATER
+                  // const isLocked = challenge.id !== "1" && !completedChallengeIds.has((parseInt(challenge.id) - 1).toString());
+                  const isLocked = false; // All unlocked for development
+                  const isCurrent = currentChallenge?.id === challenge.id;
+                  
+                  return (
+                    <div
+                      key={challenge.id}
+                      className={`p-4 rounded-lg border transition-all cursor-pointer hover:shadow-md ${
+                        isCurrent
+                          ? 'border-primary bg-primary/10 shadow-md'
+                          : isCompleted
+                            ? 'border-green-500/50 bg-green-50/50 hover:bg-green-50'
+                            : isLocked
+                              ? 'border-muted bg-muted/50 cursor-not-allowed opacity-60'
+                              : 'border-muted hover:border-primary/50 hover:bg-accent/50'
+                      }`}
+                      onClick={() => !isLocked && handleChallengeSelect(challenge)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-1">
+                          {isCompleted ? (
+                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                              <CheckCircle className="w-5 h-5 text-white" />
+                            </div>
+                          ) : isLocked ? (
+                            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                              <span className="text-sm">🔒</span>
+                            </div>
+                          ) : isCurrent ? (
+                            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+                              <span className="text-sm text-white font-bold">{index + 1}</span>
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center">
+                              <span className="text-sm font-bold text-primary">{index + 1}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-sm leading-tight">{challenge.title}</div>
+                          <div className="text-xs text-muted-foreground mt-1">{challenge.difficulty}</div>
+                          {challenge.description && (
+                            <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                              {challenge.description}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Learning Objectives */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-base flex items-center gap-2">
+                  <Target className="w-4 h-4 text-primary" />
+                  What You'll Master
+                </h3>
+                <div className="text-xs text-muted-foreground space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Build perfect prompt structure</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Master role-based prompting</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Control tone and style</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Handle complex requirements</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Unlock creative AI potential</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    <span>Real-world prompt applications</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 ml-80 pt-20 p-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center space-y-6 mb-8">
+              <h1 className="text-4xl font-bold text-foreground">Prompting Fundamentals</h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Master AI prompting through fun, real-world scenarios. From calling in sick to planning the perfect party!
+              </p>
+            </div>
+
+            <div className="grid gap-6">
+              {challenges.map((challenge, index) => {
+                const isCompleted = completedChallengeIds.has(challenge.id);
+                // COMMENTED OUT LOCKING FOR DEVELOPMENT - WILL RE-ENABLE LATER
+                // const isLocked = challenge.id !== "1" && !completedChallengeIds.has((parseInt(challenge.id) - 1).toString());
+                const isLocked = false; // All unlocked for development
+                
+                return (
+                  <Card 
+                    key={challenge.id}
+                    className={`transition-all hover:shadow-lg cursor-pointer ${
+                      isCompleted 
+                        ? 'border-green-500/50 bg-green-50/50' 
+                        : isLocked 
+                          ? 'opacity-50 cursor-not-allowed' 
+                          : 'hover:border-primary/50'
+                    }`}
+                    onClick={() => !isLocked && handleChallengeSelect(challenge)}
+                  >
+                    <CardHeader>
+                      <div className="flex items-start gap-4">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                          isCompleted 
+                            ? 'bg-green-500 text-white' 
+                            : isLocked 
+                              ? 'bg-muted text-muted-foreground' 
+                              : 'bg-primary text-white'
+                        }`}>
+                          {isCompleted ? '✓' : isLocked ? '🔒' : index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <CardTitle className="text-xl">{challenge.title}</CardTitle>
+                            <span className={`text-xs px-2 py-1 rounded-full ${
+                              challenge.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                              challenge.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                              'bg-red-100 text-red-800'
+                            }`}>
+                              {challenge.difficulty}
+                            </span>
+                          </div>
+                          <CardDescription className="text-base">
+                            {challenge.description}
+                          </CardDescription>
+                          <div className="mt-3 p-3 bg-accent/50 rounded-lg">
+                            <div className="text-sm font-medium text-foreground mb-1">🎯 Challenge:</div>
+                            <div className="text-sm text-muted-foreground">{challenge.objective}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-muted-foreground">
+                          {isCompleted ? '✅ Completed' : isLocked ? '🔒 Locked' : '🎮 Interactive Game Included'}
+                        </div>
+                        <Button 
+                          size="sm" 
+                          disabled={isLocked}
+                          className={isCompleted ? 'bg-green-500 hover:bg-green-600' : ''}
+                        >
+                          {isCompleted ? 'Review' : isLocked ? 'Locked' : 'Start Lesson'}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (gameState === "playing" && (currentChallenge || currentGame)) {
     // Render fact-checking games
     if (currentGame) {
@@ -526,20 +879,20 @@ const Index = () => {
           case "RoleMatcher":
             GameComponent = RoleMatcher;
             break;
-        case "DetailDetective":
-          GameComponent = DetailDetective;
-          break;
-        case "ToneController":
-          GameComponent = ToneController;
-          break;
-        case "MultiTaskMaster":
-          GameComponent = MultiTaskMaster;
-          break;
-        case "CreativeChallenge":
-          GameComponent = CreativeChallenge;
-          break;
-        default:
-          GameComponent = PromptBuilder;
+          case "DetailDetective":
+            GameComponent = DetailDetective;
+            break;
+          case "ToneController":
+            GameComponent = ToneController;
+            break;
+          case "MultiTaskMaster":
+            GameComponent = MultiTaskMaster;
+            break;
+          case "CreativeChallenge":
+            GameComponent = CreativeChallenge;
+            break;
+          default:
+            GameComponent = PromptBuilder;
         }
 
         return (
@@ -569,234 +922,10 @@ const Index = () => {
           </div>
         );
       }
-
-      // Original lesson view with sidebar for challenges without games
-    return (
-      <div className="min-h-screen bg-muted/30 flex">
-        {/* Navigation Header */}
-        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
-            </div>
-            <div className="flex items-center gap-6">
-              <span className="text-sm text-muted-foreground">🏠 Home</span>
-              <span className="text-sm font-medium text-primary">🎮 Games</span>
-              <span className="text-sm text-muted-foreground">📈 Progress</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="w-80 bg-background border-r border-border pt-20 p-6 overflow-y-auto">
-          <div className="space-y-6">
-            {/* Challenge Info */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" />
-                <h2 className="font-semibold text-foreground">{currentChallenge.title}</h2>
-              </div>
-              <p className="text-sm text-muted-foreground">{currentChallenge.description}</p>
-            </div>
-
-            {/* Lesson Content */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Target className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium text-foreground">Lesson</span>
-              </div>
-              <div className="space-y-3">
-                <p className="text-sm text-foreground font-medium">Objective:</p>
-                <p className="text-sm text-muted-foreground">{currentChallenge.objective}</p>
-              </div>
-            </div>
-
-            {/* Hints */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">Hints</span>
-              </div>
-              <div className="space-y-2">
-                {currentChallenge.hints.map((hint, index) => (
-                  <div key={index} className="p-2 bg-muted/50 rounded text-xs text-foreground">
-                    {hint}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Examples */}
-            {currentChallenge.goodExamples.length > 0 && (
-              <div className="space-y-4">
-                <span className="text-sm font-medium text-foreground">Examples</span>
-                <div className="space-y-2">
-                  {currentChallenge.goodExamples.map((example, index) => (
-                    <div key={index} className="p-2 bg-green-50 border border-green-200 rounded text-xs text-green-800">
-                      ✓ {example}
-                    </div>
-                  ))}
-                  {currentChallenge.badExamples.map((example, index) => (
-                    <div key={index} className="p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
-                      ✗ {example}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <Button 
-              variant="outline" 
-              onClick={handleBackToChallenges}
-              className="w-full"
-            >
-              Back to Challenges
-            </Button>
-          </div>
-        </div>
-
-        {/* Main Game Area */}
-        <div className="flex-1 pt-20 p-6">
-          <PromptBuilder
-            challenge={currentChallenge}
-            onComplete={handleChallengeComplete}
-            onBack={handleBackToChallenges}
-          />
-        </div>
-      </div>
-    );
     }
   }
 
-  // Challenges view for prompting lessons
-  const selectedCategory = games.find(g => g.id === selectedGameCategory);
-  const challenges = selectedCategory?.challenges || [];
-
-  return (
-    <div className="min-h-screen bg-muted/30 flex">
-      {/* Navigation Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <span className="text-sm text-muted-foreground">🏠 Home</span>
-            <span className="text-sm font-medium text-primary">🎮 Games</span>
-            <span className="text-sm text-muted-foreground">📈 Progress</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Progress Sidebar */}
-      <div className="w-80 bg-background border-r border-border pt-20 p-6">
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="font-semibold text-foreground">Your Progress</h2>
-            <div className="text-sm text-muted-foreground">
-              Total Points: {playerData.score}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Level: {playerData.level}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Completed: {playerData.completedChallenges}/{challenges.length}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <span className="text-sm font-medium text-foreground">Challenges</span>
-            <div className="space-y-2">
-              {challenges.map((challenge, index) => {
-                const isCompleted = completedChallengeIds.has(challenge.id);
-                const isLocked = index > 0 && !completedChallengeIds.has(challenges[index - 1].id);
-                
-                return (
-                  <div 
-                    key={challenge.id}
-                    className={`p-2 text-xs rounded border cursor-pointer transition-colors ${
-                      isCompleted 
-                        ? 'bg-green-50 border-green-200 text-green-800' 
-                        : isLocked 
-                          ? 'bg-muted border-muted-foreground/20 text-muted-foreground cursor-not-allowed'
-                          : 'bg-background border-border text-foreground hover:bg-muted/50'
-                    }`}
-                    onClick={() => !isLocked && handleChallengeSelect(challenge)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{challenge.title}</span>
-                      <span>
-                        {isCompleted ? '✓' : isLocked ? '🔒' : '○'}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 pt-20 p-6">
-        <div className="max-w-4xl mx-auto">
-            <div className="text-center space-y-6 mb-8">
-              <h1 className="text-3xl font-bold text-foreground">Prompting Challenges</h1>
-              <p className="text-muted-foreground">
-                Master the fundamentals of AI prompting through structured lessons
-              </p>
-              <Button variant="outline" onClick={handleBackToGameSelect}>
-                ← Back to Game Selection
-              </Button>
-            </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {challenges.map((challenge, index) => {
-              const isCompleted = completedChallengeIds.has(challenge.id);
-              const isLocked = index > 0 && !completedChallengeIds.has(challenges[index - 1].id);
-              
-              return (
-                <Card 
-                  key={challenge.id}
-                  className={`cursor-pointer transition-all hover:shadow-md ${
-                    isCompleted 
-                      ? 'border-green-200 bg-green-50' 
-                      : isLocked 
-                        ? 'opacity-50 cursor-not-allowed' 
-                        : 'hover:border-primary/50'
-                  }`}
-                  onClick={() => !isLocked && handleChallengeSelect(challenge)}
-                >
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">{challenge.title}</CardTitle>
-                      <div className="text-lg">
-                        {isCompleted ? '✓' : isLocked ? '🔒' : '○'}
-                      </div>
-                    </div>
-                    <CardDescription>{challenge.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        challenge.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
-                        challenge.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {challenge.difficulty}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <div>Something went wrong</div>;
 };
 
 export default Index;
