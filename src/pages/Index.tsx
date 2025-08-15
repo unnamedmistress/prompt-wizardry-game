@@ -3,6 +3,9 @@ import { toast } from "sonner";
 import { GameHeader } from "@/components/GameHeader";
 import { GameCard } from "@/components/GameCard";
 import { PromptBuilder } from "@/components/PromptBuilder";
+import { TruthDetective } from "@/components/games/TruthDetective";
+import { SourceHunter } from "@/components/games/SourceHunter";
+import { PromptEscape } from "@/components/games/PromptEscape";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import heroImage from "@/assets/hero-crystal.jpg";
@@ -19,102 +22,96 @@ interface Challenge {
   badExamples: string[];
 }
 
-const challenges: Challenge[] = [
+const games = [
   {
-    id: "1",
-    title: "Basic Prompt Structure",
-    description: "Learn the fundamental elements of a well-structured prompt",
-    difficulty: "Beginner",
-    objective: "Create a prompt that asks AI to write a professional email about a meeting reschedule",
-    hints: [
-      "Start by giving the AI a role or context",
-      "Be specific about what you want",
-      "Mention the tone and format you prefer",
-      "Include relevant details"
-    ],
-    goodExamples: ["You are a professional assistant. Write a polite email to reschedule a team meeting..."],
-    badExamples: ["Write email about meeting"]
+    id: "prompting-basics",
+    title: "Prompting Fundamentals",
+    description: "Learn the core principles of effective AI prompting",
+    type: "lessons",
+    challenges: [
+      {
+        id: "1",
+        title: "Basic Prompt Structure",
+        description: "Learn the fundamental elements of a well-structured prompt",
+        difficulty: "Beginner" as const,
+        objective: "Create a prompt that asks AI to write a professional email about a meeting reschedule",
+        hints: [
+          "Start by giving the AI a role or context",
+          "Be specific about what you want",
+          "Mention the tone and format you prefer",
+          "Include relevant details"
+        ],
+        goodExamples: ["You are a professional assistant. Write a polite email to reschedule a team meeting..."],
+        badExamples: ["Write email about meeting"]
+      },
+      {
+        id: "2", 
+        title: "Adding Context & Role",
+        description: "Master the art of giving AI proper context and role definition",
+        difficulty: "Beginner" as const,
+        objective: "Create a prompt where AI acts as a cooking instructor explaining how to make pasta",
+        hints: [
+          "Define who the AI should be",
+          "Set the audience level (beginner, expert, etc.)",
+          "Specify the communication style",
+          "Include the specific task"
+        ],
+        goodExamples: [],
+        badExamples: []
+      },
+      {
+        id: "3",
+        title: "Specificity & Details",
+        description: "Learn how being specific dramatically improves AI responses",
+        difficulty: "Intermediate" as const, 
+        objective: "Create a detailed prompt for AI to write a product description for a smart home device",
+        hints: [
+          "Include target audience",
+          "Specify key features to highlight",
+          "Mention desired length and tone",
+          "Add formatting requirements"
+        ],
+        goodExamples: [],
+        badExamples: []
+      }
+    ]
   },
   {
-    id: "2", 
-    title: "Adding Context & Role",
-    description: "Master the art of giving AI proper context and role definition",
-    difficulty: "Beginner",
-    objective: "Create a prompt where AI acts as a cooking instructor explaining how to make pasta",
-    hints: [
-      "Define who the AI should be",
-      "Set the audience level (beginner, expert, etc.)",
-      "Specify the communication style",
-      "Include the specific task"
-    ],
-    goodExamples: [],
-    badExamples: []
-  },
-  {
-    id: "3",
-    title: "Specificity & Details",
-    description: "Learn how being specific dramatically improves AI responses",
-    difficulty: "Intermediate", 
-    objective: "Create a detailed prompt for AI to write a product description for a smart home device",
-    hints: [
-      "Include target audience",
-      "Specify key features to highlight",
-      "Mention desired length and tone",
-      "Add formatting requirements"
-    ],
-    goodExamples: [],
-    badExamples: []
-  },
-  {
-    id: "4",
-    title: "Output Formatting",
-    description: "Control how AI structures and presents information",
-    difficulty: "Intermediate",
-    objective: "Get AI to create a structured comparison between two programming languages",
-    hints: [
-      "Specify the exact format (table, list, etc.)",
-      "Define comparison criteria",
-      "Set length constraints",
-      "Request specific sections"
-    ],
-    goodExamples: [],
-    badExamples: []
-  },
-  {
-    id: "5",
-    title: "Chain of Thought",
-    description: "Guide AI through step-by-step reasoning processes",
-    difficulty: "Advanced",
-    objective: "Create a prompt that makes AI solve a complex problem step-by-step",
-    hints: [
-      "Ask AI to think step by step",
-      "Request reasoning for each step",
-      "Include verification methods",
-      "Structure the thinking process"
-    ],
-    goodExamples: [],
-    badExamples: []
-  },
-  {
-    id: "6",
-    title: "Few-Shot Examples",
-    description: "Use examples to guide AI behavior and output style",
-    difficulty: "Advanced", 
-    objective: "Use examples to teach AI a specific writing style for social media posts",
-    hints: [
-      "Provide 2-3 good examples",
-      "Show the pattern you want",
-      "Explain what makes examples good",
-      "Request similar output"
-    ],
-    goodExamples: [],
-    badExamples: []
+    id: "facts-framework",
+    title: "FACTS Framework Games",
+    description: "Master fact-checking and verification through gamified challenges",
+    type: "games",
+    games: [
+      {
+        id: "truth-detective",
+        title: "Truth Detective",
+        description: "Spot AI hallucinations in 'Two Truths and a Lie' format",
+        icon: "🕵️",
+        component: "TruthDetective"
+      },
+      {
+        id: "source-hunter", 
+        title: "Source Hunter",
+        description: "Find credible sources to verify AI claims",
+        icon: "🔍",
+        component: "SourceHunter"
+      },
+      {
+        id: "prompt-escape",
+        title: "Prompt Escape Room",
+        description: "Escape by finding which prompt caused problematic responses",
+        icon: "🔓",
+        component: "PromptEscape"
+      }
+    ]
   }
 ];
 
 const Index = () => {
-  const [gameState, setGameState] = useState<"welcome" | "challenges" | "playing">("welcome");
+  const [gameState, setGameState] = useState<"welcome" | "game-select" | "challenges" | "playing" | "fact-games">("welcome");
   const [currentChallenge, setCurrentChallenge] = useState<Challenge | null>(null);
+  const [currentGame, setCurrentGame] = useState<string | null>(null);
+  const [selectedGameCategory, setSelectedGameCategory] = useState<string | null>(null);
   const [playerData, setPlayerData] = useState({
     level: 1,
     score: 0,
@@ -153,7 +150,22 @@ const Index = () => {
   }, [gameState]);
 
   const handleStartGame = () => {
-    setGameState("challenges");
+    setGameState("game-select");
+  };
+
+  const handleGameCategorySelect = (categoryId: string) => {
+    setSelectedGameCategory(categoryId);
+    const category = games.find(g => g.id === categoryId);
+    if (category?.type === "lessons") {
+      setGameState("challenges");
+    } else {
+      setGameState("fact-games");
+    }
+  };
+
+  const handleFactGameSelect = (gameId: string) => {
+    setCurrentGame(gameId);
+    setGameState("playing");
   };
 
   const handleChallengeSelect = (challenge: Challenge) => {
@@ -180,8 +192,20 @@ const Index = () => {
   };
 
   const handleBackToChallenges = () => {
-    setGameState("challenges");
+    if (selectedGameCategory === "facts-framework") {
+      setGameState("fact-games");
+    } else {
+      setGameState("challenges");
+    }
     setCurrentChallenge(null);
+    setCurrentGame(null);
+  };
+
+  const handleBackToGameSelect = () => {
+    setGameState("game-select");
+    setSelectedGameCategory(null);
+    setCurrentChallenge(null);
+    setCurrentGame(null);
   };
 
   if (gameState === "welcome") {
@@ -192,7 +216,7 @@ const Index = () => {
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">Prompt Wizardry</span>
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
               <span className="text-sm text-muted-foreground">🏠 Home</span>
@@ -208,15 +232,15 @@ const Index = () => {
             <div className="max-w-4xl mx-auto text-center space-y-8">
               <div className="space-y-4">
                 <h1 className="text-5xl font-bold text-foreground">
-                  Welcome to Prompt Wizardry!
+                  Welcome to AI Literacy!
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Master the art of AI prompting through interactive challenges. 
-                  Learn to craft prompts that get amazing results from AI.
+                  Master AI prompting and fact-checking through interactive games. 
+                  Learn to prompt effectively and verify AI responses using the FACTS framework.
                 </p>
               </div>
               
-              <Button 
+                <Button 
                 onClick={handleStartGame}
                 size="lg"
                 className="text-lg px-8 py-4 bg-primary hover:bg-primary/90"
@@ -230,7 +254,7 @@ const Index = () => {
     );
   }
 
-  if (gameState === "playing" && currentChallenge) {
+  if (gameState === "game-select") {
     return (
       <div className="min-h-screen bg-muted/30 flex">
         {/* Navigation Header */}
@@ -238,7 +262,168 @@ const Index = () => {
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-6 h-6 text-primary" />
-              <span className="font-bold text-lg">Prompt Wizardry</span>
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="text-sm text-muted-foreground">🏠 Home</span>
+              <span className="text-sm font-medium text-primary">🎮 Games</span>
+              <span className="text-sm text-muted-foreground">📈 Progress</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 pt-20 p-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center space-y-6 mb-8">
+              <h1 className="text-3xl font-bold text-foreground">Choose Your Learning Path</h1>
+              <p className="text-muted-foreground">
+                Master AI prompting and fact-checking through interactive experiences
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              {games.map((game) => (
+                <Card 
+                  key={game.id}
+                  className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+                  onClick={() => handleGameCategorySelect(game.id)}
+                >
+                  <CardHeader>
+                    <CardTitle className="text-xl">{game.title}</CardTitle>
+                    <CardDescription className="text-base">{game.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs px-3 py-1 rounded-full ${
+                        game.type === 'lessons' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                      }`}>
+                        {game.type === 'lessons' ? 'Structured Lessons' : 'Interactive Games'}
+                      </span>
+                      <span className="text-2xl">
+                        {game.type === 'lessons' ? '📚' : '🎮'}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameState === "fact-games") {
+    const factGames = games.find(g => g.id === "facts-framework")?.games || [];
+    
+    return (
+      <div className="min-h-screen bg-muted/30 flex">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="text-sm text-muted-foreground">🏠 Home</span>
+              <span className="text-sm font-medium text-primary">🎮 Games</span>
+              <span className="text-sm text-muted-foreground">📈 Progress</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 pt-20 p-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center space-y-6 mb-8">
+              <h1 className="text-3xl font-bold text-foreground">FACTS Framework Games</h1>
+              <p className="text-muted-foreground">
+                Learn to verify AI responses using the FACTS framework through fun games
+              </p>
+              <Button variant="outline" onClick={handleBackToGameSelect}>
+                ← Back to Game Selection
+              </Button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {factGames.map((game) => (
+                <Card 
+                  key={game.id}
+                  className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50"
+                  onClick={() => handleFactGameSelect(game.id)}
+                >
+                  <CardHeader className="text-center">
+                    <div className="text-4xl mb-2">{game.icon}</div>
+                    <CardTitle className="text-lg">{game.title}</CardTitle>
+                    <CardDescription>{game.description}</CardDescription>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (gameState === "playing" && (currentChallenge || currentGame)) {
+    // Render fact-checking games
+    if (currentGame) {
+      let GameComponent;
+      switch (currentGame) {
+        case "truth-detective":
+          GameComponent = TruthDetective;
+          break;
+        case "source-hunter":
+          GameComponent = SourceHunter;
+          break;
+        case "prompt-escape":
+          GameComponent = PromptEscape;
+          break;
+        default:
+          GameComponent = () => <div>Game not found</div>;
+      }
+
+      return (
+        <div className="min-h-screen bg-muted/30 flex">
+          {/* Navigation Header */}
+          <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span className="text-sm text-muted-foreground">🏠 Home</span>
+                <span className="text-sm font-medium text-primary">🎮 Games</span>
+                <span className="text-sm text-muted-foreground">📈 Progress</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Game Area */}
+          <div className="flex-1 pt-20 p-6">
+            <GameComponent
+              onComplete={handleChallengeComplete}
+              onBack={handleBackToChallenges}
+            />
+          </div>
+        </div>
+      );
+    }
+
+    // Render prompting lessons
+    if (currentChallenge) {
+    return (
+      <div className="min-h-screen bg-muted/30 flex">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
               <span className="text-sm text-muted-foreground">🏠 Home</span>
@@ -326,7 +511,12 @@ const Index = () => {
         </div>
       </div>
     );
+    }
   }
+
+  // Challenges view for prompting lessons
+  const selectedCategory = games.find(g => g.id === selectedGameCategory);
+  const challenges = selectedCategory?.challenges || [];
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
@@ -334,8 +524,8 @@ const Index = () => {
       <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-6 h-6 text-primary" />
-            <span className="font-bold text-lg">Prompt Wizardry</span>
+              <Sparkles className="w-6 h-6 text-primary" />
+              <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
           </div>
           <div className="flex items-center gap-6">
             <span className="text-sm text-muted-foreground">🏠 Home</span>
@@ -397,12 +587,15 @@ const Index = () => {
       {/* Main Content */}
       <div className="flex-1 pt-20 p-6">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center space-y-6 mb-8">
-            <h1 className="text-3xl font-bold text-foreground">Choose Your Challenge</h1>
-            <p className="text-muted-foreground">
-              Select a challenge to practice your prompting skills
-            </p>
-          </div>
+            <div className="text-center space-y-6 mb-8">
+              <h1 className="text-3xl font-bold text-foreground">Prompting Challenges</h1>
+              <p className="text-muted-foreground">
+                Master the fundamentals of AI prompting through structured lessons
+              </p>
+              <Button variant="outline" onClick={handleBackToGameSelect}>
+                ← Back to Game Selection
+              </Button>
+            </div>
 
           <div className="grid gap-4 md:grid-cols-2">
             {challenges.map((challenge, index) => {

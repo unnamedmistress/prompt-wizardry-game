@@ -1,0 +1,242 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Timer, Key, Lock, CheckCircle } from "lucide-react";
+
+interface PromptEscapeProps {
+  onComplete: (score: number) => void;
+  onBack: () => void;
+}
+
+const escapeRooms = [
+  {
+    id: 1,
+    title: "The Hallucination Chamber",
+    description: "Escape by finding which prompt created the false response!",
+    aiResponse: "The Great Wall of China is visible from space with the naked eye and was built continuously over 2,000 years by a single dynasty.",
+    prompts: [
+      "Tell me about the Great Wall of China's construction history and visibility from space.",
+      "List factual information about the Great Wall of China, including common misconceptions.",
+      "Write an exciting story about the Great Wall of China that might include some exaggerations.",
+      "Provide verified facts about the Great Wall of China from reliable historical sources."
+    ],
+    correctAnswer: 2,
+    explanation: "Prompt 3 asked for 'an exciting story that might include exaggerations' - this would lead to false information mixed with facts."
+  },
+  {
+    id: 2,
+    title: "The Bias Trap",
+    description: "Find the prompt that led to this biased response!",
+    aiResponse: "Men are naturally better at mathematics and science because of biological differences in brain structure that make them more logical thinkers.",
+    prompts: [
+      "Explain gender differences in STEM performance based on current research.",
+      "Why are men better at math and science than women?",
+      "Analyze factors that influence gender representation in STEM fields.",
+      "Discuss biological and social factors affecting academic performance across genders."
+    ],
+    correctAnswer: 1,
+    explanation: "Prompt 2 contains a leading question with a false premise ('Why are men better...') which prompted the biased response."
+  },
+  {
+    id: 3,
+    title: "The Context Void",
+    description: "Which prompt lacks crucial context?",
+    aiResponse: "You should definitely invest all your money in cryptocurrency right now. Bitcoin will reach $500,000 by next year guaranteed!",
+    prompts: [
+      "As a financial advisor, provide balanced investment advice considering risk tolerance and market conditions.",
+      "What's your opinion on cryptocurrency investments?",
+      "Analyze cryptocurrency as an investment option, including risks and potential returns.",
+      "Should someone invest in crypto? Give me specific financial advice."
+    ],
+    correctAnswer: 3,
+    explanation: "Prompt 4 asks for specific financial advice without providing context about the person's financial situation, risk tolerance, or qualifications."
+  }
+];
+
+export const PromptEscape = ({ onComplete, onBack }: PromptEscapeProps) => {
+  const [currentRoom, setCurrentRoom] = useState(0);
+  const [selectedPrompt, setSelectedPrompt] = useState<number | null>(null);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [gameComplete, setGameComplete] = useState(false);
+  const [score, setScore] = useState(0);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [isTimerActive, setIsTimerActive] = useState(true);
+
+  const room = escapeRooms[currentRoom];
+
+  useEffect(() => {
+    if (timeLeft > 0 && isTimerActive && !showExplanation) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && !showExplanation) {
+      handleTimeUp();
+    }
+  }, [timeLeft, isTimerActive, showExplanation]);
+
+  const handleTimeUp = () => {
+    setIsTimerActive(false);
+    toast("Time's up! Let's see the solution.", { duration: 3000 });
+    setShowExplanation(true);
+  };
+
+  const handlePromptSelect = (index: number) => {
+    if (showExplanation) return;
+    setSelectedPrompt(index);
+  };
+
+  const handleEscape = () => {
+    if (selectedPrompt === null) {
+      toast("Select a prompt to attempt your escape!");
+      return;
+    }
+
+    setIsTimerActive(false);
+    const isCorrect = selectedPrompt === room.correctAnswer;
+    
+    if (isCorrect) {
+      const timeBonus = Math.max(0, timeLeft * 5);
+      setScore(score + 100 + timeBonus);
+      toast(`Escaped! +${100 + timeBonus} points (including time bonus)! 🔓`);
+    } else {
+      toast("Wrong choice! You're still trapped! 🔒");
+    }
+    
+    setShowExplanation(true);
+  };
+
+  const handleNextRoom = () => {
+    if (currentRoom < escapeRooms.length - 1) {
+      setCurrentRoom(currentRoom + 1);
+      setSelectedPrompt(null);
+      setTimeLeft(60);
+      setShowExplanation(false);
+      setIsTimerActive(true);
+    } else {
+      setGameComplete(true);
+      onComplete(score);
+    }
+  };
+
+  if (gameComplete) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card className="max-w-md text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl">🔓 Escape Complete!</CardTitle>
+            <CardDescription>Final Score: {score} points</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-4">You've mastered prompt analysis under pressure!</p>
+            <Button onClick={onBack}>Continue Learning</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="text-center space-y-2">
+        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
+          <Key className="w-6 h-6 text-primary" />
+          Prompt Escape Room
+        </h2>
+        <p className="text-muted-foreground">Find the problematic prompt before time runs out!</p>
+        <div className="flex items-center justify-center gap-4 text-sm">
+          <span>Room {currentRoom + 1} of {escapeRooms.length}</span>
+          <span>Score: {score}</span>
+          <div className={`flex items-center gap-1 ${timeLeft <= 10 ? 'text-red-600' : 'text-muted-foreground'}`}>
+            <Timer className="w-4 h-4" />
+            {timeLeft}s
+          </div>
+        </div>
+      </div>
+
+      <Card className="border-2 border-amber-400 bg-amber-50">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <Lock className="w-5 h-5 text-amber-600" />
+            {room.title}
+          </CardTitle>
+          <CardDescription className="text-amber-800 font-medium">
+            {room.description}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 bg-white border-2 border-red-300 rounded-lg mb-6">
+            <h4 className="font-medium text-red-800 mb-2">⚠️ Problematic AI Response:</h4>
+            <p className="text-sm text-red-700 italic">"{room.aiResponse}"</p>
+          </div>
+
+          <h4 className="font-medium mb-4">Which prompt likely caused this response?</h4>
+          
+          <div className="grid gap-3">
+            {room.prompts.map((prompt, index) => (
+              <div
+                key={index}
+                className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  selectedPrompt === index
+                    ? 'border-primary bg-primary/10'
+                    : 'border-muted hover:border-primary/50'
+                } ${
+                  showExplanation
+                    ? index === room.correctAnswer
+                      ? 'border-green-500 bg-green-50'
+                      : selectedPrompt === index && index !== room.correctAnswer
+                        ? 'border-red-500 bg-red-50'
+                        : 'opacity-60'
+                    : ''
+                }`}
+                onClick={() => handlePromptSelect(index)}
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0 mt-1">
+                    {showExplanation && index === room.correctAnswer ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
+                        selectedPrompt === index
+                          ? 'bg-primary text-white border-primary'
+                          : 'border-muted-foreground text-muted-foreground'
+                      }`}>
+                        {index + 1}
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-sm">{prompt}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {showExplanation && (
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="font-medium text-blue-900 mb-2">🔍 Analysis:</h4>
+              <p className="text-sm text-blue-800">{room.explanation}</p>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-6">
+            <Button variant="outline" onClick={onBack} className="flex-1">
+              Exit Game
+            </Button>
+            {!showExplanation ? (
+              <Button 
+                onClick={handleEscape} 
+                disabled={selectedPrompt === null}
+                className="flex-1"
+              >
+                Attempt Escape! 🔓
+              </Button>
+            ) : (
+              <Button onClick={handleNextRoom} className="flex-1">
+                {currentRoom < escapeRooms.length - 1 ? 'Next Room' : 'Complete Escape'}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
