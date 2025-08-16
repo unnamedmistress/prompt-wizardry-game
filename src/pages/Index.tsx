@@ -934,14 +934,116 @@ const Index = () => {
                 </div>
                 <div className="flex items-center gap-6">
                   <span className="text-sm text-muted-foreground">🏠 Home</span>
-                  <span className="text-sm font-medium text-primary">🎮 Games</span>
-                  <span className="text-sm text-muted-foreground">📈 Progress</span>
+                  <span className="text-sm font-medium text-primary">🎮 Lessons</span>
+                  <span className="text-sm text-muted-foreground">Level 1 • 0 pts</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="fixed left-0 top-16 bottom-0 w-80 bg-gradient-to-br from-primary/10 to-primary/5 border-r border-border p-6 overflow-y-auto z-40">
+              <div className="space-y-6">
+                {/* Level Status */}
+                <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-6 border border-primary/20">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-2">Level 1</div>
+                    <div className="text-muted-foreground mb-4">Prompt Master</div>
+                    <div className="flex justify-center gap-8 mb-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-foreground">0</div>
+                        <div className="text-sm text-muted-foreground">Points</div>
+                      </div>
+                      <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">
+                        {completedChallengeIds.size}
+                      </div>
+                        <div className="text-sm text-muted-foreground">Completed</div>
+                      </div>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full text-muted-foreground"
+                      onClick={() => {
+                        setCurrentChallenge(null);
+                        setCurrentGame(null);
+                      }}
+                    >
+                      ← Choose Different Path
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Learning Path */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-foreground font-semibold">
+                    <BookOpen className="w-4 h-4" />
+                    Learning Path
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {games.find(g => g.id === currentGame)?.challenges.map((challenge, index) => (
+                      <div 
+                        key={challenge.id}
+                        className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                          currentChallenge?.id === challenge.id 
+                            ? 'bg-primary/10 border-primary/30' 
+                            : 'bg-background/50 border-border hover:bg-background/70'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                          completedChallengeIds.has(challenge.id) 
+                            ? 'bg-green-500 text-white' 
+                            : currentChallenge?.id === challenge.id
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                        }`}>
+                          {completedChallengeIds.has(challenge.id) ? (
+                            <CheckCircle className="w-4 h-4" />
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-foreground truncate">
+                            {challenge.title}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {challenge.difficulty}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* What You'll Master */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-foreground font-semibold">
+                    <Target className="w-4 h-4" />
+                    What You'll Master
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {[
+                      "Build perfect prompt structure",
+                      "Master role-based prompting",
+                      "Control tone and style",
+                      "Handle complex requirements",
+                      "Unlock creative AI potential",
+                      "Real-world prompt applications"
+                    ].map((skill, index) => (
+                      <div key={index} className="flex items-center gap-3 text-sm">
+                        <div className="w-2 h-2 rounded-full bg-primary"></div>
+                        <span className="text-muted-foreground">{skill}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Main Game Area */}
-            <div className="flex-1 pt-20 p-6">
+            <div className="flex-1 ml-80 pt-20 p-6">
               <GameComponent
                 challenge={currentChallenge}
                 onComplete={handleChallengeComplete}
@@ -951,6 +1053,137 @@ const Index = () => {
           </div>
         );
       }
+
+      // Fallback for lessons without game components
+      return (
+        <div className="min-h-screen bg-muted/30 flex">
+          {/* Navigation Header */}
+          <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
+              </div>
+              <div className="flex items-center gap-6">
+                <span className="text-sm text-muted-foreground">🏠 Home</span>
+                <span className="text-sm font-medium text-primary">🎮 Lessons</span>
+                <span className="text-sm text-muted-foreground">Level 1 • 0 pts</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <div className="fixed left-0 top-16 bottom-0 w-80 bg-gradient-to-br from-primary/10 to-primary/5 border-r border-border p-6 overflow-y-auto z-40">
+            <div className="space-y-6">
+              {/* Level Status */}
+              <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl p-6 border border-primary/20">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-primary mb-2">Level 1</div>
+                  <div className="text-muted-foreground mb-4">Prompt Master</div>
+                  <div className="flex justify-center gap-8 mb-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">0</div>
+                      <div className="text-sm text-muted-foreground">Points</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-foreground">
+                        {completedChallengeIds.size}
+                      </div>
+                      <div className="text-sm text-muted-foreground">Completed</div>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="w-full text-muted-foreground"
+                    onClick={() => {
+                      setCurrentChallenge(null);
+                      setCurrentGame(null);
+                    }}
+                  >
+                    ← Choose Different Path
+                  </Button>
+                </div>
+              </div>
+
+              {/* Learning Path */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-foreground font-semibold">
+                  <BookOpen className="w-4 h-4" />
+                  Learning Path
+                </div>
+                
+                <div className="space-y-3">
+                  {games.find(g => g.id === currentGame)?.challenges.map((challenge, index) => (
+                    <div 
+                      key={challenge.id}
+                      className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+                        currentChallenge?.id === challenge.id 
+                          ? 'bg-primary/10 border-primary/30' 
+                          : 'bg-background/50 border-border hover:bg-background/70'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                        completedChallengeIds.has(challenge.id) 
+                          ? 'bg-green-500 text-white' 
+                          : currentChallenge?.id === challenge.id
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {completedChallengeIds.has(challenge.id) ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          index + 1
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-foreground truncate">
+                          {challenge.title}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {challenge.difficulty}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* What You'll Master */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-foreground font-semibold">
+                  <Target className="w-4 h-4" />
+                  What You'll Master
+                </div>
+                
+                <div className="space-y-2">
+                  {[
+                    "Build perfect prompt structure",
+                    "Master role-based prompting",
+                    "Control tone and style",
+                    "Handle complex requirements",
+                    "Unlock creative AI potential",
+                    "Real-world prompt applications"
+                  ].map((skill, index) => (
+                    <div key={index} className="flex items-center gap-3 text-sm">
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      <span className="text-muted-foreground">{skill}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Game Area */}
+          <div className="flex-1 ml-80 pt-20 p-6">
+            <PromptBuilder
+              challenge={currentChallenge}
+              onComplete={handleChallengeComplete}
+              onBack={handleBackToChallenges}
+            />
+          </div>
+        </div>
+      );
     }
   }
 
