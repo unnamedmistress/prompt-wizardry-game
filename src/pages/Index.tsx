@@ -347,9 +347,15 @@ const Index = () => {
               <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
-              <span className="text-sm text-muted-foreground">🏠 Home</span>
-              <span className="text-sm text-muted-foreground">🎮 Games</span>
-              <span className="text-sm text-muted-foreground">📈 Progress</span>
+              <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
+                🏠 Home
+              </Button>
+              <Button variant="ghost" onClick={() => setGameState("game-select")} className="text-sm">
+                🎓 Lessons
+              </Button>
+              <Button variant="ghost" onClick={() => setGameState("game-select")} className="text-sm">
+                📈 Levels
+              </Button>
             </div>
           </div>
         </div>
@@ -393,9 +399,13 @@ const Index = () => {
               <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
-              <span className="text-sm text-muted-foreground">🏠 Home</span>
-              <span className="text-sm font-medium text-primary">🎮 Games</span>
-              <span className="text-sm text-muted-foreground">📈 Progress</span>
+              <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
+                🏠 Home
+              </Button>
+              <span className="text-sm font-medium text-primary">🎓 Lessons</span>
+              <Button variant="ghost" onClick={() => setGameState("game-select")} className="text-sm">
+                📈 Levels
+              </Button>
             </div>
           </div>
         </div>
@@ -455,9 +465,13 @@ const Index = () => {
               <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
-              <span className="text-sm text-muted-foreground">🏠 Home</span>
+              <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
+                🏠 Home
+              </Button>
               <span className="text-sm font-medium text-primary">🎮 Games</span>
-              <span className="text-sm text-muted-foreground">📈 Progress</span>
+              <Button variant="ghost" onClick={() => setGameState("game-select")} className="text-sm">
+                📈 Levels
+              </Button>
             </div>
           </div>
         </div>
@@ -509,13 +523,10 @@ const Index = () => {
               <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
             </div>
             <div className="flex items-center gap-6">
-              <button 
-                onClick={() => setGameState("welcome")}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
+              <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
                 🏠 Home
-              </button>
-              <span className="text-sm font-medium text-primary">🎮 Lessons</span>
+              </Button>
+              <span className="text-sm font-medium text-primary">🎓 Lessons</span>
               <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
             </div>
           </div>
@@ -877,9 +888,13 @@ const Index = () => {
                 <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
               </div>
               <div className="flex items-center gap-6">
-                <span className="text-sm text-muted-foreground">🏠 Home</span>
+                <Button variant="ghost" onClick={handleBackToChallenges} className="text-sm">
+                  🏠 Home
+                </Button>
                 <span className="text-sm font-medium text-primary">🎮 Games</span>
-                <span className="text-sm text-muted-foreground">📈 Progress</span>
+                <Button variant="ghost" onClick={() => setGameState("game-select")} className="text-sm">
+                  📈 Levels
+                </Button>
               </div>
             </div>
           </div>
@@ -933,9 +948,11 @@ const Index = () => {
                   <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
                 </div>
                 <div className="flex items-center gap-6">
-                  <span className="text-sm text-muted-foreground">🏠 Home</span>
-                  <span className="text-sm font-medium text-primary">🎮 Lessons</span>
-                  <span className="text-sm text-muted-foreground">Level 1 • 0 pts</span>
+                  <Button variant="ghost" onClick={handleBackToChallenges} className="text-sm">
+                    🏠 Home
+                  </Button>
+                  <span className="text-sm font-medium text-primary">🎓 Lessons</span>
+                  <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
                 </div>
               </div>
             </div>
@@ -1065,9 +1082,11 @@ const Index = () => {
                 <span className="font-bold text-lg">AI Literacy - Learn to Prompt</span>
               </div>
               <div className="flex items-center gap-6">
-                <span className="text-sm text-muted-foreground">🏠 Home</span>
-                <span className="text-sm font-medium text-primary">🎮 Lessons</span>
-                <span className="text-sm text-muted-foreground">Level 1 • 0 pts</span>
+                <Button variant="ghost" onClick={handleBackToChallenges} className="text-sm">
+                  🏠 Home
+                </Button>
+                <span className="text-sm font-medium text-primary">🎓 Lessons</span>
+                <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
               </div>
             </div>
           </div>
