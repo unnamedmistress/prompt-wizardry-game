@@ -306,7 +306,7 @@ const Index = () => {
     setGameState("playing");
   };
 
-  const handleChallengeComplete = (score: number) => {
+  const handleChallengeComplete = (score: number = 100) => {
     if (currentChallenge) {
       setCompletedChallengeIds(prev => new Set([...prev, currentChallenge.id]));
       setPlayerData(prev => ({
@@ -322,6 +322,10 @@ const Index = () => {
     }
     setGameState("challenges");
     setCurrentChallenge(null);
+  };
+
+  const handleChallengeCompleteNoScore = () => {
+    handleChallengeComplete(100); // Default score for games that don't track score
   };
 
   const handleBackToChallenges = () => {
@@ -932,11 +936,20 @@ const Index = () => {
 
             {/* Main Game Area */}
             <div className="flex-1 lg:ml-80 p-4 sm:p-6">
-              <GameComponent
-                challenge={currentChallenge}
-                onComplete={handleChallengeComplete}
-                onBack={handleBackToChallenges}
-              />
+              {currentChallenge.gameComponent === "FormatCrafterGame" || 
+               currentChallenge.gameComponent === "PrecisionTargeterGame" || 
+               currentChallenge.gameComponent === "PerspectiveShifterGame" || 
+               currentChallenge.gameComponent === "StoryEngineGame" ? (
+                <GameComponent
+                  onComplete={handleChallengeCompleteNoScore}
+                  onBack={handleBackToChallenges}
+                />
+              ) : (
+                <GameComponent
+                  onComplete={handleChallengeComplete}
+                  onBack={handleBackToChallenges}
+                />
+              )}
             </div>
           </div>
         </div>
