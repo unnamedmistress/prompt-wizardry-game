@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, RotateCcw, ArrowLeft, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
+import { CheckCircle, RotateCcw, ArrowLeft, ThumbsUp, ThumbsDown, Minus, Loader2 } from "lucide-react";
+import { createClient } from '@supabase/supabase-js';
 
 interface PromptBuilderGameProps {
   onComplete: (score: number) => void;
@@ -110,6 +111,11 @@ I'll aim to return tomorrow and [SLOT2] reach out if things change.
 Thank you for your [SLOT3] understanding,
 [Your Name]`;
 
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
+);
+
 export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps) {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedElements, setSelectedElements] = useState<PromptElement[]>([]);
@@ -117,6 +123,8 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
   const [isComplete, setIsComplete] = useState(false);
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedEmail, setGeneratedEmail] = useState<string>('');
   
   // Level 2 states
   const [selectedTone, setSelectedTone] = useState<string>('');
@@ -138,11 +146,31 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
     setAvailableElements([...availableElements, element].sort((a, b) => parseInt(a.id) - parseInt(b.id)));
   };
 
-  const handleLevel1Submit = () => {
+  const generateEmailWithAPI = async (prompt: string, tone: string = 'professional') => {
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-prompt-response', {
+        body: { prompt, tone }
+      });
+
+      if (error) throw error;
+      return data.email;
+    } catch (error) {
+      console.error('Error generating email:', error);
+      return 'Error generating email. Please try again.';
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleLevel1Submit = async () => {
     const userOrder = selectedElements.map(e => e.id);
     const isCorrect = JSON.stringify(userOrder) === JSON.stringify(correctOrder);
     
     if (isCorrect) {
+      const prompt = selectedElements.map(e => e.text).join(' ');
+      const email = await generateEmailWithAPI(prompt);
+      setGeneratedEmail(email);
       setScore(100);
       setShowFeedback(true);
       setTimeout(() => {
@@ -150,13 +178,28 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
         setShowFeedback(false);
       }, 3000);
     } else {
+      setGeneratedEmail("Hey, I'm sick and not coming in. Thanks.");
       setScore(0);
       setShowFeedback(true);
     }
   };
 
-  const handleLevel2ToneSelect = (toneId: string) => {
+  const handleLevel2ToneSelect = async (toneId: string) => {
     setSelectedTone(toneId);
+    
+    // Generate email with selected tone
+    const basePrompt = "You are a helpful assistant. Write an email to my boss. I'm sick today and need to call out.";
+    const email = await generateEmailWithAPI(basePrompt, toneId);
+    
+    // Update the tone option with generated email
+    const updatedOptions = toneOptions.map(option => 
+      option.id === toneId 
+        ? { ...option, example: email }
+        : option
+    );
+    
+    // Force re-render by updating a state that triggers component update
+    setGeneratedEmail(email);
   };
 
   const handleLevel2Submit = (choice: string) => {
@@ -303,15 +346,23 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
                 )}
               </div>
               
-              {selectedElements.length === 4 && (
-                <Button 
-                  variant="magical" 
-                  onClick={handleLevel1Submit}
-                  className="w-full mt-4"
-                >
-                  Check My Prompt ✨
-                </Button>
-              )}
+               {selectedElements.length === 4 && (
+                 <Button 
+                   variant="magical" 
+                   onClick={handleLevel1Submit}
+                   className="w-full mt-4"
+                   disabled={isGenerating}
+                 >
+                   {isGenerating ? (
+                     <>
+                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                       Generating...
+                     </>
+                   ) : (
+                     'Check My Prompt ✨'
+                   )}
+                 </Button>
+               )}
             </CardContent>
           </Card>
         </div>
@@ -326,9 +377,9 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
                       <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
                       <p className="text-foreground font-semibold">Perfect! Here's your polished AI output:</p>
                     </div>
-                    <div className="bg-background/50 border rounded-lg p-4">
-                      <pre className="text-sm text-foreground whitespace-pre-wrap">
-{`Subject: Sick Day Notification
+                     <div className="bg-background/50 border rounded-lg p-4">
+                       <pre className="text-sm text-foreground whitespace-pre-wrap">
+                         {generatedEmail || `Subject: Sick Day Notification
 
 Hi [Boss's Name],
 
@@ -336,18 +387,18 @@ I wanted to let you know that I'm not feeling well today and won't be able to co
 
 Thank you for your understanding,
 [Your Name]`}
-                      </pre>
-                    </div>
+                       </pre>
+                     </div>
                     <p className="text-center text-muted-foreground">Moving to Level 2...</p>
                   </>
                 ) : (
                   <>
                     <p className="text-foreground font-semibold text-center">Not quite - try reordering for a clearer result.</p>
-                    <div className="bg-background/50 border rounded-lg p-4">
-                      <pre className="text-sm text-foreground whitespace-pre-wrap">
-{`Hey, I'm sick and not coming in. Thanks.`}
-                      </pre>
-                    </div>
+                     <div className="bg-background/50 border rounded-lg p-4">
+                       <pre className="text-sm text-foreground whitespace-pre-wrap">
+                         {generatedEmail || "Hey, I'm sick and not coming in. Thanks."}
+                       </pre>
+                     </div>
                     <p className="text-muted-foreground text-center">Hint: Role → Task → Context → Tone</p>
                   </>
                 )}
@@ -383,8 +434,15 @@ Thank you for your understanding,
                 <CardTitle className="text-foreground text-lg">{tone.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-background/50 border rounded-lg p-3">
-                  <pre className="text-xs text-foreground whitespace-pre-wrap">{tone.example}</pre>
+                <div className="bg-background/50 border rounded-lg p-3 min-h-[200px] flex items-center justify-center">
+                  {selectedTone === tone.id && isGenerating ? (
+                    <div className="flex items-center text-muted-foreground">
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generating...
+                    </div>
+                  ) : (
+                    <pre className="text-xs text-foreground whitespace-pre-wrap">{tone.example}</pre>
+                  )}
                 </div>
               </CardContent>
             </Card>
