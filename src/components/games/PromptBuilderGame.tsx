@@ -1,223 +1,587 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Puzzle, CheckCircle, Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, RotateCcw, ArrowLeft, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
 
 interface PromptBuilderGameProps {
   onComplete: (score: number) => void;
   onBack: () => void;
 }
 
-const promptElements = [
-  { id: 1, text: "You are a professional assistant.", type: "role", category: "Role Definition" },
-  { id: 2, text: "Write a polite email", type: "task", category: "Main Task" },
-  { id: 3, text: "to reschedule our team meeting", type: "context", category: "Context" },
-  { id: 4, text: "Use a professional and apologetic tone", type: "tone", category: "Tone/Style" },
-  { id: 5, text: "Include a new proposed date and time", type: "details", category: "Specific Details" }
+interface PromptElement {
+  id: string;
+  text: string;
+  type: string;
+  category: string;
+}
+
+interface ToneOption {
+  id: string;
+  name: string;
+  example: string;
+}
+
+const level1Elements: PromptElement[] = [
+  { id: '1', text: 'You are a helpful assistant.', type: 'role', category: 'Role' },
+  { id: '2', text: 'Write an email to my boss.', type: 'task', category: 'Task' },
+  { id: '3', text: "I'm sick today and need to call out.", type: 'context', category: 'Context' },
+  { id: '4', text: 'Use a professional tone.', type: 'tone', category: 'Tone' },
 ];
 
-const correctOrder = [1, 2, 3, 4, 5];
+const correctOrder = ['1', '2', '3', '4'];
 
-export const PromptBuilderGame = ({ onComplete, onBack }: PromptBuilderGameProps) => {
-  const [selectedElements, setSelectedElements] = useState<number[]>([]);
-  const [availableElements, setAvailableElements] = useState([...promptElements]);
-  const [gameComplete, setGameComplete] = useState(false);
+const toneOptions: ToneOption[] = [
+  { 
+    id: 'professional', 
+    name: 'Professional', 
+    example: `Subject: Sick Day Notification
+
+Hi [Boss's Name],
+
+I'm not feeling well today and won't be able to come into work. I'll rest and plan to return tomorrow.
+
+Thank you for your understanding,
+[Your Name]`
+  },
+  { 
+    id: 'angry', 
+    name: 'Angry', 
+    example: `Subject: Out Sick
+
+I'm sick today and won't be coming in. I've been pushing through work nonstop, and now my health is paying the price.
+
+[Your Name]`
+  },
+  { 
+    id: 'casual', 
+    name: 'Casual', 
+    example: `Hey [Boss's Name],
+
+Just wanted to give you a heads up I'm feeling under the weather today and won't make it in. Hoping to be back tomorrow.
+
+Thanks,
+[Your Name]`
+  },
+  { 
+    id: 'compelling', 
+    name: 'Compelling', 
+    example: `Subject: Sick Day Request
+
+Hi [Boss's Name],
+
+I wanted to reach out because I'm not feeling well today and it's best for me and the team if I stay home. This way I won't risk anyone else getting sick.
+
+I'll rest up and aim to be back tomorrow.
+
+Best,
+[Your Name]`
+  },
+  { 
+    id: 'persuasive', 
+    name: 'Persuasive', 
+    example: `Subject: Sick Day Request
+
+Hi [Boss's Name],
+
+I strongly believe it's in the company's best interest for me to stay home today, as I don't want to compromise productivity by spreading illness to the team.
+
+Please approve my sick day and I'll ensure to catch up as soon as I return.
+
+Thank you,
+[Your Name]`
+  }
+];
+
+const communityResults = {
+  professional: 70,
+  casual: 20,
+  persuasive: 10,
+  compelling: 0,
+  angry: 0
+};
+
+const baseEmail = `Hi [Boss's Name],
+
+I wanted to let you know that I'm not feeling well today and won't be able to come into work.
+[SLOT1] understand that I'll rest and keep you updated.
+I'll aim to return tomorrow and [SLOT2] reach out if things change.
+
+Thank you for your [SLOT3] understanding,
+[Your Name]`;
+
+export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps) {
+  const [currentLevel, setCurrentLevel] = useState(1);
+  const [selectedElements, setSelectedElements] = useState<PromptElement[]>([]);
+  const [availableElements, setAvailableElements] = useState<PromptElement[]>(level1Elements);
+  const [isComplete, setIsComplete] = useState(false);
   const [score, setScore] = useState(0);
   const [showFeedback, setShowFeedback] = useState(false);
+  
+  // Level 2 states
+  const [selectedTone, setSelectedTone] = useState<string>('');
+  const [userToneChoice, setUserToneChoice] = useState<string>('');
+  const [showCommunityResults, setShowCommunityResults] = useState(false);
+  
+  // Level 3 states
+  const [pleaseSlots, setPleaseSlots] = useState<{[key: string]: boolean}>({ slot1: false, slot2: false, slot3: false });
+  const [userPleaseOpinion, setUserPleaseOpinion] = useState<string>('');
+  const [showPleaseResults, setShowPleaseResults] = useState(false);
 
-  const handleElementClick = (elementId: number) => {
-    if (showFeedback) return;
-    
-    const element = availableElements.find(e => e.id === elementId);
-    if (!element) return;
-
-    setSelectedElements([...selectedElements, elementId]);
-    setAvailableElements(availableElements.filter(e => e.id !== elementId));
+  const handleElementClick = (element: PromptElement) => {
+    setSelectedElements([...selectedElements, element]);
+    setAvailableElements(availableElements.filter(e => e.id !== element.id));
   };
 
-  const handleRemoveElement = (elementId: number) => {
-    if (showFeedback) return;
-    
-    const element = promptElements.find(e => e.id === elementId);
-    if (!element) return;
-
-    setSelectedElements(selectedElements.filter(id => id !== elementId));
-    setAvailableElements([...availableElements, element].sort((a, b) => a.id - b.id));
+  const handleRemoveElement = (element: PromptElement) => {
+    setSelectedElements(selectedElements.filter(e => e.id !== element.id));
+    setAvailableElements([...availableElements, element].sort((a, b) => parseInt(a.id) - parseInt(b.id)));
   };
 
-  const handleSubmit = () => {
-    if (selectedElements.length !== promptElements.length) {
-      toast("Please arrange all prompt elements!");
-      return;
-    }
-
-    let correctPlacements = 0;
-    selectedElements.forEach((elementId, index) => {
-      if (elementId === correctOrder[index]) {
-        correctPlacements++;
-      }
-    });
-
-    const scoreEarned = correctPlacements * 20;
-    setScore(scoreEarned);
-    setShowFeedback(true);
-
-    if (correctPlacements === promptElements.length) {
-      toast("Perfect! You've mastered prompt structure! 🎉");
+  const handleLevel1Submit = () => {
+    const userOrder = selectedElements.map(e => e.id);
+    const isCorrect = JSON.stringify(userOrder) === JSON.stringify(correctOrder);
+    
+    if (isCorrect) {
+      setScore(100);
+      setShowFeedback(true);
       setTimeout(() => {
-        setGameComplete(true);
-        onComplete(scoreEarned);
-      }, 2000);
+        setCurrentLevel(2);
+        setShowFeedback(false);
+      }, 3000);
     } else {
-      toast(`Good effort! You got ${correctPlacements}/${promptElements.length} elements correct.`);
+      setScore(0);
+      setShowFeedback(true);
     }
+  };
+
+  const handleLevel2ToneSelect = (toneId: string) => {
+    setSelectedTone(toneId);
+  };
+
+  const handleLevel2Submit = (choice: string) => {
+    setUserToneChoice(choice);
+    setShowCommunityResults(true);
+    setTimeout(() => {
+      setCurrentLevel(3);
+      setShowCommunityResults(false);
+    }, 4000);
+  };
+
+  const togglePleaseSlot = (slot: string) => {
+    setPleaseSlots(prev => ({ ...prev, [slot]: !prev[slot] }));
+  };
+
+  const handleLevel3Submit = (opinion: string) => {
+    setUserPleaseOpinion(opinion);
+    setShowPleaseResults(true);
+    setTimeout(() => {
+      setIsComplete(true);
+      onComplete(100);
+    }, 3000);
   };
 
   const handleReset = () => {
+    setCurrentLevel(1);
     setSelectedElements([]);
-    setAvailableElements([...promptElements]);
-    setShowFeedback(false);
+    setAvailableElements(level1Elements);
+    setIsComplete(false);
     setScore(0);
+    setShowFeedback(false);
+    setSelectedTone('');
+    setUserToneChoice('');
+    setShowCommunityResults(false);
+    setPleaseSlots({ slot1: false, slot2: false, slot3: false });
+    setUserPleaseOpinion('');
+    setShowPleaseResults(false);
   };
 
-  if (gameComplete) {
+  const generateEmailWithPlease = () => {
+    return baseEmail
+      .replace('[SLOT1]', pleaseSlots.slot1 ? 'Please' : '')
+      .replace('[SLOT2]', pleaseSlots.slot2 ? 'please' : '')
+      .replace('[SLOT3]', pleaseSlots.slot3 ? 'please' : '');
+  };
+
+  if (isComplete) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl">🧩 Prompt Builder Complete!</CardTitle>
-            <CardDescription>Score: {score}/100 points</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">You've learned the fundamentals of prompt structure!</p>
-            <Button onClick={onBack}>Continue Learning</Button>
-          </CardContent>
-        </Card>
+      <div className="max-w-4xl mx-auto space-y-6">
+        <div className="text-center space-y-4">
+          <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+          <h2 className="text-2xl font-bold text-foreground">Congratulations!</h2>
+          <p className="text-muted-foreground">
+            You've mastered the building blocks of prompting!
+          </p>
+          <div className="bg-gradient-card border border-primary/20 rounded-lg p-6 space-y-2">
+            <h3 className="font-semibold text-foreground">What You Learned:</h3>
+            <ul className="text-muted-foreground space-y-1">
+              <li>• Structure matters: Role → Task → Context → Tone</li>
+              <li>• Tone dramatically affects AI output</li>
+              <li>• Word choice has subtle but important effects</li>
+            </ul>
+          </div>
+          <div className="space-y-2">
+            <Button onClick={onBack} className="mr-2">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Games
+            </Button>
+            <Button variant="outline" onClick={handleReset}>
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Play Again
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Puzzle className="w-6 h-6 text-primary" />
-          Prompt Builder Challenge
-        </h2>
-        <p className="text-muted-foreground">Drag and arrange the elements to build an effective prompt</p>
-        <div className="text-sm text-muted-foreground">
-          Score: {score}/100
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Available Elements */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Available Elements</CardTitle>
-            <CardDescription>Click to add to your prompt</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {availableElements.map((element) => (
-              <div
-                key={element.id}
-                className="p-3 border-2 border-dashed border-muted rounded-lg cursor-pointer hover:border-primary/50 transition-colors"
-                onClick={() => handleElementClick(element.id)}
-              >
-                <div className="text-xs text-muted-foreground mb-1">{element.category}</div>
-                <div className="text-sm">{element.text}</div>
-              </div>
-            ))}
-            {availableElements.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                All elements used! ✨
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Prompt Builder */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Your Prompt</CardTitle>
-            <CardDescription>Build your prompt in the correct order</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {selectedElements.map((elementId, index) => {
-              const element = promptElements.find(e => e.id === elementId);
-              const isCorrectPosition = showFeedback && elementId === correctOrder[index];
-              
-              return (
-                <div
-                  key={`${elementId}-${index}`}
-                  className={`p-3 border-2 rounded-lg cursor-pointer transition-colors ${
-                    showFeedback
-                      ? isCorrectPosition
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-red-500 bg-red-50'
-                      : 'border-primary bg-primary/10 hover:bg-primary/20'
-                  }`}
-                  onClick={() => handleRemoveElement(elementId)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs text-muted-foreground mb-1">
-                        Step {index + 1}: {element?.category}
-                      </div>
-                      <div className="text-sm">{element?.text}</div>
-                    </div>
-                    {showFeedback && (
-                      <CheckCircle className={`w-5 h-5 ${
-                        isCorrectPosition ? 'text-green-600' : 'text-red-600'
-                      }`} />
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-            {selectedElements.length === 0 && (
-              <div className="text-center text-muted-foreground py-8 border-2 border-dashed border-muted rounded-lg">
-                Click elements to build your prompt
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {showFeedback && (
-        <Card className="border-blue-200 bg-blue-50">
-          <CardContent className="pt-6">
-            <h4 className="font-medium text-blue-900 mb-2">💡 Perfect Prompt Structure:</h4>
-            <ol className="text-sm text-blue-800 space-y-1">
-              <li>1. <strong>Role Definition:</strong> "You are a professional assistant."</li>
-              <li>2. <strong>Main Task:</strong> "Write a polite email"</li>
-              <li>3. <strong>Context:</strong> "to reschedule our team meeting"</li>
-              <li>4. <strong>Tone/Style:</strong> "Use a professional and apologetic tone"</li>
-              <li>5. <strong>Specific Details:</strong> "Include a new proposed date and time"</li>
-            </ol>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="flex gap-3">
-        <Button variant="outline" onClick={onBack} className="flex-1">
-          Back to Lessons
+  // Level 1: Basic Prompt Structure
+  if (currentLevel === 1) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Button variant="ghost" onClick={onBack} className="mb-4">
+          ← Back to Games
         </Button>
-        {showFeedback ? (
-          <Button onClick={handleReset} className="flex-1">
-            Try Again
-          </Button>
-        ) : (
-          <Button 
-            onClick={handleSubmit} 
-            disabled={selectedElements.length !== promptElements.length}
-            className="flex-1"
-          >
-            Check My Prompt
-          </Button>
+
+        <Card className="bg-gradient-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-foreground">Level 1: Basic Prompt Structure</CardTitle>
+            <CardDescription>
+              Learn that good prompts follow: Role → Task → Context → Tone
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Available Elements</CardTitle>
+              <CardDescription>Click to add to your prompt</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {availableElements.map((element) => (
+                  <div
+                    key={element.id}
+                    className="p-3 bg-secondary/30 border border-secondary/50 rounded-lg cursor-pointer hover:bg-secondary/50 transition-colors"
+                    onClick={() => handleElementClick(element)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-foreground">{element.text}</span>
+                      <Badge variant="outline">{element.category}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Your Prompt</CardTitle>
+              <CardDescription>Arrange in correct order</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="min-h-[200px] space-y-2">
+                {selectedElements.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    Select elements to build your prompt
+                  </div>
+                ) : (
+                  selectedElements.map((element, index) => (
+                    <div
+                      key={`${element.id}-${index}`}
+                      className="p-3 bg-accent/20 border border-accent/30 rounded-lg cursor-pointer hover:bg-accent/30 transition-colors"
+                      onClick={() => handleRemoveElement(element)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-foreground">{element.text}</span>
+                        <Badge variant="outline">#{index + 1}</Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              
+              {selectedElements.length === 4 && (
+                <Button 
+                  variant="magical" 
+                  onClick={handleLevel1Submit}
+                  className="w-full mt-4"
+                >
+                  Check My Prompt ✨
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {showFeedback && (
+          <Card className={`border-2 ${score > 0 ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10'}`}>
+            <CardContent className="pt-4">
+              <div className="space-y-4">
+                {score > 0 ? (
+                  <>
+                    <div className="text-center">
+                      <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                      <p className="text-foreground font-semibold">Perfect! Here's your polished AI output:</p>
+                    </div>
+                    <div className="bg-background/50 border rounded-lg p-4">
+                      <pre className="text-sm text-foreground whitespace-pre-wrap">
+{`Subject: Sick Day Notification
+
+Hi [Boss's Name],
+
+I wanted to let you know that I'm not feeling well today and won't be able to come into work. I'll rest and keep you updated, with the goal of returning tomorrow.
+
+Thank you for your understanding,
+[Your Name]`}
+                      </pre>
+                    </div>
+                    <p className="text-center text-muted-foreground">Moving to Level 2...</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-foreground font-semibold text-center">Not quite - try reordering for a clearer result.</p>
+                    <div className="bg-background/50 border rounded-lg p-4">
+                      <pre className="text-sm text-foreground whitespace-pre-wrap">
+{`Hey, I'm sick and not coming in. Thanks.`}
+                      </pre>
+                    </div>
+                    <p className="text-muted-foreground text-center">Hint: Role → Task → Context → Tone</p>
+                  </>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
-    </div>
-  );
-};
+    );
+  }
+
+  // Level 2: Experiment with Tone
+  if (currentLevel === 2) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Card className="bg-gradient-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-foreground">Level 2: Experiment with Tone</CardTitle>
+            <CardDescription>
+              See how different tones change the AI's output. Which would work best for your boss?
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {toneOptions.map((tone) => (
+            <Card 
+              key={tone.id}
+              className={`cursor-pointer transition-all hover:border-primary/50 ${selectedTone === tone.id ? 'border-primary bg-primary/10' : 'bg-gradient-card border-primary/20'}`}
+              onClick={() => handleLevel2ToneSelect(tone.id)}
+            >
+              <CardHeader>
+                <CardTitle className="text-foreground text-lg">{tone.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-background/50 border rounded-lg p-3">
+                  <pre className="text-xs text-foreground whitespace-pre-wrap">{tone.example}</pre>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {selectedTone && !showCommunityResults && (
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Which email would work best for your boss?</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {toneOptions.map((tone) => (
+                  <Button
+                    key={tone.id}
+                    variant={tone.id === selectedTone ? "default" : "outline"}
+                    onClick={() => handleLevel2Submit(tone.id)}
+                  >
+                    {tone.name}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {showCommunityResults && (
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Community Results</CardTitle>
+              <CardDescription>You chose: {toneOptions.find(t => t.id === userToneChoice)?.name}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {Object.entries(communityResults).map(([tone, percentage]) => (
+                  <div key={tone} className="flex items-center justify-between">
+                    <span className="text-foreground capitalize">{tone}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="w-32 bg-secondary/30 rounded-full h-2">
+                        <div 
+                          className="bg-primary h-2 rounded-full transition-all" 
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
+                      <span className="text-muted-foreground text-sm">{percentage}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-center text-muted-foreground mt-4">Moving to Level 3...</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  // Level 3: The Word "Please"
+  if (currentLevel === 3) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-6">
+        <Card className="bg-gradient-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-foreground">Level 3: The Word "Please"</CardTitle>
+            <CardDescription>
+              Explore micro-language choices. Click the slots to add "please" and see the effect.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+
+        <Card className="bg-gradient-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-foreground">Email Template</CardTitle>
+            <CardDescription>Click the [+] buttons to add "please"</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-background/50 border rounded-lg p-4">
+              <pre className="text-sm text-foreground whitespace-pre-wrap">
+{`Hi [Boss's Name],
+
+I wanted to let you know that I'm not feeling well today and won't be able to come into work.
+`}
+                <Button
+                  size="sm"
+                  variant={pleaseSlots.slot1 ? "destructive" : "outline"}
+                  onClick={() => togglePleaseSlot('slot1')}
+                  className="mx-1"
+                >
+                  {pleaseSlots.slot1 ? 'Please' : '+'}
+                </Button>
+{` understand that I'll rest and keep you updated.
+I'll aim to return tomorrow and `}
+                <Button
+                  size="sm"
+                  variant={pleaseSlots.slot2 ? "destructive" : "outline"}
+                  onClick={() => togglePleaseSlot('slot2')}
+                  className="mx-1"
+                >
+                  {pleaseSlots.slot2 ? 'please' : '+'}
+                </Button>
+{` reach out if things change.
+
+Thank you for your `}
+                <Button
+                  size="sm"
+                  variant={pleaseSlots.slot3 ? "destructive" : "outline"}
+                  onClick={() => togglePleaseSlot('slot3')}
+                  className="mx-1"
+                >
+                  {pleaseSlots.slot3 ? 'please' : '+'}
+                </Button>
+{` understanding,
+[Your Name]`}
+              </pre>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-card border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-foreground">Your Email Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-background/50 border rounded-lg p-4">
+              <pre className="text-sm text-foreground whitespace-pre-wrap">{generateEmailWithPlease()}</pre>
+            </div>
+          </CardContent>
+        </Card>
+
+        {!showPleaseResults && (
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Did adding "please" help, hurt, or remain neutral?</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-2 justify-center flex-wrap">
+                <Button variant="outline" onClick={() => handleLevel3Submit('helped')}>
+                  <ThumbsUp className="w-4 h-4 mr-2" />
+                  Helped
+                </Button>
+                <Button variant="outline" onClick={() => handleLevel3Submit('neutral')}>
+                  <Minus className="w-4 h-4 mr-2" />
+                  Neutral
+                </Button>
+                <Button variant="outline" onClick={() => handleLevel3Submit('hurt')}>
+                  <ThumbsDown className="w-4 h-4 mr-2" />
+                  Hurt
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {showPleaseResults && (
+          <Card className="bg-gradient-card border-primary/20">
+            <CardHeader>
+              <CardTitle className="text-foreground">Community Poll Results</CardTitle>
+              <CardDescription>You chose: {userPleaseOpinion}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground">Helped</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-32 bg-secondary/30 rounded-full h-2">
+                      <div className="bg-green-500 h-2 rounded-full w-1/4" />
+                    </div>
+                    <span className="text-muted-foreground text-sm">25%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground">Neutral</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-32 bg-secondary/30 rounded-full h-2">
+                      <div className="bg-yellow-500 h-2 rounded-full w-1/2" />
+                    </div>
+                    <span className="text-muted-foreground text-sm">50%</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-foreground">Hurt</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-32 bg-secondary/30 rounded-full h-2">
+                      <div className="bg-red-500 h-2 rounded-full w-1/4" />
+                    </div>
+                    <span className="text-muted-foreground text-sm">25%</span>
+                  </div>
+                </div>
+              </div>
+              <p className="text-center text-muted-foreground mt-4">Completing game...</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    );
+  }
+
+  return null;
+}
