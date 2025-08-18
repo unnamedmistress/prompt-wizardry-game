@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, RotateCcw, ArrowLeft, ThumbsUp, ThumbsDown, Minus, Loader2 } from "lucide-react";
-import { createClient } from '@supabase/supabase-js';
 
 interface PromptBuilderGameProps {
   onComplete: (score: number) => void;
@@ -111,11 +110,6 @@ I'll aim to return tomorrow and [SLOT2] reach out if things change.
 Thank you for your [SLOT3] understanding,
 [Your Name]`;
 
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
-
 export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps) {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedElements, setSelectedElements] = useState<PromptElement[]>([]);
@@ -149,11 +143,19 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
   const generateEmailWithAPI = async (prompt: string, tone: string = 'professional') => {
     setIsGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke('generate-prompt-response', {
-        body: { prompt, tone }
+      const response = await fetch('/api/functions/v1/generate-prompt-response', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt, tone })
       });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to generate email');
+      }
+
+      const data = await response.json();
       return data.email;
     } catch (error) {
       console.error('Error generating email:', error);
