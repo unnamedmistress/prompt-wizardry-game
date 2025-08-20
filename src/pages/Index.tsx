@@ -20,58 +20,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
 import GenieMentor from "@/components/GenieMentor";
+import { useGameStore } from "@/store/useGameStore";
 
 const allLearningExperiences: LearningExperience[] = lessons as LearningExperience[];
+const HINT_COST = 10;
 
 const Index = () => {
   const [gameState, setGameState] = useState<"welcome" | "learning-path" | "playing">("welcome");
   const [currentExperience, setCurrentExperience] = useState<LearningExperience | null>(null);
-  const [playerData, setPlayerData] = useState({
-    level: 1,
-    score: 0,
-    completedChallenges: 0,
-    coins: 0,
-    stars: 0
-  });
-  const [completedExperienceIds, setCompletedExperienceIds] = useState<Set<string>>(new Set());
+  const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint } = useGameStore();
+  const [hintsUsed, setHintsUsed] = useState(0);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [genieMessage, setGenieMessage] = useState("");
   const [isGenieOpen, setIsGenieOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [lastResult, setLastResult] = useState<{ stars: number; coins: number }>({ stars: 0, coins: 0 });
 
-  // Load saved progress from localStorage
+  // Load saved game state
   useEffect(() => {
-    const savedPlayerData = localStorage.getItem('aiLiteracy_playerData');
-    const savedCompletedExperiences = localStorage.getItem('aiLiteracy_completedExperiences');
     const savedGameState = localStorage.getItem('aiLiteracy_gameState');
-
-    if (savedPlayerData) {
-      const data = JSON.parse(savedPlayerData);
-      setPlayerData({
-        level: data.level ?? 1,
-        score: data.score ?? 0,
-        completedChallenges: data.completedChallenges ?? 0,
-        coins: data.coins ?? 0,
-        stars: data.stars ?? 0,
-      });
-    }
-    if (savedCompletedExperiences) {
-      setCompletedExperienceIds(new Set(JSON.parse(savedCompletedExperiences)));
-    }
     if (savedGameState && savedGameState !== 'playing') {
       setGameState(savedGameState as "welcome" | "learning-path");
     }
   }, []);
-
-  // Save progress to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('aiLiteracy_playerData', JSON.stringify(playerData));
-  }, [playerData]);
-
-  useEffect(() => {
-    localStorage.setItem('aiLiteracy_completedExperiences', JSON.stringify([...completedExperienceIds]));
-  }, [completedExperienceIds]);
 
   useEffect(() => {
     localStorage.setItem('aiLiteracy_gameState', gameState);
@@ -91,21 +62,16 @@ const Index = () => {
   const handleExperienceSelect = (experience: LearningExperience) => {
     setCurrentExperience(experience);
     setGameState("playing");
+    setHintsUsed(0);
   };
 
   const handleExperienceComplete = (score: number = 100) => {
     if (currentExperience) {
-      const starsEarned = score >= 100 ? 3 : score >= 50 ? 2 : score > 0 ? 1 : 0;
+      let starsEarned = score >= 100 ? 3 : score >= 50 ? 2 : score > 0 ? 1 : 0;
+      if (hintsUsed >= 1 && starsEarned > 2) starsEarned = 2;
+      if (hintsUsed >= 2 && starsEarned > 1) starsEarned = 1;
       const coinsEarned = starsEarned * 50;
-      setCompletedExperienceIds(prev => new Set([...prev, currentExperience.id]));
-      setPlayerData(prev => ({
-        ...prev,
-        score: prev.score + score,
-        completedChallenges: prev.completedChallenges + 1,
-        level: Math.floor((prev.completedChallenges + 1) / 3) + 1,
-        stars: prev.stars + starsEarned,
-        coins: prev.coins + coinsEarned,
-      }));
+      completeExperience(currentExperience.id, starsEarned, coinsEarned);
       setLastResult({ stars: starsEarned, coins: coinsEarned });
       setShowCompletionModal(true);
     }
@@ -119,6 +85,7 @@ const Index = () => {
 
   const handleModalRetry = () => {
     setShowCompletionModal(false);
+    setHintsUsed(0);
   };
 
   const handleExperienceCompleteNoScore = () => {
@@ -128,6 +95,26 @@ const Index = () => {
   const handleBackToLearningPath = () => {
     setGameState("learning-path");
     setCurrentExperience(null);
+  };
+
+  const handleGetHint = () => {
+    if (!currentExperience) return;
+    const hints = currentExperience.hints || [];
+    if (hintsUsed >= hints.length) {
+      setGenieMessage("No more hints available.");
+      setIsGenieOpen(true);
+      return;
+    }
+    const purchased = purchaseHint(currentExperience.id, hintsUsed, HINT_COST);
+    if (!purchased) {
+      setGenieMessage("Not enough coins for a hint.");
+      setIsGenieOpen(true);
+      return;
+    }
+    const hintText = hints[hintsUsed];
+    setHintsUsed(prev => prev + 1);
+    setGenieMessage(hintText);
+    setIsGenieOpen(true);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -171,9 +158,9 @@ const Index = () => {
                 🎓 Learn
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>Level {playerData.level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+                <span>Level {level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
               </span>
             </div>
           </div>
@@ -207,11 +194,11 @@ const Index = () => {
                 </div>
               </div>
 
-              {completedExperienceIds.size > 0 && (
+              {completedExperienceIds.length > 0 && (
                 <div className="mt-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
                   <div className="text-primary font-medium">Your Progress</div>
                   <div className="text-sm text-muted-foreground mt-1">
-                    {completedExperienceIds.size} of {allLearningExperiences.length} experiences completed
+                    {completedExperienceIds.length} of {allLearningExperiences.length} experiences completed
                   </div>
                 </div>
               )}
@@ -245,9 +232,9 @@ const Index = () => {
               </Button>
               <span className="text-sm font-medium text-primary">🎓 Learn</span>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>Level {playerData.level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+                <span>Level {level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
               </span>
             </div>
           </div>
@@ -264,11 +251,11 @@ const Index = () => {
               <div className="flex justify-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  <span className="text-muted-foreground">{completedExperienceIds.size} Completed</span>
+                  <span className="text-muted-foreground">{completedExperienceIds.length} Completed</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-primary"></div>
-                  <span className="text-muted-foreground">{allLearningExperiences.length - completedExperienceIds.size} Available</span>
+                  <span className="text-muted-foreground">{allLearningExperiences.length - completedExperienceIds.length} Available</span>
                 </div>
               </div>
             </div>
@@ -285,8 +272,8 @@ const Index = () => {
 
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {experiences.map((experience) => {
-                      const isCompleted = completedExperienceIds.has(experience.id);
-                      const isLocked = experience.requiredStars !== undefined && playerData.stars < experience.requiredStars;
+                      const isCompleted = completedExperienceIds.includes(experience.id);
+                      const isLocked = experience.requiredStars !== undefined && stars < experience.requiredStars;
 
                       return (
                         <Card
@@ -381,6 +368,7 @@ const Index = () => {
     }
 
     const shouldUseNoScore = ["FormatCrafterGame", "PrecisionTargeterGame", "PerspectiveShifterGame", "StoryEngineGame"].includes(currentExperience.gameComponent);
+    const hintDisabled = coins < HINT_COST || hintsUsed >= currentExperience.hints.length;
 
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -407,9 +395,9 @@ const Index = () => {
                 {currentExperience.difficulty}
               </span>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>Level {playerData.level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+                <span>Level {level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
               </span>
             </div>
             <div className="sm:hidden">
@@ -473,18 +461,6 @@ const Index = () => {
                   </ul>
                 </div>
 
-                {/* Hints */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-xs sm:text-sm text-blue-800">💡 Helpful Hints</h4>
-                  <ul className="space-y-2">
-                    {currentExperience.hints.map((hint, index) => (
-                      <li key={index} className="text-xs text-blue-700 bg-blue-50 p-2 rounded">
-                        • {hint}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Examples */}
                 <div className="space-y-3">
                   <h4 className="font-medium text-xs sm:text-sm">📋 Examples</h4>
@@ -530,18 +506,6 @@ const Index = () => {
                 onComplete={shouldUseNoScore ? handleExperienceCompleteNoScore : handleExperienceComplete}
                 onBack={handleBackToLearningPath}
               />
-              <div className="mt-4">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => {
-                    setGenieMessage("Here's a hint: focus on the key details!");
-                    setIsGenieOpen(true);
-                  }}
-                >
-                  Get Hint
-                </Button>
-              </div>
             </div>
           </div>
         </div>
@@ -582,6 +546,9 @@ const Index = () => {
           message={genieMessage}
           isOpen={isGenieOpen}
           onClose={() => setIsGenieOpen(false)}
+          onGetHint={handleGetHint}
+          hintCost={HINT_COST}
+          hintDisabled={hintDisabled}
         />
       </div>
     );
