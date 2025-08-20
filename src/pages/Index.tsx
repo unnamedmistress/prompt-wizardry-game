@@ -16,6 +16,7 @@ import StoryEngineGame from "@/components/games/StoryEngineGame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
+import GenieMentor from "@/components/GenieMentor";
 
 interface LearningExperience {
   id: string;
@@ -382,6 +383,8 @@ const Index = () => {
   });
   const [completedExperienceIds, setCompletedExperienceIds] = useState<Set<string>>(new Set());
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+  const [genieMessage, setGenieMessage] = useState("");
+  const [isGenieOpen, setIsGenieOpen] = useState(false);
 
   // Load saved progress from localStorage
   useEffect(() => {
@@ -418,6 +421,13 @@ const Index = () => {
 
   useEffect(() => {
     localStorage.setItem('aiLiteracy_gameState', gameState);
+  }, [gameState]);
+
+  useEffect(() => {
+    if (gameState === "playing") {
+      setGenieMessage("🧞 Hi! I'm here if you need a hint or some motivation!");
+      setIsGenieOpen(true);
+    }
   }, [gameState]);
 
   const handleStartLearning = () => {
@@ -859,9 +869,26 @@ const Index = () => {
                 onComplete={shouldUseNoScore ? handleExperienceCompleteNoScore : handleExperienceComplete}
                 onBack={handleBackToLearningPath}
               />
+              <div className="mt-4">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => {
+                    setGenieMessage("Here's a hint: focus on the key details!");
+                    setIsGenieOpen(true);
+                  }}
+                >
+                  Get Hint
+                </Button>
+              </div>
             </div>
           </div>
         </div>
+        <GenieMentor
+          message={genieMessage}
+          isOpen={isGenieOpen}
+          onClose={() => setIsGenieOpen(false)}
+        />
       </div>
     );
   }
