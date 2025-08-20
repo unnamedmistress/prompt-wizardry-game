@@ -15,7 +15,7 @@ import PerspectiveShifterGame from "@/components/games/PerspectiveShifterGame";
 import StoryEngineGame from "@/components/games/StoryEngineGame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft } from "lucide-react";
+import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
 
 interface LearningExperience {
   id: string;
@@ -30,6 +30,7 @@ interface LearningExperience {
   goodExamples: string[];
   badExamples: string[];
   gameComponent: string;
+  requiredStars?: number;
 }
 
 // Unified learning experiences for all games
@@ -102,6 +103,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Specificity & Details",
     description: "Transform vague requests into crystal-clear instructions",
     difficulty: "Intermediate" as const,
+    requiredStars: 3,
     category: "Prompting Fundamentals",
     icon: "🎯",
     objective: "Get AI to help write the perfect dating app profile that's authentic and engaging",
@@ -133,6 +135,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Tone & Style Control",
     description: "Master the art of getting exactly the right voice from AI",
     difficulty: "Intermediate" as const,
+    requiredStars: 3,
     category: "Prompting Fundamentals",
     icon: "🎨",
     objective: "Get AI to write a resignation letter that's professional but shows you're leaving for positive reasons",
@@ -164,6 +167,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Complex Multi-Task Prompts",
     description: "Combine multiple requirements into one powerful prompt",
     difficulty: "Advanced" as const,
+    requiredStars: 6,
     category: "Prompting Fundamentals",
     icon: "⚡",
     objective: "Get AI to plan a surprise proposal that's personal, memorable, and perfectly executed",
@@ -195,6 +199,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Creative & Fun Prompts",
     description: "Unlock AI's creative potential with imaginative scenarios",
     difficulty: "Advanced" as const,
+    requiredStars: 6,
     category: "Prompting Fundamentals",
     icon: "🎪",
     objective: "Get AI to help create a murder mystery dinner party that will blow your friends' minds",
@@ -227,6 +232,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Office Format Master",
     description: "Structure AI output for business presentations and documents",
     difficulty: "Intermediate" as const,
+    requiredStars: 3,
     category: "Format & Output Control",
     icon: "📊",
     objective: "Transform information into professional formats like tables, lists, and scripts",
@@ -246,6 +252,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Fitness Precision Trainer",
     description: "Master constraints and delimiters for scoped output",
     difficulty: "Advanced" as const,
+    requiredStars: 6,
     category: "Precision & Constraints",
     icon: "💪",
     objective: "Use precise constraints to get exactly what you need",
@@ -265,6 +272,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Hollywood Perspective Master",
     description: "Learn viewpoint transformation and role-based responses",
     difficulty: "Intermediate" as const,
+    requiredStars: 3,
     category: "Perspective & Viewpoint",
     icon: "🎬",
     objective: "Write from different perspectives and viewpoints",
@@ -284,6 +292,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Creative Story Engine",
     description: "Master narrative prompts with plot, structure, and tone",
     difficulty: "Advanced" as const,
+    requiredStars: 6,
     category: "Creative Writing",
     icon: "📚",
     objective: "Combine genre, structure, and tone for compelling narratives",
@@ -304,6 +313,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Truth Detective",
     description: "Spot AI hallucinations in 'Two Truths and a Lie' format",
     difficulty: "Intermediate" as const,
+    requiredStars: 3,
     category: "Fact-Checking & Verification",
     icon: "🕵️",
     objective: "Identify AI-generated inaccuracies and hallucinations",
@@ -323,7 +333,8 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Source Hunter",
     description: "Find credible sources to verify AI claims",
     difficulty: "Advanced" as const,
-    category: "Fact-Checking & Verification", 
+    requiredStars: 6,
+    category: "Fact-Checking & Verification",
     icon: "🔍",
     objective: "Locate and evaluate credible sources for verification",
     whatYoullLearn: [
@@ -342,6 +353,7 @@ const allLearningExperiences: LearningExperience[] = [
     title: "Prompt Escape Room",
     description: "Escape by finding which prompt caused problematic responses",
     difficulty: "Advanced" as const,
+    requiredStars: 6,
     category: "Prompt Analysis",
     icon: "🔓",
     objective: "Identify problematic prompts and their issues",
@@ -364,7 +376,9 @@ const Index = () => {
   const [playerData, setPlayerData] = useState({
     level: 1,
     score: 0,
-    completedChallenges: 0
+    completedChallenges: 0,
+    coins: 0,
+    stars: 0
   });
   const [completedExperienceIds, setCompletedExperienceIds] = useState<Set<string>>(new Set());
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
@@ -376,7 +390,14 @@ const Index = () => {
     const savedGameState = localStorage.getItem('aiLiteracy_gameState');
 
     if (savedPlayerData) {
-      setPlayerData(JSON.parse(savedPlayerData));
+      const data = JSON.parse(savedPlayerData);
+      setPlayerData({
+        level: data.level ?? 1,
+        score: data.score ?? 0,
+        completedChallenges: data.completedChallenges ?? 0,
+        coins: data.coins ?? 0,
+        stars: data.stars ?? 0,
+      });
     }
     if (savedCompletedExperiences) {
       setCompletedExperienceIds(new Set(JSON.parse(savedCompletedExperiences)));
@@ -410,16 +431,20 @@ const Index = () => {
 
   const handleExperienceComplete = (score: number = 100) => {
     if (currentExperience) {
+      const starsEarned = score >= 100 ? 3 : score >= 50 ? 2 : score > 0 ? 1 : 0;
+      const coinsEarned = starsEarned * 50;
       setCompletedExperienceIds(prev => new Set([...prev, currentExperience.id]));
       setPlayerData(prev => ({
         ...prev,
         score: prev.score + score,
         completedChallenges: prev.completedChallenges + 1,
-        level: Math.floor((prev.completedChallenges + 1) / 3) + 1
+        level: Math.floor((prev.completedChallenges + 1) / 3) + 1,
+        stars: prev.stars + starsEarned,
+        coins: prev.coins + coinsEarned,
       }));
-      
-      toast(`Experience completed! +${score} points`, {
-        description: `You've earned ${score} points and advanced your AI literacy skills!`,
+
+      toast(`Experience completed! +${starsEarned}⭐ +${coinsEarned} coins`, {
+        description: `You've earned ${starsEarned} stars and ${coinsEarned} coins!`,
       });
     }
     setGameState("learning-path");
@@ -475,7 +500,11 @@ const Index = () => {
               <Button variant="ghost" onClick={() => setGameState("learning-path")} className="text-sm">
                 🎓 Learn
               </Button>
-              <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Level {playerData.level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -545,7 +574,11 @@ const Index = () => {
                 🏠 Home
               </Button>
               <span className="text-sm font-medium text-primary">🎓 Learn</span>
-              <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Level {playerData.level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -583,16 +616,27 @@ const Index = () => {
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {experiences.map((experience) => {
                       const isCompleted = completedExperienceIds.has(experience.id);
-                      
+                      const isLocked = experience.requiredStars !== undefined && playerData.stars < experience.requiredStars;
+
                       return (
-                        <Card 
+                        <Card
                           key={experience.id}
-                          className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
-                            isCompleted 
-                              ? 'border-green-500 bg-green-50/50' 
-                              : 'border-border hover:border-primary/50'
+                          className={`relative transition-all border-2 ${
+                            isCompleted
+                              ? 'border-green-500 bg-green-50/50'
+                              : 'border-border'
+                          } ${
+                            isLocked
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'cursor-pointer hover:shadow-lg hover:border-primary/50'
                           }`}
-                          onClick={() => handleExperienceSelect(experience)}
+                          onClick={() => {
+                            if (isLocked) {
+                              toast('Earn more stars to unlock this lesson.');
+                              return;
+                            }
+                            handleExperienceSelect(experience);
+                          }}
                         >
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between gap-2">
@@ -602,7 +646,7 @@ const Index = () => {
                                   <CardTitle className="text-base leading-tight">{experience.title}</CardTitle>
                                 </div>
                               </div>
-                              {isCompleted && (
+                              {isCompleted && !isLocked && (
                                 <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
                               )}
                             </div>
@@ -614,8 +658,8 @@ const Index = () => {
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(experience.difficulty)}`}>
                                   {experience.difficulty}
                                 </span>
-                                <Button size="sm" variant={isCompleted ? "outline" : "default"}>
-                                  {isCompleted ? "Review" : "Start"}
+                                <Button size="sm" variant={isCompleted ? 'outline' : 'default'} disabled={isLocked}>
+                                  {isLocked ? `Requires ⭐${experience.requiredStars}` : isCompleted ? 'Review' : 'Start'}
                                 </Button>
                               </div>
                               <div className="text-xs text-muted-foreground">
@@ -623,6 +667,11 @@ const Index = () => {
                               </div>
                             </div>
                           </CardContent>
+                          {isLocked && (
+                            <div className="absolute inset-0 rounded-lg bg-background/60 backdrop-blur-sm flex items-center justify-center">
+                              <Lock className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                          )}
                         </Card>
                       );
                     })}
@@ -687,7 +736,11 @@ const Index = () => {
               <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(currentExperience.difficulty)}`}>
                 {currentExperience.difficulty}
               </span>
-              <span className="text-sm text-muted-foreground">Level {playerData.level} • {playerData.score} pts</span>
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Level {playerData.level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{playerData.coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{playerData.stars}</span>
+              </span>
             </div>
             <div className="sm:hidden">
               <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(!showMobileSidebar)}>
