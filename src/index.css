@@ -143,6 +143,12 @@ All colors MUST be HSL.
 }
 
 @media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.1ms !important;
+    animation-iteration-count: 1 !important;
+    transition: none !important;
+  }
+
   .star-pop,
   .coin-pop {
     animation: none;
