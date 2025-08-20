@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Volume2, Check, X } from "lucide-react";
 interface ToneControllerProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const scenarios = [
@@ -87,7 +89,7 @@ const scenarios = [
   }
 ];
 
-export const ToneController = ({ onComplete, onBack }: ToneControllerProps) => {
+export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerProps) => {
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedTone, setSelectedTone] = useState<number | null>(null);
   const [score, setScore] = useState(0);

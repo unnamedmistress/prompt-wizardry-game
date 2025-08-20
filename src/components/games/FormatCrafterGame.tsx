@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LearningExperience } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, FileText, Table, List, BarChart } from 'lucide-react';
@@ -6,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface FormatCrafterGameProps {
   onComplete: () => void;
+  lesson: LearningExperience;
 }
 
-const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ onComplete }) => {
+const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ lesson, onComplete }) => {
   const [selectedFormat, setSelectedFormat] = useState<string>('');
   const [selectedContent, setSelectedContent] = useState<string>('');
   const [selectedTone, setSelectedTone] = useState<string>('');

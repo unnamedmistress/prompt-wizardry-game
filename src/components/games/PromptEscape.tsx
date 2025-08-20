@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Timer, Key, Lock, CheckCircle } from "lucide-react";
 interface PromptEscapeProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const escapeRooms = [
@@ -54,7 +56,7 @@ const escapeRooms = [
   }
 ];
 
-export const PromptEscape = ({ onComplete, onBack }: PromptEscapeProps) => {
+export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) => {
   const [currentRoom, setCurrentRoom] = useState(0);
   const [selectedPrompt, setSelectedPrompt] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(60);

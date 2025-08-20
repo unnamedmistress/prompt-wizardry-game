@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { CheckCircle, XCircle, Target } from "lucide-react";
 interface TruthDetectiveProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const hallucinations = [
@@ -45,7 +47,7 @@ const hallucinations = [
   }
 ];
 
-export const TruthDetective = ({ onComplete, onBack }: TruthDetectiveProps) => {
+export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectiveProps) => {
   const [currentRound, setCurrentRound] = useState(0);
   const [selectedStatements, setSelectedStatements] = useState<number[]>([]);
   const [gameComplete, setGameComplete] = useState(false);

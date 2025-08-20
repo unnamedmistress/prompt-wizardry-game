@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Search, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 interface DetailDetectiveProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const prompts = [
@@ -51,7 +53,7 @@ const prompts = [
   }
 ];
 
-export const DetailDetective = ({ onComplete, onBack }: DetailDetectiveProps) => {
+export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveProps) => {
   const [currentPrompt, setCurrentPrompt] = useState(0);
   const [selectedDetails, setSelectedDetails] = useState<string[]>([]);
   const [score, setScore] = useState(0);

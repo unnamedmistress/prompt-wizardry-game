@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Layers, CheckCircle, AlertCircle } from "lucide-react";
 interface MultiTaskMasterProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const promptComponents = [
@@ -33,7 +35,7 @@ const scenarios = [
   }
 ];
 
-export const MultiTaskMaster = ({ onComplete, onBack }: MultiTaskMasterProps) => {
+export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterProps) => {
   const [selectedComponents, setSelectedComponents] = useState<number[]>([]);
   const [gameComplete, setGameComplete] = useState(false);
   const [score, setScore] = useState(0);
