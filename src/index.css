@@ -122,6 +122,7 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
 
 @keyframes star-pop {
   0% { transform: scale(0.5); opacity: 0; }
