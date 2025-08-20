@@ -21,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
 import GenieMentor from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
+import { getModelHint } from "@/lib/hintGenerator";
 
 const allLearningExperiences: LearningExperience[] = lessons as LearningExperience[];
 const HINT_COST = 10;
@@ -97,24 +98,44 @@ const Index = () => {
     setCurrentExperience(null);
   };
 
-  const handleGetHint = () => {
+  const handleGetHint = async () => {
     if (!currentExperience) return;
     const hints = currentExperience.hints || [];
-    if (hintsUsed >= hints.length) {
+
+    if (hintsUsed >= hints.length + 1) {
       setGenieMessage("No more hints available.");
       setIsGenieOpen(true);
       return;
     }
+
+    // Static hints available
+    if (hintsUsed < hints.length) {
+      const purchased = purchaseHint(currentExperience.id, hintsUsed, HINT_COST);
+      if (!purchased) {
+        setGenieMessage("Not enough coins for a hint.");
+        setIsGenieOpen(true);
+        return;
+      }
+      const hintText = hints[hintsUsed];
+      setHintsUsed(prev => prev + 1);
+      setGenieMessage(hintText);
+      setIsGenieOpen(true);
+      return;
+    }
+
+    // Fetch model-generated hint
     const purchased = purchaseHint(currentExperience.id, hintsUsed, HINT_COST);
     if (!purchased) {
       setGenieMessage("Not enough coins for a hint.");
       setIsGenieOpen(true);
       return;
     }
-    const hintText = hints[hintsUsed];
-    setHintsUsed(prev => prev + 1);
-    setGenieMessage(hintText);
+
+    setGenieMessage("🔮 Thinking of a hint for you...");
     setIsGenieOpen(true);
+    const modelHint = await getModelHint(currentExperience.id);
+    setHintsUsed(hints.length + 1);
+    setGenieMessage(modelHint);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -275,9 +296,21 @@ const Index = () => {
                       const isCompleted = completedExperienceIds.includes(experience.id);
                       const isLocked = experience.requiredStars !== undefined && stars < experience.requiredStars;
 
+                      const ariaLabel = `${experience.title} - ${experience.difficulty} - ${
+                        isLocked
+                          ? 'Locked, requires ' + experience.requiredStars + ' stars'
+                          : isCompleted
+                          ? 'Completed'
+                          : 'Not completed'
+                      }`;
+
                       return (
                         <Card
                           key={experience.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-label={ariaLabel}
+                          aria-disabled={isLocked}
                           className={`relative transition-all border-2 ${
                             isCompleted
                               ? 'border-green-500 bg-green-50/50'
@@ -293,6 +326,16 @@ const Index = () => {
                               return;
                             }
                             handleExperienceSelect(experience);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              if (isLocked) {
+                                toast('Earn more stars to unlock this lesson.');
+                                return;
+                              }
+                              handleExperienceSelect(experience);
+                            }
                           }}
                         >
                           <CardHeader className="pb-3">
@@ -315,9 +358,9 @@ const Index = () => {
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(experience.difficulty)}`}>
                                   {experience.difficulty}
                                 </span>
-                                <Button size="sm" variant={isCompleted ? 'outline' : 'default'} disabled={isLocked}>
+                                <span className="text-sm font-medium" aria-hidden="true">
                                   {isLocked ? `Requires ⭐${experience.requiredStars}` : isCompleted ? 'Review' : 'Start'}
-                                </Button>
+                                </span>
                               </div>
                               <div className="text-xs text-muted-foreground">
                                 <strong>Objective:</strong> {experience.objective}
@@ -325,7 +368,7 @@ const Index = () => {
                             </div>
                           </CardContent>
                           {isLocked && (
-                            <div className="absolute inset-0 rounded-lg bg-background/60 backdrop-blur-sm flex items-center justify-center">
+                            <div className="absolute inset-0 rounded-lg bg-secondary/80 backdrop-blur-sm flex items-center justify-center">
                               <Lock className="w-8 h-8 text-muted-foreground" />
                             </div>
                           )}
@@ -368,7 +411,7 @@ const Index = () => {
     }
 
     const shouldUseNoScore = ["FormatCrafterGame", "PrecisionTargeterGame", "PerspectiveShifterGame", "StoryEngineGame"].includes(currentExperience.gameComponent);
-    const hintDisabled = coins < HINT_COST || hintsUsed >= currentExperience.hints.length;
+    const hintDisabled = coins < HINT_COST || hintsUsed >= (currentExperience.hints?.length ?? 0) + 1;
 
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -522,7 +565,8 @@ const Index = () => {
                 {[0,1,2].map(i => (
                   <Star
                     key={i}
-                    className={`w-8 h-8 ${i < lastResult.stars ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'} star-pop`}
+                    fill="currentColor"
+                    className={`w-8 h-8 ${i < lastResult.stars ? 'text-yellow-500' : 'text-muted-foreground'} star-pop`}
                     style={{ animationDelay: `${i * 0.2}s` }}
                   />
                 ))}

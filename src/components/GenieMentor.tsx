@@ -22,7 +22,7 @@ const GenieMentor: React.FC<GenieMentorProps> = ({
   if (!isOpen) {
     return onGetHint ? (
       <button
-        aria-label="Get hint"
+        aria-label={hintCost ? `Get a hint for ${hintCost} coins` : 'Get a hint'}
         onClick={onGetHint}
         disabled={hintDisabled}
         className="fixed bottom-4 right-4 z-50 bg-purple-600 text-white p-3 rounded-full shadow-lg"
@@ -57,7 +57,7 @@ const GenieMentor: React.FC<GenieMentorProps> = ({
             onClick={onGetHint}
             disabled={hintDisabled}
             className="mt-2 w-full text-xs"
-            aria-label="Get Hint"
+            aria-label={hintCost ? `Get a hint for ${hintCost} coins` : 'Get Hint'}
           >
             Get Hint (-{hintCost}🪙)
           </Button>
