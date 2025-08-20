@@ -1,0 +1,397 @@
+[
+  {
+    "id": "prompt-structure",
+    "title": "Basic Prompt Structure",
+    "description": "Master the building blocks of great prompts with fun scenarios",
+    "difficulty": "Beginner",
+    "category": "Prompting Fundamentals",
+    "icon": "🏗️",
+    "objective": "Help someone call in sick to work with a convincing (but honest!) excuse",
+    "whatYoullLearn": [
+      "Structure prompts with clear role assignments",
+      "Include specific context and details",
+      "Control tone and formality levels",
+      "Balance honesty with effectiveness"
+    ],
+    "hints": [
+      "Start by giving the AI a role (like 'helpful assistant')",
+      "Be specific about the situation",
+      "Mention the tone you want (professional, casual, etc.)",
+      "Include important details like timing"
+    ],
+    "goodExamples": [
+      "You are a helpful assistant. Write a professional text message to my boss explaining I'm sick and can't come to work today. Use a polite but not overly formal tone, mention I have flu symptoms, and that I hope to return tomorrow.",
+      "Act as a professional communicator. Help me write an email to my manager about calling in sick. I have a bad migraine, need to rest today, and should be better by tomorrow. Keep it brief but sincere."
+    ],
+    "badExamples": [
+      "Write sick message",
+      "Tell my boss I can't work",
+      "Make excuse for work"
+    ],
+    "gameComponent": "PromptBuilderGame"
+  },
+  {
+    "id": "role-mastery",
+    "title": "Context & Role Mastery",
+    "description": "Learn how the right role transforms AI responses",
+    "difficulty": "Beginner",
+    "category": "Prompting Fundamentals",
+    "icon": "🎭",
+    "objective": "Get AI to help plan an epic birthday party for a 25-year-old who loves board games",
+    "whatYoullLearn": [
+      "Choose effective AI roles for different tasks",
+      "Set proper context and constraints",
+      "Specify response style and format",
+      "Include key requirements and limitations"
+    ],
+    "hints": [
+      "Choose the perfect role (party planner, friend, event coordinator)",
+      "Set the context (budget, guest count, preferences)",
+      "Specify the style of response you want",
+      "Include key constraints or requirements"
+    ],
+    "goodExamples": [
+      "You are an experienced party planner. Help me plan a birthday party for my 25-year-old friend who loves board games. We have a $300 budget, 15 guests, and want it to be casual but memorable. Give me ideas for games, food, decorations, and activities.",
+      "Act as a creative event coordinator. I'm planning a board game themed birthday party for someone turning 25. Include suggestions for themed snacks, party games beyond board games, and how to make it Instagram-worthy."
+    ],
+    "badExamples": [
+      "Plan a birthday party",
+      "Give me party ideas",
+      "What should I do for a birthday?"
+    ],
+    "gameComponent": "RoleMatcher"
+  },
+  {
+    "id": "specificity-details",
+    "title": "Specificity & Details",
+    "description": "Transform vague requests into crystal-clear instructions",
+    "difficulty": "Intermediate",
+    "requiredStars": 3,
+    "category": "Prompting Fundamentals",
+    "icon": "🎯",
+    "objective": "Get AI to help write the perfect dating app profile that's authentic and engaging",
+    "whatYoullLearn": [
+      "Add specific personality and interest details",
+      "Define target audience clearly",
+      "Specify tone and style preferences",
+      "Set constraints like character limits"
+    ],
+    "hints": [
+      "Include specific details about personality and interests",
+      "Mention the target audience you want to attract",
+      "Specify the tone (witty, sincere, adventurous, etc.)",
+      "Add constraints like character limits or must-include elements"
+    ],
+    "goodExamples": [
+      "You are a dating coach specializing in authentic profiles. Help me write a dating app bio that's 150 characters max. I'm 28, love hiking and cooking, work as a teacher, and want to attract someone who values humor and outdoor adventures. Make it witty but genuine.",
+      "Act as a relationship expert. Create a dating profile for someone who's introverted but loves deep conversations, enjoys reading sci-fi, plays guitar, and is looking for a meaningful connection rather than casual dating. Keep it engaging but not overly quirky."
+    ],
+    "badExamples": [
+      "Write dating profile",
+      "Make me sound good on dating apps",
+      "Help with my bio"
+    ],
+    "gameComponent": "DetailDetective"
+  },
+  {
+    "id": "tone-control",
+    "title": "Tone & Style Control",
+    "description": "Master the art of getting exactly the right voice from AI",
+    "difficulty": "Intermediate",
+    "requiredStars": 3,
+    "category": "Prompting Fundamentals",
+    "icon": "🎨",
+    "objective": "Get AI to write a resignation letter that's professional but shows you're leaving for positive reasons",
+    "whatYoullLearn": [
+      "Specify exact tone preferences",
+      "Include relevant context",
+      "Define what to avoid in responses",
+      "Set format and length requirements"
+    ],
+    "hints": [
+      "Specify the exact tone (professional, grateful, optimistic)",
+      "Include the context (new opportunity, career growth, etc.)",
+      "Mention what to avoid (negativity, complaints, burning bridges)",
+      "Set the format and length requirements"
+    ],
+    "goodExamples": [
+      "You are a career counselor. Help me write a resignation letter that's professional and positive. I'm leaving for a better opportunity, want to express gratitude for my experience, and maintain good relationships. Keep it to one page and include a 2-week notice.",
+      "Act as an HR professional. Write a resignation email that's warm but professional. I'm moving to a new city for family reasons, have enjoyed my 3 years here, and want to ensure a smooth transition. Avoid mentioning any workplace frustrations."
+    ],
+    "badExamples": [
+      "Write resignation letter",
+      "Help me quit my job",
+      "I want to leave work"
+    ],
+    "gameComponent": "ToneController"
+  },
+  {
+    "id": "multi-task",
+    "title": "Complex Multi-Task Prompts",
+    "description": "Combine multiple requirements into one powerful prompt",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Prompting Fundamentals",
+    "icon": "⚡",
+    "objective": "Get AI to plan a surprise proposal that's personal, memorable, and perfectly executed",
+    "whatYoullLearn": [
+      "Break down complex tasks into components",
+      "Include personal details for customization",
+      "Specify different types of help needed",
+      "Add multiple constraints and considerations"
+    ],
+    "hints": [
+      "Break down all the components (location, timing, backup plans)",
+      "Include personal details that make it special",
+      "Specify what you need help with (planning vs. execution)",
+      "Add constraints like budget, privacy, weather considerations"
+    ],
+    "goodExamples": [
+      "You are a romantic event planner with experience in proposals. Help me plan a surprise proposal for my partner who loves sunsets, quiet moments, and meaningful locations. We met at a coffee shop, she loves hiking, budget is $1000. I need location ideas, timing advice, backup weather plans, and a step-by-step timeline. Make it personal but not overly elaborate.",
+      "Act as a proposal consultant. Plan a marriage proposal for someone who values experiences over material things, loves their hometown, and is close to family. Include ideas for incorporating family, choosing the right moment, and making it feel authentic rather than performative. Consider seasonal factors and meaningful locations."
+    ],
+    "badExamples": [
+      "Help me propose",
+      "Plan a proposal",
+      "How should I ask someone to marry me?"
+    ],
+    "gameComponent": "MultiTaskMaster"
+  },
+  {
+    "id": "creative-prompts",
+    "title": "Creative & Fun Prompts",
+    "description": "Unlock AI's creative potential with imaginative scenarios",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Prompting Fundamentals",
+    "icon": "🎪",
+    "objective": "Get AI to help create a murder mystery dinner party that will blow your friends' minds",
+    "whatYoullLearn": [
+      "Set creative roles for AI",
+      "Include constraints for complexity",
+      "Specify exactly what you need",
+      "Consider your audience's interests"
+    ],
+    "hints": [
+      "Set the creative role (mystery writer, party planner, etc.)",
+      "Include constraints (number of people, complexity level)",
+      "Specify what you need (characters, plot, clues, timeline)",
+      "Mention the audience and their interests"
+    ],
+    "goodExamples": [
+      "You are a mystery writer and party planner. Create a murder mystery dinner party for 8 friends who love puzzles and drama. Set it in the 1920s, include character descriptions with motives, clues that reveal throughout dinner, and a shocking but logical conclusion. Make it interactive but not too complex for first-time players.",
+      "Act as an escape room designer. Design a murder mystery experience for a dinner party with 6 people. Include props they can find around a house, red herrings, character backstories with secrets, and multiple possible suspects until the final reveal. Keep it fun and engaging rather than dark or disturbing."
+    ],
+    "badExamples": [
+      "Create a murder mystery",
+      "Help with a party game",
+      "Make a mystery for dinner"
+    ],
+    "gameComponent": "CreativeChallenge"
+  },
+  {
+    "id": "format-crafter",
+    "title": "Office Format Master",
+    "description": "Structure AI output for business presentations and documents",
+    "difficulty": "Intermediate",
+    "requiredStars": 3,
+    "category": "Format & Output Control",
+    "icon": "📊",
+    "objective": "Transform information into professional formats like tables, lists, and scripts",
+    "whatYoullLearn": [
+      "Create tables and structured data",
+      "Format professional lists and outlines",
+      "Generate scripts and templates",
+      "Control output formatting precisely"
+    ],
+    "hints": [
+      "Specify exact format requirements",
+      "Include structure preferences",
+      "Define professional standards"
+    ],
+    "goodExamples": [
+      "Format as a table with columns for...",
+      "Create a bulleted list with..."
+    ],
+    "badExamples": [
+      "Make agenda",
+      "Format this"
+    ],
+    "gameComponent": "FormatCrafterGame"
+  },
+  {
+    "id": "precision-targeter",
+    "title": "Fitness Precision Trainer",
+    "description": "Master constraints and delimiters for scoped output",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Precision & Constraints",
+    "icon": "💪",
+    "objective": "Use precise constraints to get exactly what you need",
+    "whatYoullLearn": [
+      "Apply specific constraints effectively",
+      "Use delimiters to scope responses",
+      "Control output boundaries",
+      "Create precise requirements"
+    ],
+    "hints": [
+      "Add clear constraints",
+      "Define scope boundaries",
+      "Use specific delimiters"
+    ],
+    "goodExamples": [
+      "Within 30 minutes, using only bodyweight exercises..."
+    ],
+    "badExamples": [
+      "Give workout",
+      "Help with exercise"
+    ],
+    "gameComponent": "PrecisionTargeterGame"
+  },
+  {
+    "id": "perspective-shifter",
+    "title": "Hollywood Perspective Master",
+    "description": "Learn viewpoint transformation and role-based responses",
+    "difficulty": "Intermediate",
+    "requiredStars": 3,
+    "category": "Perspective & Viewpoint",
+    "icon": "🎬",
+    "objective": "Write from different perspectives and viewpoints",
+    "whatYoullLearn": [
+      "Adopt different character perspectives",
+      "Shift viewpoints effectively",
+      "Create authentic voice variations",
+      "Master role-based writing"
+    ],
+    "hints": [
+      "Choose specific roles",
+      "Define perspective clearly",
+      "Maintain character consistency"
+    ],
+    "goodExamples": [
+      "As a film director, analyze this movie...",
+      "From a critic's perspective..."
+    ],
+    "badExamples": [
+      "Review movie",
+      "Talk about film"
+    ],
+    "gameComponent": "PerspectiveShifterGame"
+  },
+  {
+    "id": "story-engine",
+    "title": "Creative Story Engine",
+    "description": "Master narrative prompts with plot, structure, and tone",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Creative Writing",
+    "icon": "📚",
+    "objective": "Combine genre, structure, and tone for compelling narratives",
+    "whatYoullLearn": [
+      "Structure narrative prompts",
+      "Combine genre elements",
+      "Control story tone and mood",
+      "Create compelling plots"
+    ],
+    "hints": [
+      "Choose genre carefully",
+      "Define story structure",
+      "Set tone and mood"
+    ],
+    "goodExamples": [
+      "Write a sci-fi mystery with noir tone..."
+    ],
+    "badExamples": [
+      "Write story",
+      "Make fiction"
+    ],
+    "gameComponent": "StoryEngineGame"
+  },
+  {
+    "id": "truth-detective",
+    "title": "Truth Detective",
+    "description": "Spot AI hallucinations in 'Two Truths and a Lie' format",
+    "difficulty": "Intermediate",
+    "requiredStars": 3,
+    "category": "Fact-Checking & Verification",
+    "icon": "🕵️",
+    "objective": "Identify AI-generated inaccuracies and hallucinations",
+    "whatYoullLearn": [
+      "Recognize AI hallucinations",
+      "Fact-check AI responses",
+      "Identify suspicious claims",
+      "Verify information accuracy"
+    ],
+    "hints": [
+      "Look for inconsistencies",
+      "Check factual claims",
+      "Trust but verify"
+    ],
+    "goodExamples": [
+      "This fact seems suspicious because..."
+    ],
+    "badExamples": [
+      "Believe everything",
+      "Don't question"
+    ],
+    "gameComponent": "TruthDetective"
+  },
+  {
+    "id": "source-hunter",
+    "title": "Source Hunter",
+    "description": "Find credible sources to verify AI claims",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Fact-Checking & Verification",
+    "icon": "🔍",
+    "objective": "Locate and evaluate credible sources for verification",
+    "whatYoullLearn": [
+      "Find credible sources",
+      "Evaluate source reliability",
+      "Cross-reference information",
+      "Build verification skills"
+    ],
+    "hints": [
+      "Look for reputable sources",
+      "Cross-reference claims",
+      "Check publication dates"
+    ],
+    "goodExamples": [
+      "According to Reuters and BBC..."
+    ],
+    "badExamples": [
+      "Random website says...",
+      "Someone posted..."
+    ],
+    "gameComponent": "SourceHunter"
+  },
+  {
+    "id": "prompt-escape",
+    "title": "Prompt Escape Room",
+    "description": "Escape by finding which prompt caused problematic responses",
+    "difficulty": "Advanced",
+    "requiredStars": 6,
+    "category": "Prompt Analysis",
+    "icon": "🔓",
+    "objective": "Identify problematic prompts and their issues",
+    "whatYoullLearn": [
+      "Analyze prompt effectiveness",
+      "Identify prompt problems",
+      "Debug AI responses",
+      "Improve prompt quality"
+    ],
+    "hints": [
+      "Examine prompt structure",
+      "Look for ambiguity",
+      "Check for bias"
+    ],
+    "goodExamples": [
+      "This prompt fails because..."
+    ],
+    "badExamples": [
+      "Prompt looks fine",
+      "Don't analyze"
+    ],
+    "gameComponent": "PromptEscape"
+  }
+]

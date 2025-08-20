@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +8,7 @@ import { CheckCircle, RotateCcw, ArrowLeft, ThumbsUp, ThumbsDown, Minus, Loader2
 interface PromptBuilderGameProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 interface PromptElement {
@@ -110,7 +112,7 @@ I'll aim to return tomorrow and [SLOT2] reach out if things change.
 Thank you for your [SLOT3] understanding,
 [Your Name]`;
 
-export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps) {
+export function PromptBuilderGame({ lesson, onComplete, onBack }: PromptBuilderGameProps) {
   const [currentLevel, setCurrentLevel] = useState(1);
   const [selectedElements, setSelectedElements] = useState<PromptElement[]>([]);
   const [availableElements, setAvailableElements] = useState<PromptElement[]>(level1Elements);
@@ -260,9 +262,9 @@ export function PromptBuilderGame({ onComplete, onBack }: PromptBuilderGameProps
           <div className="bg-gradient-card border border-primary/20 rounded-lg p-6 space-y-2">
             <h3 className="font-semibold text-foreground">What You Learned:</h3>
             <ul className="text-muted-foreground space-y-1">
-              <li>• Structure matters: Role → Task → Context → Tone</li>
-              <li>• Tone dramatically affects AI output</li>
-              <li>• Word choice has subtle but important effects</li>
+              {lesson.whatYoullLearn.map((item) => (
+                <li key={item}>• {item}</li>
+              ))}
             </ul>
           </div>
           <div className="space-y-2">

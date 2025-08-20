@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Palette, Star, Lightbulb } from "lucide-react";
 interface CreativeChallengeProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const creativityElements = [
@@ -62,7 +64,7 @@ const creativityElements = [
   }
 ];
 
-export const CreativeChallenge = ({ onComplete, onBack }: CreativeChallengeProps) => {
+export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChallengeProps) => {
   const [selections, setSelections] = useState<{ [key: number]: number }>({});
   const [gameComplete, setGameComplete] = useState(false);
   const [score, setScore] = useState(0);

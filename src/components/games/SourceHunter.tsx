@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Search, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 interface SourceHunterProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const scenarios = [
@@ -80,7 +82,7 @@ const scenarios = [
   }
 ];
 
-export const SourceHunter = ({ onComplete, onBack }: SourceHunterProps) => {
+export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) => {
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedSources, setSelectedSources] = useState<number[]>([]);
   const [showResults, setShowResults] = useState(false);

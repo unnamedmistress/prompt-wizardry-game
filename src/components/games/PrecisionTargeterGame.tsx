@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LearningExperience } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Target, Activity, Clock, AlertTriangle } from 'lucide-react';
@@ -6,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface PrecisionTargeterGameProps {
   onComplete: () => void;
+  lesson: LearningExperience;
 }
 
-const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ onComplete }) => {
+const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, onComplete }) => {
   const [selectedConstraints, setSelectedConstraints] = useState<string[]>([]);
   const [selectedDelimiters, setSelectedDelimiters] = useState<string[]>([]);
   const [selectedScope, setSelectedScope] = useState<string>('');

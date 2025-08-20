@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LearningExperience } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Eye, User, Lightbulb, Camera } from 'lucide-react';
@@ -6,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface PerspectiveShifterGameProps {
   onComplete: () => void;
+  lesson: LearningExperience;
 }
 
-const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ onComplete }) => {
+const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson, onComplete }) => {
   const [selectedPerspective, setSelectedPerspective] = useState<string>('');
   const [selectedScenario, setSelectedScenario] = useState<string>('');
   const [selectedFocus, setSelectedFocus] = useState<string>('');

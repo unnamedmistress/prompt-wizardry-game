@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import type { LearningExperience } from "@/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, BookOpen, Users, Zap, Heart } from 'lucide-react';
@@ -6,9 +7,10 @@ import { Badge } from '@/components/ui/badge';
 
 interface StoryEngineGameProps {
   onComplete: () => void;
+  lesson: LearningExperience;
 }
 
-const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ onComplete }) => {
+const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete }) => {
   const [selectedGenre, setSelectedGenre] = useState<string>('');
   const [selectedStructure, setSelectedStructure] = useState<string>('');
   const [selectedElements, setSelectedElements] = useState<string[]>([]);

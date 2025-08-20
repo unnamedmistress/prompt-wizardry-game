@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import { Users, Target } from "lucide-react";
 interface RoleMatcherProps {
   onComplete: (score: number) => void;
   onBack: () => void;
+  lesson: LearningExperience;
 }
 
 const scenarios = [
@@ -40,7 +42,7 @@ const scenarios = [
   }
 ];
 
-export const RoleMatcher = ({ onComplete, onBack }: RoleMatcherProps) => {
+export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) => {
   const [currentScenario, setCurrentScenario] = useState(0);
   const [selectedRole, setSelectedRole] = useState<number | null>(null);
   const [score, setScore] = useState(0);
