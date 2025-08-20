@@ -145,7 +145,7 @@ export function PromptBuilderGame({ lesson, onComplete, onBack }: PromptBuilderG
   const generateEmailWithAPI = async (prompt: string, tone: string = 'professional') => {
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/functions/v1/generate-prompt-response', {
+      const response = await fetch('/functions/v1/generate-prompt-response', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
