@@ -95,35 +95,48 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
             <CardDescription>Choose a character and see how the phrase changes.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <textarea
-              readOnly
-              value="Honesty is the best policy. Re write this in the voice of Dropbox."
-              className="w-full p-2 border rounded text-sm"
-            />
-            <div className="flex gap-2">
-              <select
-                className="border rounded px-2 py-1"
-                value={selectedCharacter}
-                onChange={e => setSelectedCharacter(e.target.value)}
-              >
-                {characters.map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-              <Button onClick={handleSend}>Send</Button>
-            </div>
-            <div className="h-48 border rounded p-3 overflow-y-auto bg-muted">
+            {/* Chat Messages Area */}
+            <div className="h-64 border rounded-lg p-4 overflow-y-auto bg-background space-y-4">
               {messages.length === 0 && (
-                <p className="text-muted-foreground text-sm">Conversation will appear here.</p>
+                <p className="text-muted-foreground text-center text-sm">Start a conversation by selecting a character and clicking Send.</p>
               )}
               {messages.map((m, i) => (
-                <div key={i} className={`mb-2 ${m.role === "user" ? "text-right" : "text-left"}`}>
-                  <div className="inline-block rounded px-2 py-1 bg-background border">
-                    {m.text}
+                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                    m.role === "user" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "bg-muted text-foreground border"
+                  }`}>
+                    <div className="text-xs opacity-70 mb-1">
+                      {m.role === "user" ? "You" : "AI Assistant"}
+                    </div>
+                    <div className="text-sm">{m.text}</div>
                   </div>
                 </div>
               ))}
             </div>
+
+            {/* Input Area - ChatGPT Style */}
+            <div className="border rounded-lg bg-background p-3 space-y-3">
+              <div className="text-sm text-muted-foreground">
+                Honesty is the best policy. Re write this in the voice of:
+              </div>
+              <div className="flex gap-2 items-center">
+                <select
+                  className="flex-1 border rounded-md px-3 py-2 bg-background text-foreground"
+                  value={selectedCharacter}
+                  onChange={e => setSelectedCharacter(e.target.value)}
+                >
+                  {characters.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+                <Button onClick={handleSend} size="sm">
+                  Send
+                </Button>
+              </div>
+            </div>
+
             <div className="flex justify-between">
               <Button variant="outline" onClick={onBack}>Back to Lessons</Button>
               <Button onClick={() => setStep(2)}>Next Game</Button>
