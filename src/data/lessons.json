@@ -1,34 +1,25 @@
 [
   {
-    "id": "prompt-structure",
-    "title": "Basic Prompt Structure",
-    "description": "Master the building blocks of great prompts with fun scenarios",
+    "id": "what-is-ai",
+    "title": "What is AI?",
+    "description": "Discover how AI mimics patterns through interactive experiments",
     "difficulty": "Beginner",
-    "category": "Prompting Fundamentals",
-    "icon": "🏗️",
-    "objective": "Help someone call in sick to work with a convincing (but honest!) excuse",
+    "category": "AI Basics",
+    "icon": "🤖",
+    "objective": "Explore how AI mimics voices, predicts words, and changes tone.",
     "whatYoullLearn": [
-      "Structure prompts with clear role assignments",
-      "Include specific context and details",
-      "Control tone and formality levels",
-      "Balance honesty with effectiveness"
+      "AI responds based on patterns it's seen",
+      "Changing style or words alters output",
+      "AI predicts the next word using probability"
     ],
     "hints": [
-      "Start by giving the AI a role (like 'helpful assistant')",
-      "Be specific about the situation",
-      "Mention the tone you want (professional, casual, etc.)",
-      "Include important details like timing"
+      "Try different characters to see mimicry",
+      "Think about which word logically fits",
+      "Tone changes how the message is interpreted"
     ],
-    "goodExamples": [
-      "You are a helpful assistant. Write a professional text message to my boss explaining I'm sick and can't come to work today. Use a polite but not overly formal tone, mention I have flu symptoms, and that I hope to return tomorrow.",
-      "Act as a professional communicator. Help me write an email to my manager about calling in sick. I have a bad migraine, need to rest today, and should be better by tomorrow. Keep it brief but sincere."
-    ],
-    "badExamples": [
-      "Write sick message",
-      "Tell my boss I can't work",
-      "Make excuse for work"
-    ],
-    "gameComponent": "PromptBuilderGame"
+    "goodExamples": [],
+    "badExamples": [],
+    "gameComponent": "AIIntroGame"
   },
   {
     "id": "role-mastery",

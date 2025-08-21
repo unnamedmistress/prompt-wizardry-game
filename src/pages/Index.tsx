@@ -7,6 +7,7 @@ import { TruthDetective } from "@/components/games/TruthDetective";
 import { SourceHunter } from "@/components/games/SourceHunter";
 import { PromptEscape } from "@/components/games/PromptEscape";
 import { PromptBuilderGame } from "@/components/games/PromptBuilderGame";
+import AIIntroGame from "@/components/games/AIIntroGame";
 import { RoleMatcher } from "@/components/games/RoleMatcher";
 import { DetailDetective } from "@/components/games/DetailDetective";
 import { ToneController } from "@/components/games/ToneController";
@@ -390,6 +391,7 @@ const Index = () => {
     const GameComponent = (() => {
       switch (currentExperience.gameComponent) {
         case "PromptBuilderGame": return PromptBuilderGame;
+        case "AIIntroGame": return AIIntroGame;
         case "RoleMatcher": return RoleMatcher;
         case "DetailDetective": return DetailDetective;
         case "ToneController": return ToneController;
