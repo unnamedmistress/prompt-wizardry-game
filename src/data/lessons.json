@@ -8,9 +8,9 @@
     "icon": "🤖",
     "objective": "Explore how AI mimics voices, predicts words, and changes tone.",
     "whatYoullLearn": [
-      "AI responds based on patterns it's seen",
-      "Changing style or words alters output",
-      "AI predicts the next word using probability"
+      "How AI mimics different character voices and styles",
+      "Why AI predicts certain words over others",
+      "How tone changes completely transform AI responses"
     ],
     "hints": [
       "Try different characters to see mimicry",

@@ -105,12 +105,12 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
               </div>
 
               <div>
-                <h4 className="font-semibold text-foreground mb-2">What You'll Learn</h4>
-                <ul className="list-disc list-inside space-y-1">
-                  <li>How AI mimics different character voices and styles</li>
-                  <li>Why AI predicts certain words over others</li>
-                  <li>How tone changes completely transform AI responses</li>
-                </ul>
+                <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+                <div className="space-y-2">
+                  <p>Start a conversation by selecting a character and clicking Send.</p>
+                  <p>Try different characters to see how AI adapts its voice and style.</p>
+                  <p>Notice how the same message gets transformed based on the character's personality.</p>
+                </div>
               </div>
             </div>
           </CardHeader>
@@ -138,11 +138,10 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
 
             {/* Input Area - ChatGPT Style */}
             <div className="border rounded-lg bg-background p-3">
-              <div className="text-sm text-muted-foreground mb-3">
-                Rewrite "Honesty is the best policy" in the voice of:</div>
               <div className="flex gap-2 items-center">
+                <span className="text-sm text-muted-foreground">Rewrite "Honesty is the best policy" in the voice of</span>
                 <select
-                  className="flex-1 border rounded-md px-3 py-2 bg-background text-foreground"
+                  className="border rounded-md px-3 py-2 bg-background text-foreground z-50"
                   value={selectedCharacter}
                   onChange={e => setSelectedCharacter(e.target.value)}
                 >
