@@ -116,6 +116,34 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
               ))}
             </div>
 
+            {/* Preset Prompts */}
+            <div className="space-y-2">
+              <div className="text-xs text-muted-foreground">Try these examples:</div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "List three uses for solar power",
+                  "Write a haiku about cats", 
+                  "Explain gravity like I'm five"
+                ].map(prompt => (
+                  <Button
+                    key={prompt}
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                      setMessages(prev => [
+                        ...prev,
+                        { role: "user", text: prompt },
+                        { role: "assistant", text: "This is what an AI would respond based on the prompt you provided." }
+                      ]);
+                    }}
+                    className="text-xs"
+                  >
+                    {prompt}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
             {/* Input Area - ChatGPT Style */}
             <div className="border rounded-lg bg-background p-3 space-y-3">
               <div className="text-sm text-muted-foreground">
