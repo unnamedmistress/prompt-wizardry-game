@@ -106,11 +106,11 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
 
               <div>
                 <h4 className="font-semibold text-foreground mb-2">Activity</h4>
-                <div className="space-y-2">
-                  <p>Start a conversation by selecting a character and clicking Send.</p>
-                  <p>Try different characters to see how AI adapts its voice and style.</p>
-                  <p>Notice how the same message gets transformed based on the character's personality.</p>
-                </div>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Start a conversation by selecting a character and clicking Send.</li>
+                  <li>Try different characters to see how AI adapts its voice and style.</li>
+                  <li>Notice how the same message gets transformed based on the character's personality.</li>
+                </ol>
               </div>
             </div>
           </CardHeader>
@@ -166,8 +166,27 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
       {step === 2 && (
         <Card>
           <CardHeader>
-            <CardTitle>Word Prediction</CardTitle>
-            <CardDescription>Select the word an AI would likely predict next.</CardDescription>
+            <CardTitle className="text-2xl font-bold">🎯 Word Prediction</CardTitle>
+            <CardDescription className="text-lg font-semibold text-foreground mb-3">AI Basics</CardDescription>
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <p>
+                AI uses patterns from its training to predict what word comes next. Some combinations are much more likely than others.
+              </p>
+              
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+                <p>Select the word an AI would most likely predict to complete the sentence.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Read the incomplete sentence below.</li>
+                  <li>Think about which word would most commonly follow.</li>
+                  <li>Click your choice to see if you think like an AI!</li>
+                </ol>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-lg font-medium">Honesty is the best ___</p>
@@ -204,8 +223,27 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
       {step === 3 && (
         <Card>
           <CardHeader>
-            <CardTitle>Tone Changes Everything</CardTitle>
-            <CardDescription>Drag a word into the blank and see how the message changes.</CardDescription>
+            <CardTitle className="text-2xl font-bold">🎭 Tone Changes Everything</CardTitle>
+            <CardDescription className="text-lg font-semibold text-foreground mb-3">AI Basics</CardDescription>
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <p>
+                The same prompt can produce completely different responses based on just one word that changes the tone.
+              </p>
+              
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+                <p>Drag different tone words to see how dramatically the AI's response changes.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+                <ol className="list-decimal list-inside space-y-1">
+                  <li>Drag a tone word from below into the blank space.</li>
+                  <li>Watch how the message to your boss completely transforms.</li>
+                  <li>Try multiple words to see the dramatic differences.</li>
+                </ol>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-lg">
