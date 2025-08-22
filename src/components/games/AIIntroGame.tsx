@@ -91,8 +91,28 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
       {step === 1 && (
         <Card>
           <CardHeader>
-            <CardTitle>What is AI? It's a mimic.</CardTitle>
-            <CardDescription>Choose a character and see how the phrase changes.</CardDescription>
+            <CardTitle className="text-2xl font-bold">🤖 What is AI?</CardTitle>
+            <CardDescription className="text-lg font-semibold text-foreground mb-3">AI Basics</CardDescription>
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <p>
+                Think of AI like a well‑read parrot: it has seen countless sentences, so when you 
+                prompt it, it guesses the words that usually come next.
+              </p>
+              
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+                <p>Explore how AI mimics voices, predicts words, and changes tone in this section.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-foreground mb-2">What You'll Learn</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  <li>How AI mimics different character voices and styles</li>
+                  <li>Why AI predicts certain words over others</li>
+                  <li>How tone changes completely transform AI responses</li>
+                </ul>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Chat Messages Area */}
