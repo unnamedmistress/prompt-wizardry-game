@@ -148,29 +148,37 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Palette className="w-6 h-6 text-primary" />
-          Creative Challenge
-        </h2>
-        <p className="text-muted-foreground">Build a creative prompt for a murder mystery dinner party</p>
-        <div className="text-sm text-muted-foreground">
-          Score: {score}/70 | Selections: {Object.keys(selections).length}/5
-        </div>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Lightbulb className="w-5 h-5 text-primary" />
-            🎭 Creative Scenario: Murder Mystery Dinner Party
-          </CardTitle>
-          <CardDescription>
-            You want AI to help create an amazing murder mystery experience for your friends. 
-            Choose the best elements for a creative, engaging prompt.
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">🎨 Creative Challenge</CardTitle>
+          <CardDescription className="text-lg font-semibold text-foreground mb-3">Creative Applications</CardDescription>
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <p>
+              Creative projects need special details to make them amazing. The more specific you are about what you want, the more creative AI can be.
+            </p>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+              <p>Build the perfect creative prompt for a murder mystery dinner party by picking the best choices.</p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Pick one choice from each category below.</li>
+                <li>Think about what would make the most fun and creative result.</li>
+                <li>See how your choices add up to create an amazing prompt.</li>
+              </ol>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="text-center space-y-2 mb-6">
+            <div className="text-sm text-muted-foreground">
+              Score: {score}/70 | Selections: {Object.keys(selections).length}/5
+            </div>
+          </div>
+
           {creativityElements.map((element) => (
             <div key={element.id} className="space-y-3">
               <h4 className="font-medium text-primary">{element.category}</h4>
@@ -189,11 +197,11 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
                       } ${
                         isRevealed
                           ? option.isGood
-                            ? 'border-green-500 bg-green-50'
+                            ? 'border-green-500 bg-green-50 text-green-900'
                             : isSelected
-                              ? 'border-yellow-500 bg-yellow-50'
+                              ? 'border-yellow-500 bg-yellow-50 text-yellow-900'
                               : 'opacity-60'
-                          : ''
+                          : 'text-foreground'
                       }`}
                       onClick={() => handleOptionSelect(element.id, index)}
                     >
@@ -235,7 +243,7 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
             <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
               <h4 className="font-medium text-purple-900 mb-2 flex items-center gap-2">
                 <Palette className="w-4 h-4" />
-                🎨 Your Creative Prompt Analysis:
+                🎨 Your Creative Prompt Results:
               </h4>
               <div className="text-sm text-purple-800 space-y-1">
                 <div>📊 Total Score: {score}/70 points</div>
@@ -244,12 +252,12 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
                   return selectedIndex !== undefined && element.options[selectedIndex].isGood;
                 }).length}/5</div>
                 {score >= 60 && (
-                  <div className="text-green-700 font-medium">🏆 Creative Mastery Achieved!</div>
+                  <div className="text-green-700 font-medium">🏆 Creative Master Achieved!</div>
                 )}
               </div>
               <div className="mt-3 text-xs text-purple-700">
-                <strong>💡 Pro Tip:</strong> Creative prompts work best when you give AI a specific creative role, 
-                vivid setting details, clear audience context, and specific creative constraints!
+                <strong>💡 Pro Tip:</strong> Creative prompts work best when you give AI a specific job, 
+                clear setting details, and tell it exactly what kind of audience it's for!
               </div>
             </div>
           )}
@@ -268,7 +276,7 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
                 disabled={Object.keys(selections).length < creativityElements.length}
                 className="flex-1"
               >
-                Analyze Creative Prompt
+                Check My Creative Prompt
               </Button>
             )}
           </div>
