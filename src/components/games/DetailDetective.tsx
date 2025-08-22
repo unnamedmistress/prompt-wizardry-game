@@ -53,6 +53,7 @@ const prompts = [
       "Success metrics and ROI measurement criteria"
     ],
     correctCount: 7
+  }
 ];
 
 export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveProps) => {
