@@ -14,43 +14,45 @@ interface DetailDetectiveProps {
 const prompts = [
   {
     id: 1,
-    prompt: "Write a product description for a smart home device.",
+    prompt: "Help me create a social media strategy for our B2B software company.",
     missingDetails: [
-      "Target audience (tech-savvy vs beginners)",
-      "Specific device type (thermostat, doorbell, etc.)",
-      "Key features to highlight",
-      "Desired length and tone",
-      "Platform/format requirements"
+      "Target audience size and industry vertical",
+      "Current social media presence and metrics",
+      "Primary business goals (lead generation, brand awareness, etc.)",
+      "Budget allocation across platforms",
+      "Competitor landscape analysis",
+      "Key decision-maker personas and pain points",
+      "Content creation resources and team capacity"
     ],
-    correctCount: 5
+    correctCount: 7
   },
   {
     id: 2,
-    prompt: "Create a social media post about our new restaurant.",
+    prompt: "Write a performance review for my team member.",
     missingDetails: [
-      "Restaurant type and cuisine",
-      "Target social platform (Instagram, Facebook, etc.)",
-      "Post goals (grand opening, promotion, etc.)",
-      "Tone and style preferences",
-      "Include hashtags or mentions",
-      "Character/word limits"
+      "Employee's specific role and responsibilities",
+      "Review period timeframe and previous feedback",
+      "Specific performance metrics and KPIs achieved",
+      "Behavioral examples (both positive and areas for improvement)",
+      "Career development goals and advancement opportunities",
+      "Company's performance review framework and scale",
+      "Manager relationship context and previous conversations"
     ],
-    correctCount: 6
+    correctCount: 7
   },
   {
     id: 3,
-    prompt: "Help me plan a vacation.",
+    prompt: "Create a training program for our sales team.",
     missingDetails: [
-      "Budget range",
-      "Travel dates and duration",
-      "Number of travelers",
-      "Preferred destinations or regions",
-      "Activity preferences",
-      "Accommodation type",
-      "Transportation preferences"
+      "Current team performance gaps and skill assessment",
+      "Sales process complexity and typical deal cycle length",
+      "Product/service technical complexity and pricing tiers",
+      "Target customer personas and objection patterns",
+      "Training budget, timeline, and delivery format preferences",
+      "Team experience levels and previous training history",
+      "Success metrics and ROI measurement criteria"
     ],
     correctCount: 7
-  }
 ];
 
 export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveProps) => {
@@ -119,100 +121,119 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Search className="w-6 h-6 text-primary" />
-          Detail Detective
-        </h2>
-        <p className="text-muted-foreground">Find all the missing details in this vague prompt</p>
-        <div className="text-sm text-muted-foreground">
-          Case {currentPrompt + 1} of {prompts.length} | Score: {score}
-        </div>
-      </div>
-
-      <Card className="border-amber-400 bg-amber-50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-600" />
-            Vague Prompt Under Investigation
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="p-4 bg-white border-2 border-amber-300 rounded-lg text-center">
-            <p className="text-lg font-medium text-amber-800">
-              "{prompt.prompt}"
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
       <Card>
         <CardHeader>
-          <CardTitle>What details are missing?</CardTitle>
-          <CardDescription>
-            Select all the important details that should be added to make this prompt more effective
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold">🔍 Detail Detective</CardTitle>
+          <CardDescription className="text-lg font-semibold text-foreground mb-3">Prompting Fundamentals</CardDescription>
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <p>
+              Vague prompts give vague answers. The more specific details you give AI, the better and more useful its response will be.
+            </p>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+              <p>Find all the missing details that would make these professional prompts much more specific and effective.</p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Read each business prompt and think about what's missing.</li>
+                <li>Click on the details that would make the prompt clearer and more useful.</li>
+                <li>Find all the important details to get the highest score.</li>
+              </ol>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-3 md:grid-cols-2">
-            {prompt.missingDetails.map((detail, index) => (
-              <div
-                key={index}
-                className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                  selectedDetails.includes(detail)
-                    ? 'border-primary bg-primary/10'
-                    : 'border-muted hover:border-primary/50'
-                } ${
-                  showResults ? 'border-green-500 bg-green-50' : ''
-                }`}
-                onClick={() => handleDetailSelect(detail)}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0">
-                    {showResults ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <div className={`w-5 h-5 rounded-full border-2 ${
-                        selectedDetails.includes(detail)
-                          ? 'bg-primary border-primary'
-                          : 'border-muted-foreground'
-                      }`} />
-                    )}
-                  </div>
-                  <span className="text-sm">{detail}</span>
-                </div>
-              </div>
-            ))}
+        <CardContent>
+          <div className="text-center space-y-2 mb-6">
+            <div className="text-sm text-muted-foreground">
+              Case {currentPrompt + 1} of {prompts.length} | Score: {score} | Selected: {selectedDetails.length} details
+            </div>
           </div>
 
-          {showResults && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">🎯 Analysis Complete!</h4>
-              <p className="text-sm text-blue-800 mb-2">
-                You identified {selectedDetails.length} out of {prompt.correctCount} missing details.
-              </p>
-              <div className="text-xs text-blue-700">
-                <strong>Pro Tip:</strong> Specific prompts with clear context, audience, format, and constraints produce much better AI responses!
+          <div className="space-y-6">
+            <div className="p-4 bg-muted rounded-lg border-l-4 border-primary">
+              <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
+                <Search className="w-4 h-4" />
+                Business Prompt to Analyze:
+              </h4>
+              <p className="text-lg font-medium text-foreground">"{prompt.prompt}"</p>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-foreground mb-4">
+                What important business details are missing? Click all that apply:
+              </h4>
+              
+              <div className="grid gap-3 md:grid-cols-2">
+                {prompt.missingDetails.map((detail, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 border-2 rounded-lg cursor-pointer transition-all text-sm ${
+                      selectedDetails.includes(detail)
+                        ? 'border-primary bg-primary/10'
+                        : 'border-muted hover:border-primary/50'
+                    } ${
+                      showResults
+                        ? 'border-green-500 bg-green-50 text-green-900'
+                        : 'text-foreground'
+                    }`}
+                    onClick={() => handleDetailSelect(detail)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        {showResults ? (
+                          <CheckCircle className="w-4 h-4 text-green-600" />
+                        ) : (
+                          <div className={`w-4 h-4 rounded border-2 ${
+                            selectedDetails.includes(detail)
+                              ? 'bg-primary border-primary'
+                              : 'border-muted-foreground'
+                          }`} />
+                        )}
+                      </div>
+                      <span className="flex-1">{detail}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
 
-          <div className="flex gap-3 pt-4">
-            <Button variant="outline" onClick={onBack} className="flex-1">
-              Back to Lessons
-            </Button>
-            {!showResults ? (
-              <Button 
-                onClick={handleSubmit}
-                className="flex-1"
-              >
-                Submit Investigation
-              </Button>
-            ) : (
-              <Button onClick={handleNext} className="flex-1">
-                {currentPrompt < prompts.length - 1 ? 'Next Case' : 'Complete Investigation'}
-              </Button>
+            {showResults && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4" />
+                  🎯 Investigation Results:
+                </h4>
+                <div className="text-sm text-blue-800 space-y-1">
+                  <div>✅ Found {selectedDetails.length} out of {prompt.correctCount} key business details</div>
+                  <div>📊 Professional Score: {Math.round((selectedDetails.length / prompt.correctCount) * 100)}%</div>
+                </div>
+                <div className="mt-3 text-xs text-blue-700">
+                  <strong>💡 Pro Tip:</strong> Business prompts need context about goals, audience, constraints, timeline, and success metrics to get results that actually help!
+                </div>
+              </div>
             )}
+
+            <div className="flex gap-3 pt-4">
+              <Button variant="outline" onClick={onBack} className="flex-1">
+                Back to Lessons
+              </Button>
+              {!showResults ? (
+                <Button 
+                  onClick={handleSubmit}
+                  disabled={selectedDetails.length === 0}
+                  className="flex-1"
+                >
+                  Submit Investigation
+                </Button>
+              ) : (
+                <Button onClick={handleNext} className="flex-1">
+                  {currentPrompt < prompts.length - 1 ? 'Next Case' : 'Complete Investigation'}
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

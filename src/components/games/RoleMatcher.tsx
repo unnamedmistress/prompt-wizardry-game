@@ -14,31 +14,31 @@ interface RoleMatcherProps {
 const scenarios = [
   {
     id: 1,
-    scenario: "A beginner wants to learn how to make spaghetti carbonara",
-    roles: ["Professional chef", "Cooking instructor", "Food blogger", "Restaurant critic"],
+    scenario: "A startup founder needs help writing a pitch deck for Series A funding to present to VCs next week",
+    roles: ["Marketing copywriter", "Investment banker", "Startup mentor", "Business consultant"],
     correctRole: 1,
-    explanation: "A cooking instructor is best for teaching beginners - they know how to break down complex recipes into simple steps."
+    explanation: "An investment banker understands VC expectations, valuation models, and financial projections that VCs scrutinize closely."
   },
   {
     id: 2,
-    scenario: "Someone needs help writing a formal business proposal",
-    roles: ["Creative writer", "Business consultant", "College student", "Social media manager"],
+    scenario: "A non-profit director needs to write a grant proposal for a $500K environmental conservation project",
+    roles: ["Environmental scientist", "Grant writer", "Fundraising consultant", "Non-profit advisor"],
     correctRole: 1,
-    explanation: "A business consultant has the expertise in formal business communication and proposal writing."
+    explanation: "Grant writers specialize in the specific language, structure, and compliance requirements that funders expect to see."
   },
   {
     id: 3,
-    scenario: "A child wants to understand how plants grow",
-    roles: ["University professor", "Elementary teacher", "Research scientist", "Garden store clerk"],
-    correctRole: 1,
-    explanation: "An elementary teacher knows how to explain complex concepts in simple, age-appropriate language."
+    scenario: "A tech company's legal team needs help analyzing a complex patent dispute with a competitor",
+    roles: ["Patent attorney", "Tech journalist", "Software engineer", "Business lawyer"],
+    correctRole: 0,
+    explanation: "Patent law is highly specialized - a patent attorney understands both the technical aspects and legal precedents specific to IP disputes."
   },
   {
     id: 4,
-    scenario: "Someone needs help debugging complex Python code",
-    roles: ["Software engineer", "Computer science student", "IT support", "Web designer"],
-    correctRole: 0,
-    explanation: "A software engineer has the deep technical expertise needed for complex debugging tasks."
+    scenario: "A restaurant chain wants to optimize their supply chain costs while maintaining food quality standards",
+    roles: ["Restaurant manager", "Supply chain analyst", "Food scientist", "Business consultant"],
+    correctRole: 1,
+    explanation: "Supply chain analysts specialize in logistics optimization, vendor relationships, and cost analysis across complex distribution networks."
   }
 ];
 

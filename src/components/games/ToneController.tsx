@@ -14,76 +14,76 @@ interface ToneControllerProps {
 const scenarios = [
   {
     id: 1,
-    situation: "You're writing a resignation letter - you got a better job offer!",
-    prompt: "Write a resignation letter for someone leaving for a better opportunity",
+    situation: "You need to ask your boss for time off during a busy period at work.",
+    prompt: "Write a request for time off during peak season",
     toneOptions: [
       {
-        tone: "Professional & Grateful",
-        description: "Maintains relationships while being clear about departure",
+        tone: "Understanding & Strategic",
+        description: "Shows awareness of timing while making a reasonable case",
         isCorrect: true,
-        example: "Express gratitude, give proper notice, offer transition help"
+        example: "Acknowledges the busy period but explains the necessity and offers solutions"
       },
       {
-        tone: "Casual & Excited", 
-        description: "Too informal for a resignation letter",
+        tone: "Demanding & Urgent", 
+        description: "Too aggressive for this delicate situation",
         isCorrect: false,
-        example: "Might damage professional relationships"
+        example: "Might create conflict during an already stressful time"
       },
       {
-        tone: "Apologetic & Hesitant",
-        description: "Shows uncertainty which isn't ideal",
+        tone: "Apologetic & Uncertain",
+        description: "Shows lack of confidence in a legitimate request",
         isCorrect: false,
-        example: "Makes it seem like you're not confident in your decision"
+        example: "Makes the request seem less valid than it might be"
       }
     ]
   },
   {
     id: 2,
-    situation: "Help your friend write a funny dating app message to someone who mentioned loving pizza",
-    prompt: "Write a first message on a dating app about pizza",
+    situation: "A client complains that your team's work doesn't match their vision. Write a response email.",
+    prompt: "Respond to a client who is unhappy with delivered work",
     toneOptions: [
       {
-        tone: "Witty & Playful",
-        description: "Perfect for dating apps - shows personality",
+        tone: "Solution-Focused & Professional",
+        description: "Takes ownership while steering toward resolution",
         isCorrect: true,
-        example: "Light humor that starts a conversation"
+        example: "Acknowledges the gap and presents clear next steps"
       },
       {
-        tone: "Formal & Serious",
-        description: "Too stiff for dating apps",
+        tone: "Defensive & Technical",
+        description: "Explains why you're right instead of solving the problem",
         isCorrect: false,
-        example: "Might come across as boring or impersonal"
+        example: "Focuses on justification rather than client satisfaction"
       },
       {
-        tone: "Overly Flirty",
-        description: "Too intense for a first message",
+        tone: "Overly Apologetic",
+        description: "Takes too much blame without showing competence",
         isCorrect: false,
-        example: "Could make the recipient uncomfortable"
+        example: "Undermines confidence in your team's abilities"
       }
     ]
   },
   {
     id: 3,
-    situation: "Write a complaint email to your internet provider about constant outages",
-    prompt: "Write a complaint email about internet service issues",
+    situation: "Write a LinkedIn post about your team winning an industry award.",
+    prompt: "Announce a professional achievement on social media",
     toneOptions: [
       {
-        tone: "Firm but Professional",
-        description: "Gets results while maintaining relationship",
+        tone: "Grateful & Team-Focused",
+        description: "Celebrates success while crediting others appropriately",
         isCorrect: true,
-        example: "States problems clearly, requests solutions professionally"
+        example: "Shares the win while highlighting team contributions"
       },
       {
-        tone: "Angry & Aggressive",
-        description: "Might damage your case and relationship",
+        tone: "Excited & Personal",
+        description: "Too casual and self-centered for professional context",
         isCorrect: false,
-        example: "Could result in less helpful customer service"
+        example: "Makes it about you rather than the achievement or team"
       },
       {
-        tone: "Overly Polite",
-        description: "Might not convey the seriousness of the issue",
+        tone: "Humble & Understated",
+        description: "Doesn't capitalize on the networking opportunity",
         isCorrect: false,
-        example: "May not get the attention your problem deserves"
+        example: "Wastes the chance to showcase expertise and build connections"
       }
     ]
   }
@@ -150,106 +150,124 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Volume2 className="w-6 h-6 text-primary" />
-          Tone Controller
-        </h2>
-        <p className="text-muted-foreground">Choose the perfect tone for each situation</p>
-        <div className="text-sm text-muted-foreground">
-          Scenario {currentScenario + 1} of {scenarios.length} | Score: {score}/105
-        </div>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">🎭 Situation</CardTitle>
+          <CardTitle className="text-2xl font-bold">🎵 Tone Controller</CardTitle>
+          <CardDescription className="text-lg font-semibold text-foreground mb-3">Communication Mastery</CardDescription>
+          <div className="space-y-4 text-sm text-muted-foreground">
+            <p>
+              The same message can sound friendly, bossy, or professional depending on the tone you choose. Getting tone right makes all the difference.
+            </p>
+            
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+              <p>Pick the perfect tone for tricky workplace situations where the wrong choice could backfire.</p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+              <ol className="list-decimal list-inside space-y-1">
+                <li>Read each workplace scenario carefully.</li>
+                <li>Think about who you're talking to and what you want to happen.</li>
+                <li>Choose the tone that gets the best result without causing problems.</li>
+              </ol>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="p-4 bg-accent/50 rounded-lg mb-6">
-            <p className="text-lg font-medium">{scenario.situation}</p>
+          <div className="text-center space-y-2 mb-6">
+            <div className="text-sm text-muted-foreground">
+              Scenario {currentScenario + 1} of {scenarios.length} | Score: {score}/105
+            </div>
           </div>
-          
-          <h4 className="font-medium mb-4">What tone should the AI use?</h4>
-          
-          <div className="space-y-3">
-            {scenario.toneOptions.map((option, index) => (
-              <div
-                key={index}
-                className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  selectedTone === index
-                    ? 'border-primary bg-primary/10'
-                    : 'border-muted hover:border-primary/50'
-                } ${
-                  showExplanation
-                    ? option.isCorrect
-                      ? 'border-green-500 bg-green-50'
-                      : selectedTone === index && !option.isCorrect
-                        ? 'border-red-500 bg-red-50'
-                        : 'opacity-60'
-                    : ''
-                }`}
-                onClick={() => handleToneSelect(index)}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-1">
-                    {showExplanation ? (
-                      option.isCorrect ? (
-                        <Check className="w-5 h-5 text-green-600" />
-                      ) : selectedTone === index ? (
-                        <X className="w-5 h-5 text-red-600" />
+
+          <div className="space-y-6">
+            <div className="p-4 bg-muted rounded-lg border-l-4 border-primary">
+              <h4 className="font-medium text-foreground mb-2">🎭 Situation</h4>
+              <p className="text-lg font-medium text-foreground">{scenario.situation}</p>
+            </div>
+            
+            <h4 className="font-medium text-foreground mb-4">What tone should the AI use?</h4>
+            
+            <div className="space-y-3">
+              {scenario.toneOptions.map((option, index) => (
+                <div
+                  key={index}
+                  className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                    selectedTone === index
+                      ? 'border-primary bg-primary/10'
+                      : 'border-muted hover:border-primary/50'
+                  } ${
+                    showExplanation
+                      ? option.isCorrect
+                        ? 'border-green-500 bg-green-50 text-green-900'
+                        : selectedTone === index && !option.isCorrect
+                          ? 'border-red-500 bg-red-50 text-red-900'
+                          : 'opacity-60'
+                      : 'text-foreground'
+                  }`}
+                  onClick={() => handleToneSelect(index)}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {showExplanation ? (
+                        option.isCorrect ? (
+                          <Check className="w-5 h-5 text-green-600" />
+                        ) : selectedTone === index ? (
+                          <X className="w-5 h-5 text-red-600" />
+                        ) : (
+                          <div className="w-5 h-5" />
+                        )
                       ) : (
-                        <div className="w-5 h-5" />
-                      )
-                    ) : (
-                      <div className={`w-5 h-5 rounded-full border-2 ${
-                        selectedTone === index
-                          ? 'bg-primary border-primary'
-                          : 'border-muted-foreground'
-                      }`} />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium mb-2">{option.tone}</div>
-                    <div className="text-sm text-muted-foreground">{option.description}</div>
-                    {showExplanation && (
-                      <div className="text-xs text-muted-foreground mt-2 italic">
-                        {option.example}
-                      </div>
-                    )}
+                        <div className={`w-5 h-5 rounded-full border-2 ${
+                          selectedTone === index
+                            ? 'bg-primary border-primary'
+                            : 'border-muted-foreground'
+                        }`} />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium mb-2">{option.tone}</div>
+                      <div className="text-sm text-muted-foreground">{option.description}</div>
+                      {showExplanation && (
+                        <div className="text-xs text-muted-foreground mt-2 italic">
+                          {option.example}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {showExplanation && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">💡 Why tone matters:</h4>
-              <p className="text-sm text-blue-800">
-                The right tone can make or break your message. Consider your audience, 
-                the relationship, and the desired outcome when choosing how the AI should sound.
-              </p>
+              ))}
             </div>
-          )}
 
-          <div className="flex gap-3 pt-6">
-            <Button variant="outline" onClick={onBack} className="flex-1">
-              Back to Lessons
-            </Button>
-            {!showExplanation ? (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={selectedTone === null}
-                className="flex-1"
-              >
-                Submit Choice
-              </Button>
-            ) : (
-              <Button onClick={handleNext} className="flex-1">
-                {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'Complete Game'}
-              </Button>
+            {showExplanation && (
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h4 className="font-medium text-blue-900 mb-2">💡 Why tone matters in the workplace:</h4>
+                <p className="text-sm text-blue-800">
+                  Professional tone isn't just about being polite. It's about reading the situation, understanding 
+                  your audience, and choosing an approach that gets results while maintaining relationships.
+                </p>
+              </div>
             )}
+
+            <div className="flex gap-3 pt-6">
+              <Button variant="outline" onClick={onBack} className="flex-1">
+                Back to Lessons
+              </Button>
+              {!showExplanation ? (
+                <Button 
+                  onClick={handleSubmit} 
+                  disabled={selectedTone === null}
+                  className="flex-1"
+                >
+                  Submit Choice
+                </Button>
+              ) : (
+                <Button onClick={handleNext} className="flex-1">
+                  {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'Complete Game'}
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
