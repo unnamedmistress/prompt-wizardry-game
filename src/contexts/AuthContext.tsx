@@ -23,9 +23,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Initial session fetch
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        setLoading(false);
-      }
+      setSession(session);
+      setLoading(false);
     });
 
     return () => {
