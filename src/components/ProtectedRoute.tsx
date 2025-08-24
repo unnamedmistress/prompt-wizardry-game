@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { session, loading } = useAuth();
 
   if (loading) {
-    return null;
+    return <div>Loading...</div>;
   }
 
   return session ? <>{children}</> : <Navigate to="/login" replace />;
