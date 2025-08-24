@@ -14,16 +14,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setSession(data.session);
-      setLoading(false);
-    };
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setLoading(false);
+      }
+    );
 
-    fetchSession();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, newSession) => {
-      setSession(newSession);
+    // Initial session fetch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        setLoading(false);
+      }
     });
 
     return () => {
