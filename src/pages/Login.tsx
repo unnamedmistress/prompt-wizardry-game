@@ -38,17 +38,19 @@ const Login = () => {
     });
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
-
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-      <Button onClick={() => handleSignIn("google")}>Sign in with Google</Button>
-      <Button onClick={() => handleSignIn("azure")}>Sign in with Azure</Button>
-      <Button variant="outline" onClick={handleSignOut}>
-        Sign Out
-      </Button>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center gap-6">
+      <div className="space-y-4">
+        <h1 className="text-3xl font-bold">Prompt Wizardry</h1>
+        <p className="max-w-md text-muted-foreground">
+          Practice crafting effective AI prompts through quick, fun mini games.
+          Click below to begin your journey.
+        </p>
+      </div>
+      <div className="flex flex-col gap-2 w-full max-w-xs">
+        <Button onClick={() => handleSignIn("google")}>Play with Google</Button>
+        <Button onClick={() => handleSignIn("azure")}>Play with Azure</Button>
+      </div>
     </div>
   );
 };
