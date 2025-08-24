@@ -8,6 +8,7 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Handle OAuth callback by getting session from URL
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -16,10 +17,18 @@ const AuthCallback = () => {
           return;
         }
 
+        // Wait a moment for session to be established
         if (data.session) {
-          navigate("/");
+          console.log("Session found, redirecting to home");
+          navigate("/", { replace: true });
         } else {
-          navigate("/login");
+          // Try to refresh session and wait for auth state change
+          const { data: { session } } = await supabase.auth.refreshSession();
+          if (session) {
+            navigate("/", { replace: true });
+          } else {
+            navigate("/login");
+          }
         }
       } catch (error) {
         console.error("Auth callback error:", error);
