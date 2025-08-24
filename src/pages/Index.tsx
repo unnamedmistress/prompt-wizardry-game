@@ -37,7 +37,7 @@ const Index = () => {
   const [isGenieOpen, setIsGenieOpen] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [lastResult, setLastResult] = useState<{ stars: number; coins: number }>({ stars: 0, coins: 0 });
-  const [showTutorial, setShowTutorial] = useState(false);
+  
 
   // Load saved game state
   useEffect(() => {
@@ -52,11 +52,16 @@ const Index = () => {
   }, [gameState]);
 
   useEffect(() => {
-    if (gameState === "playing") {
-      setGenieMessage("🧞 Hi! I'm here if you need a hint or some motivation!");
-      setIsGenieOpen(true);
+    if (gameState === "playing" && currentExperience) {
+      // Only show genie open for the first game (AI Intro)
+      if (currentExperience.id === "ai-intro") {
+        setGenieMessage("🧞 Hi! I'm here if you need a hint or some motivation!");
+        setIsGenieOpen(true);
+      } else {
+        setIsGenieOpen(false);
+      }
     }
-  }, [gameState]);
+  }, [gameState, currentExperience]);
 
   const handleStartLearning = () => {
     setGameState("learning-path");
@@ -216,14 +221,6 @@ const Index = () => {
                   <Play className="w-5 h-5 mr-2" />
                   Start Learning Journey
                 </Button>
-                <Button 
-                  onClick={() => setShowTutorial(true)}
-                  size="lg"
-                  variant="outline"
-                  className="text-lg px-8 py-4"
-                >
-                  How does it work?
-                </Button>
               </div>
               <div className="text-sm text-muted-foreground">
                 {allLearningExperiences.length} interactive experiences • All skill levels
@@ -238,22 +235,6 @@ const Index = () => {
                 </div>
               )}
 
-              {/* Tutorial Dialog */}
-              <Dialog open={showTutorial} onOpenChange={setShowTutorial}>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Try a prompt</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <p>1. Type <code className="bg-muted px-2 py-1 rounded text-sm">"Tell me a fun fact about space"</code>.</p>
-                    <p>2. The AI predicts text and replies with a fact.</p>
-                    <p>3. Change your prompt to see different results.</p>
-                  </div>
-                  <DialogFooter>
-                    <Button onClick={() => setShowTutorial(false)}>Got it!</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
             </div>
           </div>
         </div>
