@@ -8,7 +8,9 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
-        // Handle OAuth callback by getting session from URL
+        console.log("Auth callback triggered, current URL:", window.location.href);
+        
+        // Handle the OAuth callback by processing the URL hash
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -17,18 +19,31 @@ const AuthCallback = () => {
           return;
         }
 
-        // Wait a moment for session to be established
         if (data.session) {
-          console.log("Session found, redirecting to home");
+          console.log("Session found in callback, redirecting to home");
           navigate("/", { replace: true });
         } else {
-          // Try to refresh session and wait for auth state change
-          const { data: { session } } = await supabase.auth.refreshSession();
-          if (session) {
-            navigate("/", { replace: true });
-          } else {
+          console.log("No session found, waiting for auth state change...");
+          // Set up a one-time listener for auth state change
+          const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log("Auth state change in callback:", event, session ? "session exists" : "no session");
+            if (session) {
+              console.log("Session established, redirecting to home");
+              navigate("/", { replace: true });
+            } else if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+              console.log("Auth failed, redirecting to login");
+              navigate("/login");
+            }
+            // Clean up the listener after first event
+            authListener.subscription.unsubscribe();
+          });
+          
+          // Fallback timeout in case auth state doesn't change
+          setTimeout(() => {
+            console.log("Timeout waiting for auth state change, redirecting to login");
+            authListener.subscription.unsubscribe();
             navigate("/login");
-          }
+          }, 10000); // 10 second timeout
         }
       } catch (error) {
         console.error("Auth callback error:", error);

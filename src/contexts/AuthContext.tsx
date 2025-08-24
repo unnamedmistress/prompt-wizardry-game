@@ -14,8 +14,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("AuthContext: Setting up auth state monitoring");
+    
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log("AuthContext: Initial session check", { session: !!session, error });
       setSession(session);
       setLoading(false);
     });
@@ -23,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('Auth state changed:', event, session ? 'User logged in' : 'User logged out');
+        console.log('AuthContext: Auth state changed:', event, session ? 'User logged in' : 'User logged out');
         setSession(session);
         setLoading(false);
       }

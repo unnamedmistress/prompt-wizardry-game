@@ -31,12 +31,23 @@ const Login = () => {
   }, [navigate]);
 
   const handleSignIn = async (provider: "google" | "azure") => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+    try {
+      console.log("Starting OAuth sign in with provider:", provider);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      
+      if (error) {
+        console.error("OAuth sign in error:", error);
+      } else {
+        console.log("OAuth sign in initiated successfully:", data);
+      }
+    } catch (error) {
+      console.error("Unexpected error during sign in:", error);
+    }
   };
 
   return (
