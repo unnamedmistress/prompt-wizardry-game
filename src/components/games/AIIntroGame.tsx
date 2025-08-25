@@ -55,6 +55,7 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; text: string }[]>([]);
   const [showWrong, setShowWrong] = useState(false);
   const [selectedTone, setSelectedTone] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleSend = () => {
     const char = characters.find(c => c.id === selectedCharacter);
@@ -74,16 +75,28 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
     }
   };
 
-  const allowDrop = (e: React.DragEvent) => e.preventDefault();
+  const allowDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const tone = e.dataTransfer.getData("text/plain");
-    if (tone) {
-      setSelectedTone(tone);
-    }
+    if (tone) setSelectedTone(tone);
+    setIsDragOver(false);
   };
   const handleDragStart = (e: React.DragEvent, tone: string) => {
     e.dataTransfer.setData("text/plain", tone);
+  };
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+  const handleDragLeave = (e: React.DragEvent) => {
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return; // ignore internal moves
+    setIsDragOver(false);
+  };
+  const handleToneClick = (tone: string) => {
+    setSelectedTone(tone);
   };
 
   return (
@@ -232,33 +245,57 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
               
               <div>
                 <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-                <p>Drag different tone words to see how dramatically the AI's response changes.</p>
+                <p>Pick (click) or drag a tone word to see how dramatically the AI's response changes.</p>
               </div>
 
               <div>
                 <h4 className="font-semibold text-foreground mb-2">Activity</h4>
                 <ol className="list-decimal list-inside space-y-1">
-                  <li>Drag a tone word from below into the blank space.</li>
+                  <li>Click OR drag a tone word into the blank tone slot.</li>
                   <li>Watch how the message to your boss completely transforms.</li>
-                  <li>Try multiple words to see the dramatic differences.</li>
+                  <li>Try several tones and compare style differences.</li>
                 </ol>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-lg">
-              Write a <span onDrop={handleDrop} onDragOver={allowDrop} className="underline px-2">{selectedTone || "___"}</span> text to my boss to call out sick today.
+            <p className="text-lg font-medium leading-relaxed">
+              Write a
+              <span
+                onDrop={handleDrop}
+                onDragOver={allowDrop}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                className={
+                  `mx-2 inline-flex min-w-[120px] items-center justify-center px-3 py-1 rounded-md border-2 text-sm font-semibold transition-colors select-none
+                  ${isDragOver ? 'border-primary bg-primary/10' : selectedTone ? 'border-green-500 bg-green-50 text-green-800' : 'border-dashed border-muted-foreground/40 bg-muted/30'}
+                  `
+                }
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedTone(null)}
+                title={selectedTone ? 'Click to clear or pick another tone below' : 'Drag or click a tone word below'}
+              >
+                {selectedTone || 'choose tone'}
+              </span>
+              text to my boss to call out sick today.
             </p>
+            <div className="text-xs text-muted-foreground -mt-2">Tip: You can click a tone word below OR drag it into the highlighted box. Click the box to clear.</div>
             <div className="flex flex-wrap gap-2">
               {toneWords.map(word => (
-                <span
+                <button
                   key={word}
                   draggable
                   onDragStart={e => handleDragStart(e, word)}
-                  className="px-2 py-1 border rounded cursor-move"
+                  onClick={() => handleToneClick(word)}
+                  className={
+                    `px-3 py-1 rounded-md border text-sm font-medium shadow-sm transition-all
+                    ${selectedTone === word ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted border-muted-foreground/30'}
+                    focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
+                  type="button"
                 >
                   {word}
-                </span>
+                </button>
               ))}
             </div>
             {selectedTone && (

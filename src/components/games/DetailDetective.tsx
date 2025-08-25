@@ -11,48 +11,65 @@ interface DetailDetectiveProps {
   lesson: LearningExperience;
 }
 
+// Dating Profile Edition – escalating specificity rounds
 const prompts = [
   {
     id: 1,
-    prompt: "Help me create a social media strategy for our B2B software company.",
+    prompt: "Help me write a dating profile.",
     missingDetails: [
-      "Target audience size and industry vertical",
-      "Current social media presence and metrics",
-      "Primary business goals (lead generation, brand awareness, etc.)",
-      "Budget allocation across platforms",
-      "Competitor landscape analysis",
-      "Key decision-maker personas and pain points",
-      "Content creation resources and team capacity"
+      "Personality traits (funny, kind, adventurous, thoughtful, etc.)",
+      "Hobbies and interests (music, sports, books, travel)",
+      "Age range and relationship goals (serious, casual, friendship)",
+      "Tone of writing (light and witty, professional, romantic)",
+      "Desired character length (short bio vs 200 words)"
     ],
-    correctCount: 7
+    correctCount: 5
   },
   {
     id: 2,
-    prompt: "Write a performance review for my team member.",
+    prompt: "Write me a short dating profile that makes me sound fun.",
     missingDetails: [
-      "Employee's specific role and responsibilities",
-      "Review period timeframe and previous feedback",
-      "Specific performance metrics and KPIs achieved",
-      "Behavioral examples (both positive and areas for improvement)",
-      "Career development goals and advancement opportunities",
-      "Company's performance review framework and scale",
-      "Manager relationship context and previous conversations"
+      "What kind of 'fun' (jokes, travel, nightlife, quirky hobbies)",
+      "Hobbies or passions to highlight",
+      "Whether 'short' means one line or a paragraph",
+      "Relationship goals (long-term vs casual)"
     ],
-    correctCount: 7
+    correctCount: 4
   },
   {
     id: 3,
-    prompt: "Create a training program for our sales team.",
+    prompt: "Make a dating profile for me. I like movies and music.",
     missingDetails: [
-      "Current team performance gaps and skill assessment",
-      "Sales process complexity and typical deal cycle length",
-      "Product/service technical complexity and pricing tiers",
-      "Target customer personas and objection patterns",
-      "Training budget, timeline, and delivery format preferences",
-      "Team experience levels and previous training history",
-      "Success metrics and ROI measurement criteria"
+      "Which genres of movies/music (horror vs rom-com, rap vs classical)",
+      "Personality traits to match tone",
+      "Age and audience (who you want to attract)",
+      "How much detail to include (quick blurb vs storytelling style)",
+      "Tone (funny, witty, serious, adventurous)"
     ],
-    correctCount: 7
+    correctCount: 5
+  },
+  {
+    id: 4,
+    prompt: "Help me write a witty profile. I’m adventurous and outgoing.",
+    missingDetails: [
+      "Specific examples of adventurous/outgoing activities (hiking, skydiving, karaoke nights)",
+      "Relationship goals (serious partner, casual, friendship)",
+      "Writing style (short punchy lines vs longer storytelling)",
+      "Fun facts or quirks (hidden talents, favorite food, pets)"
+    ],
+    correctCount: 4
+  },
+  {
+    id: 5,
+    prompt: "Create a dating bio that shows I’m 25, love board games, and want a long-term relationship.",
+    missingDetails: [
+      "Tone (lighthearted, romantic, professional, nerdy)",
+      "Favorite board games or styles (strategy, party games, classics)",
+      "Personality traits (funny, empathetic, competitive, easy-going)",
+      "Constraints (150 characters vs 200 words)",
+      "Dealbreakers/boundaries (must love pets, non-smoker, etc.)"
+    ],
+    correctCount: 5
   }
 ];
 
@@ -124,24 +141,24 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
     <div className="max-w-4xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">🔍 Detail Detective</CardTitle>
+          <CardTitle className="text-2xl font-bold">❤️ Specificity & Details (Dating Profile Edition)</CardTitle>
           <CardDescription className="text-lg font-semibold text-foreground mb-3">Prompting Fundamentals</CardDescription>
           <div className="space-y-4 text-sm text-muted-foreground">
             <p>
-              Vague prompts give vague answers. The more specific details you give AI, the better and more useful its response will be.
+              Vague prompts give vague answers. Watch how adding specifics turns a bland dating bio prompt into something the AI can actually nail.
             </p>
             
             <div>
               <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-              <p>Find all the missing details that would make these professional prompts much more specific and effective.</p>
+              <p>Identify every missing detail that would help the AI write a compelling, authentic dating profile.</p>
             </div>
 
             <div>
               <h4 className="font-semibold text-foreground mb-2">Activity</h4>
               <ol className="list-decimal list-inside space-y-1">
-                <li>Read each business prompt and think about what's missing.</li>
-                <li>Click on the details that would make the prompt clearer and more useful.</li>
-                <li>Find all the important details to get the highest score.</li>
+                <li>Read the draft prompt for the dating bio.</li>
+                <li>Click all the important details the AI still needs.</li>
+                <li>Select every missing piece to maximize your score.</li>
               </ol>
             </div>
           </div>
@@ -149,7 +166,7 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
         <CardContent>
           <div className="text-center space-y-2 mb-6">
             <div className="text-sm text-muted-foreground">
-              Case {currentPrompt + 1} of {prompts.length} | Score: {score} | Selected: {selectedDetails.length} details
+              Round {currentPrompt + 1} of {prompts.length} | Score: {score} | Selected: {selectedDetails.length} details
             </div>
           </div>
 
@@ -157,14 +174,14 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
             <div className="p-4 bg-muted rounded-lg border-l-4 border-primary">
               <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                 <Search className="w-4 h-4" />
-                Business Prompt to Analyze:
+                Prompt to Analyze:
               </h4>
               <p className="text-lg font-medium text-foreground">"{prompt.prompt}"</p>
             </div>
 
             <div>
               <h4 className="font-medium text-foreground mb-4">
-                What important business details are missing? Click all that apply:
+                What important details are missing? Click all that apply:
               </h4>
               
               <div className="grid gap-3 md:grid-cols-2">
@@ -205,14 +222,14 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
-                  🎯 Investigation Results:
+                  🎯 Round Results:
                 </h4>
                 <div className="text-sm text-blue-800 space-y-1">
-                  <div>✅ Found {selectedDetails.length} out of {prompt.correctCount} key business details</div>
-                  <div>📊 Professional Score: {Math.round((selectedDetails.length / prompt.correctCount) * 100)}%</div>
+                  <div>✅ Found {selectedDetails.length} out of {prompt.correctCount} key dating profile details</div>
+                  <div>📊 Specificity Score: {Math.round((selectedDetails.length / prompt.correctCount) * 100)}%</div>
                 </div>
                 <div className="mt-3 text-xs text-blue-700">
-                  <strong>💡 Pro Tip:</strong> Business prompts need context about goals, audience, constraints, timeline, and success metrics to get results that actually help!
+                  <strong>💡 Pro Tip:</strong> Strong dating prompts specify tone, personality, interests, relationship intent, and constraints (length, style, quirks) for authentic results.
                 </div>
               </div>
             )}
@@ -222,16 +239,16 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                 Back to Lessons
               </Button>
               {!showResults ? (
-                <Button 
+                <Button
                   onClick={handleSubmit}
                   disabled={selectedDetails.length === 0}
                   className="flex-1"
                 >
-                  Submit Investigation
+                  Submit Round
                 </Button>
               ) : (
                 <Button onClick={handleNext} className="flex-1">
-                  {currentPrompt < prompts.length - 1 ? 'Next Case' : 'Complete Investigation'}
+                  {currentPrompt < prompts.length - 1 ? 'Next Round' : 'Complete Game'}
                 </Button>
               )}
             </div>
