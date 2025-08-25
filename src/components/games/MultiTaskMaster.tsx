@@ -146,6 +146,8 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
   const [finished, setFinished] = useState(false);
   const [provisionalScore, setProvisionalScore] = useState<number>(0);
   const [alignmentTweaked, setAlignmentTweaked] = useState(false);
+  const [customMode, setCustomMode] = useState(false); // unlock manual typing
+  const [tip, setTip] = useState<string | null>(null); // inline compact tip
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, evaluated]);
@@ -168,70 +170,83 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
   const pushBot = (content: string) => setMessages(m => [...m, { id: crypto.randomUUID(), role: 'bot', content }]);
   const pushUser = (content: string) => setMessages(m => [...m, { id: crypto.randomUUID(), role: 'user', content }]);
 
-  const fieldHint = (stepKey: keyof CollectedFields, value: string): string | null => {
+  const fieldTip = (stepKey: keyof CollectedFields, value: string): string | null => {
     const v = value.trim();
-    if (v === '') return 'Try adding at least a little detail.';
+    if (v === '') return 'Add a little more detail.';
     switch(stepKey) {
-      case 'role':
-        if (!/(planner|coach|expert|specialist|strategist|consultant|designer|chef|guide)/i.test(v)) return 'Add a descriptor (e.g. experienced, senior, specialist).';
-        break;
-      case 'task':
-        if (!/^(plan|create|design|draft|generate|outline|develop|build|craft)\b/i.test(v)) return 'Start with an action verb like "Plan" or "Design".';
-        if (v.split(/\s+/).length < 4) return 'Add scope or outcome to the task.';
-        break;
-      case 'constraints':
-        if (!/\d/.test(v)) return 'Add at least one number (days, budget, count).';
-        if (v.split(/[,;]| and /).length < 2) return 'Add a second constraint (budget, time, limit).';
-        break;
-      case 'audience':
-        if (v.split(/\s+/).length < 3) return 'Add descriptors (age, experience, interest).';
-        break;
-      case 'specifics':
-        if (!/,| and |;/.test(v) && v.split(/\s+/).length < 4) return 'Add multiple specifics separated by commas.';
-        break;
-      case 'format':
-        if (!/(list|bullet|schedule|outline|table|steps?)/i.test(v)) return 'Specify a structure like list, outline, or schedule.';
-        break;
+      case 'role': if (!/(planner|coach|expert|specialist|strategist|consultant|designer|chef|guide)/i.test(v)) return 'Add a descriptor (e.g. experienced).'; break;
+      case 'task': if (!/^(plan|create|design|draft|generate|outline|develop|build|craft)\b/i.test(v)) return 'Start with an action verb.'; if (v.split(/\s+/).length < 4) return 'Add scope/outcome.'; break;
+      case 'constraints': if (!/\d/.test(v)) return 'Add a number.'; if (v.split(/[,;]| and /).length < 2) return 'Add another constraint.'; break;
+      case 'audience': if (v.split(/\s+/).length < 3) return 'Add audience descriptors.'; break;
+      case 'specifics': if (!/,| and |;/.test(v) && v.split(/\s+/).length < 4) return 'List multiple specifics.'; break;
+      case 'format': if (!/(list|bullet|schedule|outline|table|steps?)/i.test(v)) return 'State a structure.'; break;
     }
     return null;
   };
 
-  const handleSubmitInput = () => {
-    if (input.trim() === '' || currentStep === null) return;
+  const handleSubmitInput = (override?: string) => {
+    if (currentStep === null) return;
+    const raw = (override ?? input).trim();
+    if (raw === '') return;
     const step = steps[currentStep];
-    pushUser(input.trim());
-    setFields(f => ({ ...f, [step.key]: input.trim() }));
+    pushUser(raw);
+    setFields(f => ({ ...f, [step.key]: raw }));
     setInput('');
-    // Provisional evaluation after each field
-    const partialEval = evaluatePrompt({ ...fields, [step.key]: input.trim() });
+    const partialEval = evaluatePrompt({ ...fields, [step.key]: raw });
     setProvisionalScore(partialEval.score);
-    const hint = fieldHint(step.key, input.trim());
-    if (hint) setTimeout(() => pushBot('💡 Hint: ' + hint), 250);
-  // Removed verbose provisional score message; minimal overlay handles this now.
+    setTip(fieldTip(step.key, raw));
     const next = currentStep + 1;
     if (next < steps.length) {
       setCurrentStep(next);
-      setTimeout(() => pushBot(steps[next].prompt), 300);
+      setTimeout(() => pushBot(steps[next].prompt), 240);
     } else {
-      // build assembled prompt
-      setCurrentStep(next); // mark complete
-      const assembled = assemblePrompt({ ...fields, [step.key]: input.trim() });
+      setCurrentStep(next);
+      const assembled = assemblePrompt({ ...fields, [step.key]: raw });
       setTimeout(() => {
         pushBot('Great! Here is the prompt you built:');
         pushBot('"' + assembled + '"');
         pushBot('Now let’s test it! I’ll score it for clarity, detail, and effectiveness.');
-  const result = evaluatePrompt({ ...fields, [step.key]: input.trim() });
+        const result = evaluatePrompt({ ...fields, [step.key]: raw });
         setEvaluated(result);
         pushBot(`✅ Score: ${result.score}/10`);
         result.bullets.forEach(b => pushBot('📌 ' + b));
         pushBot('Pro Version: "' + result.proVersion + '"');
         pushBot('Want to try another challenge? Next: plan a surprise birthday party!');
-        // If misaligned, add playful domain clash message
         if (result.categories.Alignment !== 'good') {
-          pushBot('🌀 Domain Clash! Your role & task vibe are a bit off. Scroll below for a "Mismatch Remix" to fix or embrace the chaos.');
+          pushBot('🌀 Domain Clash! Your role & task vibe are a bit off. Scroll below for a "Mismatch Remix" to adjust.');
         }
-      }, 400);
+      }, 360);
     }
+  };
+
+  // Guided suggestion presets (first round no typing required)
+  const suggestions: Record<keyof CollectedFields, string[]> = {
+    role: ['experienced travel planner', 'certified fitness coach', 'creative event designer', 'strategic study mentor'],
+    task: ['plan a 5-day European rail itinerary', 'design a balanced 4-week strength program', 'create a themed birthday party outline', 'outline a focused 2-hour study sprint'],
+    constraints: ['$1500 budget, 2 people, mid-May', '4 weeks, 3 sessions/week, minimal equipment', 'indoors, 15 guests, 3-hour window', '120 minutes total, 3 subjects, Pomodoro timing'],
+    audience: ['a foodie couple in their 30s', 'beginner adults returning to fitness', 'a group of mixed-age friends', 'two college students before exams'],
+    specifics: ['backup rainy-day options, local hidden gems', 'progressive overload, recovery tips', 'lighting, music playlist, surprise element', 'energy management, micro-break techniques'],
+    format: ['day-by-day schedule with bullet lists', 'weekly table with phases & notes', 'sectioned outline (Setup | Activities | Finale)', 'timed checklist with intervals']
+  };
+
+  const renderSuggestions = () => {
+    if (currentStep === null || evaluated || customMode) return null;
+    const step = steps[currentStep];
+    return (
+      <div className="mt-4 space-y-2">
+        <div className="flex flex-wrap gap-2">
+          {suggestions[step.key].map(opt => (
+            <Button key={opt} size="sm" variant="outline" className="text-xs" onClick={() => handleSubmitInput(opt)}>
+              {opt}
+            </Button>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" className="h-6 px-2 text-[11px]" onClick={() => setCustomMode(true)}>Custom input</Button>
+          {tip && <span className="text-[11px] text-muted-foreground flex items-center gap-1">💡 {tip}</span>}
+        </div>
+      </div>
+    );
   };
 
   const handleReplay = () => {
@@ -294,13 +309,15 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
             <div ref={bottomRef} />
           </div>
 
-          {/* Input Area */}
+          {/* Guided Suggestions / Input Area */}
           {!evaluated && (
-            <div className="mt-4 flex gap-2">
-              {currentStep === null ? (
-                <Button className="flex-1" onClick={advance}>Start <ArrowRight className="w-4 h-4 ml-1" /></Button>
-              ) : (
-                <>
+            <div className="mt-4 space-y-3">
+              {currentStep === null && (
+                <Button className="w-full" onClick={advance}>Start Guided Build <ArrowRight className="w-4 h-4 ml-1" /></Button>
+              )}
+              {renderSuggestions()}
+              {customMode && currentStep !== null && currentStep < steps.length && (
+                <div className="flex gap-2">
                   <input
                     value={input}
                     onChange={e => setInput(e.target.value)}
@@ -309,10 +326,8 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
                     className="flex-1 px-3 py-2 rounded border bg-background"
                     disabled={currentStep >= steps.length}
                   />
-                  <Button onClick={handleSubmitInput} disabled={input.trim()==='' || currentStep >= steps.length}>
-                    Send
-                  </Button>
-                </>
+                  <Button onClick={() => handleSubmitInput()} disabled={input.trim()==='' || currentStep >= steps.length}>Send</Button>
+                </div>
               )}
             </div>
           )}
@@ -330,6 +345,7 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
                 <Button variant="secondary" onClick={handleReplay}><RotateCcw className="w-4 h-4 mr-1" />Replay</Button>
                 <Button onClick={handleComplete} disabled={finished}><Sparkles className="w-4 h-4 mr-1" />Finish & Save</Button>
                 <Button variant="outline" onClick={onBack} className="ml-auto">Back</Button>
+                {!customMode && <Button variant="ghost" size="sm" onClick={() => setCustomMode(true)}>Refine Manually</Button>}
               </div>
             </>
           )}
