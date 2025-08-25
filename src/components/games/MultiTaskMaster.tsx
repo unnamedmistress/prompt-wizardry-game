@@ -145,6 +145,7 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
   const [evaluated, setEvaluated] = useState<EvaluationResult | null>(null);
   const [finished, setFinished] = useState(false);
   const [provisionalScore, setProvisionalScore] = useState<number>(0);
+  const [alignmentTweaked, setAlignmentTweaked] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, evaluated]);
@@ -206,7 +207,7 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
     setProvisionalScore(partialEval.score);
     const hint = fieldHint(step.key, input.trim());
     if (hint) setTimeout(() => pushBot('💡 Hint: ' + hint), 250);
-    setTimeout(() => pushBot(`(Provisional score so far: ${partialEval.score}/10 — will improve with more detail.)`), 300);
+  // Removed verbose provisional score message; minimal overlay handles this now.
     const next = currentStep + 1;
     if (next < steps.length) {
       setCurrentStep(next);
@@ -225,6 +226,10 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
         result.bullets.forEach(b => pushBot('📌 ' + b));
         pushBot('Pro Version: "' + result.proVersion + '"');
         pushBot('Want to try another challenge? Next: plan a surprise birthday party!');
+        // If misaligned, add playful domain clash message
+        if (result.categories.Alignment !== 'good') {
+          pushBot('🌀 Domain Clash! Your role & task vibe are a bit off. Scroll below for a "Mismatch Remix" to fix or embrace the chaos.');
+        }
       }, 400);
     }
   };
@@ -254,7 +259,12 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
           <CardDescription>Practice building multi-part prompts like a real conversation.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-[460px] overflow-y-auto border rounded-md p-4 bg-muted/30 space-y-4 text-sm">
+          <div className="relative h-[460px] overflow-y-auto border rounded-md p-4 bg-muted/30 space-y-4 text-sm">
+            {provisionalScore > 0 && !evaluated && currentStep !== null && (
+              <div className="absolute top-2 right-2 flex items-center gap-1 text-[11px] font-medium bg-primary/10 border border-primary/30 text-primary px-2 py-1 rounded-full backdrop-blur-sm shadow-sm animate-pulse">
+                <span>Score ~ {provisionalScore}/10</span>
+              </div>
+            )}
             {messages.map(msg => (
               <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[80%] px-3 py-2 rounded-md shadow-sm whitespace-pre-wrap leading-snug ${
@@ -308,14 +318,103 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
           )}
 
           {evaluated && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button variant="secondary" onClick={handleReplay}><RotateCcw className="w-4 h-4 mr-1" />Replay</Button>
-              <Button onClick={handleComplete} disabled={finished}><Sparkles className="w-4 h-4 mr-1" />Finish & Save</Button>
-              <Button variant="outline" onClick={onBack} className="ml-auto">Back</Button>
-            </div>
+            <>
+              {evaluated.categories.Alignment !== 'good' && !alignmentTweaked && (
+                <div className="mt-6 border rounded-md p-4 bg-background/70 space-y-3">
+                  <div className="text-sm font-semibold flex items-center gap-2">⚔️ Mismatch Remix <span className="text-xs font-normal text-muted-foreground">(role ↔ task tuning)</span></div>
+                  <p className="text-xs text-muted-foreground leading-snug">Your role and task domains don’t strongly align. Choose a remix below or keep the creative clash. Each button instantly re-evaluates.</p>
+                  <RemixBar fields={fields} setFields={setFields} setEvaluated={setEvaluated} evaluated={evaluated} pushBot={pushBot} setAlignmentTweaked={setAlignmentTweaked} />
+                </div>
+              )}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button variant="secondary" onClick={handleReplay}><RotateCcw className="w-4 h-4 mr-1" />Replay</Button>
+                <Button onClick={handleComplete} disabled={finished}><Sparkles className="w-4 h-4 mr-1" />Finish & Save</Button>
+                <Button variant="outline" onClick={onBack} className="ml-auto">Back</Button>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+// --- Remix Component for Alignment Suggestions ---
+interface RemixBarProps { 
+  fields: CollectedFields; 
+  setFields: (f: CollectedFields | ((prev: CollectedFields)=>CollectedFields)) => void; 
+  setEvaluated: (e: EvaluationResult) => void; 
+  evaluated: EvaluationResult | null; 
+  pushBot: (m: string) => void;
+  setAlignmentTweaked: (v:boolean)=>void;
+}
+
+function detectTaskDomain(task: string) {
+  const t = task.toLowerCase();
+  if (/trip|itinerary|travel|destination/.test(t)) return 'travel';
+  if (/workout|training|fitness|exercise|program/.test(t)) return 'fitness';
+  if (/event|party|celebration|wedding|conference/.test(t)) return 'event';
+  return 'generic';
+}
+
+function domainRole(domain: string) {
+  switch(domain){
+    case 'travel': return 'experienced travel itinerary strategist';
+    case 'fitness': return 'certified strength & conditioning coach';
+    case 'event': return 'creative event experience planner';
+    default: return 'specialist consultant';
+  }
+}
+
+function augmentTaskForRole(role: string, task: string) {
+  if (/travel/.test(role) && !/itinerary|trip/.test(task.toLowerCase())) return task + ' with a structured day-by-day itinerary';
+  if (/coach|fitness/.test(role) && !/progress|phases?/.test(task.toLowerCase())) return task + ' with progressive phases and recovery guidance';
+  if (/event/.test(role) && !/schedule|run ?of ?show/.test(task.toLowerCase())) return task + ' including a run-of-show schedule';
+  return task;
+}
+
+function crossDomainPerspective(role: string, task: string) {
+  return `${task}. Leverage unique insights from the perspective of a ${role} to add unexpected value.`;
+}
+
+const RemixBar = ({ fields, setFields, setEvaluated, evaluated, pushBot, setAlignmentTweaked }: RemixBarProps) => {
+  if (!evaluated) return null;
+  const domain = detectTaskDomain(fields.task);
+  const alignedRole = domainRole(domain);
+  const roleAdjust = () => {
+    const newFields = { ...fields, role: alignedRole };
+    const res = evaluatePrompt(newFields);
+    setFields(newFields);
+    setEvaluated(res);
+    pushBot('🔧 Remixed role to match task domain.');
+    setAlignmentTweaked(true);
+  };
+  const taskAdjust = () => {
+    const newTask = augmentTaskForRole(fields.role, fields.task);
+    const newFields = { ...fields, task: newTask };
+    const res = evaluatePrompt(newFields);
+    setFields(newFields);
+    setEvaluated(res);
+    pushBot('🛠️ Enhanced task to leverage chosen role.');
+    setAlignmentTweaked(true);
+  };
+  const embraceMismatch = () => {
+    const newTask = crossDomainPerspective(fields.role, fields.task);
+    const newFields = { ...fields, task: newTask };
+    const res = evaluatePrompt(newFields);
+    setFields(newFields);
+    setEvaluated(res);
+    pushBot('🎭 Keeping mismatch but framing it as a creative perspective.');
+    setAlignmentTweaked(true);
+  };
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="outline" onClick={roleAdjust}>Align Role</Button>
+        <Button size="sm" variant="outline" onClick={taskAdjust}>Refine Task</Button>
+        <Button size="sm" variant="secondary" onClick={embraceMismatch}>Embrace Mismatch</Button>
+      </div>
+      <p className="text-[10px] text-muted-foreground">Pick one: replace role, enhance task, or keep mismatch with an explicit cross-domain angle.</p>
     </div>
   );
 };
