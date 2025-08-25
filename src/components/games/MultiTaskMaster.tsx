@@ -1,287 +1,222 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Layers, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowRight, RotateCcw, Sparkles } from "lucide-react";
 
-interface MultiTaskMasterProps {
-  onComplete: (score: number) => void;
-  onBack: () => void;
-  lesson: LearningExperience;
+interface MultiTaskMasterProps { onComplete: (score: number) => void; onBack: () => void; lesson: LearningExperience; }
+
+type ChatRole = 'bot' | 'user' | 'system';
+interface ChatMessage { id: string; role: ChatRole; content: string; meta?: string }
+
+interface CollectedFields {
+  role: string;
+  task: string;
+  constraints: string;
+  audience: string;
+  specifics: string;
+  format: string;
 }
 
-const promptComponents = [
-  { id: 1, text: "You are an experienced travel planner", category: "Role", required: true },
-  { id: 2, text: "Plan a 3-day weekend trip", category: "Main Task", required: true },
-  { id: 3, text: "Budget: $500 per person", category: "Constraint", required: true },
-  { id: 4, text: "For a couple who loves food and culture", category: "Audience", required: true },
-  { id: 5, text: "Within 2 hours of Chicago", category: "Location", required: true },
-  { id: 6, text: "Include restaurant recommendations", category: "Specific Request", required: true },
-  { id: 7, text: "Suggest 2-3 activities per day", category: "Format Detail", required: true },
-  { id: 8, text: "Provide backup indoor options for bad weather", category: "Contingency", required: false },
-  { id: 9, text: "Include estimated costs for each activity", category: "Detail Enhancement", required: false },
-  { id: 10, text: "Mention parking availability", category: "Practical Detail", required: false }
+const steps: { key: keyof CollectedFields; prompt: string; placeholder: string }[] = [
+  { key: 'role', prompt: 'First, who should the AI pretend to be? (Example: travel planner, fitness coach, event organizer).', placeholder: 'e.g. travel planner' },
+  { key: 'task', prompt: 'Great. Now, what’s the main job you want AI to do? (Example: plan a trip, make a workout, design a party).', placeholder: 'e.g. plan a 5-day Italy trip' },
+  { key: 'constraints', prompt: 'Good. Now give me any limits. (Example: budget, time, number of people).', placeholder: 'e.g. $1500 budget, 2 people, mid-May' },
+  { key: 'audience', prompt: 'Nice. Who is this for? (Example: a couple, a family, a group of friends).', placeholder: 'e.g. a couple in their 30s who love food' },
+  { key: 'specifics', prompt: 'Add something extra you want included. (Example: restaurant suggestions, indoor activities, backup plans).', placeholder: 'e.g. regional food stops + rainy day alternatives' },
+  { key: 'format', prompt: 'Last step! How should the answer be shaped? (Example: list, daily schedule, bullet points).', placeholder: 'e.g. day-by-day schedule with bullet lists' }
 ];
 
-const scenarios = [
-  {
-    id: 1,
-    title: "Weekend Trip Planner",
-    description: "Help a couple plan the perfect weekend getaway",
-    objective: "Create a comprehensive travel plan that covers all their needs",
-    minComponents: 7,
-    maxComponents: 10
-  }
-];
+const introLine = "Welcome to Multi-Task Master! I’ll help you build a powerful prompt step by step. At the end, we’ll test how good it is. Ready?";
+
+function assemblePrompt(f: CollectedFields) {
+  return `You are a ${f.role}. Your task is to ${f.task} for ${f.audience}. The budget/limits are ${f.constraints}. Please include ${f.specifics}. Format the answer as ${f.format}.`;
+}
+
+interface EvaluationResult {
+  score: number; // 0-10
+  bullets: string[]; // feedback lines with emojis
+  proVersion: string; // improved prompt
+}
+
+function evaluatePrompt(fields: CollectedFields): EvaluationResult {
+  let score = 0;
+  const bullets: string[] = [];
+
+  // Clarity: each field present
+  (Object.entries(fields) as [keyof CollectedFields, string][]).forEach(([k, v]) => {
+    if (v.trim().length > 0) score += 1; // up to 6 points
+  });
+
+  // Detail heuristics
+  const hasNumber = /\d/.test(fields.constraints + fields.specifics + fields.task);
+  if (hasNumber) { score += 1; bullets.push('Detail: includes numeric specifics ✅'); } else bullets.push('Detail: consider adding numbers (days, counts, budget) ❌');
+
+  const hasFormatKeyword = /(list|bullet|schedule|table|sections?|outline|steps?)/i.test(fields.format);
+  if (hasFormatKeyword) { score += 1; bullets.push('Format clarity ✅'); } else bullets.push('Format could be clearer (add list / schedule) ❌');
+
+  const hasAudienceDescriptor = /(family|couple|team|students?|friends?|beginner|advanced)/i.test(fields.audience);
+  if (hasAudienceDescriptor) { score += 1; bullets.push('Audience described ✅'); } else bullets.push('Audience lacks descriptive detail ❌');
+
+  score = Math.min(10, score); // cap
+
+  // Baseline bullets for required pieces
+  if (fields.role.trim()) bullets.unshift('Clear role chosen ✅'); else bullets.unshift('Role missing ❌');
+  if (fields.task.trim()) bullets.unshift('Main task stated ✅'); else bullets.unshift('Main task unclear ❌');
+  if (fields.constraints.trim().split(/\s+/).length < 3) bullets.push('Constraint missing detail ❌ (add time, budget, or quantity)'); else bullets.push('Constraints reasonably specific ✅');
+  if (fields.format.trim()) bullets.push('Format specified ✅');
+
+  // Pro version rewrite: add instructive polish
+  const pro = assemblePrompt({
+    ...fields,
+    task: enrich(fields.task, 'Provide a structured, outcome-focused solution'),
+    specifics: ensureVerb(fields.specifics),
+    format: fields.format.match(/schedule|day/i) ? fields.format + ' Include concise daily headings.' : fields.format + ' Include clear section headings.'
+  }) + ' Ensure concise, actionable language and include estimate ranges where helpful.';
+
+  return { score, bullets, proVersion: pro };
+}
+
+function enrich(text: string, addon: string) {
+  return /provide|create|design|plan/i.test(text) ? text : addon + ': ' + text;
+}
+function ensureVerb(text: string) {
+  return /include|add|provide|incorporate/i.test(text) ? text : 'Include ' + text;
+}
 
 export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterProps) => {
-  const [selectedComponents, setSelectedComponents] = useState<number[]>([]);
-  const [gameComplete, setGameComplete] = useState(false);
-  const [score, setScore] = useState(0);
-  const [showResults, setShowResults] = useState(false);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentStep, setCurrentStep] = useState<number | null>(null); // null until user confirms ready
+  const [input, setInput] = useState("");
+  const [fields, setFields] = useState<CollectedFields>({ role: '', task: '', constraints: '', audience: '', specifics: '', format: '' });
+  const [evaluated, setEvaluated] = useState<EvaluationResult | null>(null);
+  const [finished, setFinished] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const scenario = scenarios[0];
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages, evaluated]);
 
-  const handleComponentToggle = (componentId: number) => {
-    if (showResults) return;
-    
-    if (selectedComponents.includes(componentId)) {
-      setSelectedComponents(selectedComponents.filter(id => id !== componentId));
-    } else {
-      setSelectedComponents([...selectedComponents, componentId]);
-    }
-  };
+  // Initialize intro
+  useEffect(() => {
+    setMessages([{ id: crypto.randomUUID(), role: 'bot', content: introLine }]);
+  }, []);
 
-  const handleSubmit = () => {
-    if (selectedComponents.length < scenario.minComponents) {
-      toast(`You need at least ${scenario.minComponents} components for a complete prompt!`);
+  const advance = () => {
+    if (currentStep === null) { // start collection
+      setCurrentStep(0);
+      pushBot(steps[0].prompt);
       return;
     }
+    // all steps done -> build + evaluate
+    if (currentStep >= steps.length) return;
+  };
 
-    // Calculate score based on required components included
-    const requiredComponents = promptComponents.filter(c => c.required);
-    const selectedRequired = selectedComponents.filter(id => 
-      requiredComponents.some(c => c.id === id)
-    );
-    
-    const optionalComponents = promptComponents.filter(c => !c.required);
-    const selectedOptional = selectedComponents.filter(id => 
-      optionalComponents.some(c => c.id === id)
-    );
+  const pushBot = (content: string) => setMessages(m => [...m, { id: crypto.randomUUID(), role: 'bot', content }]);
+  const pushUser = (content: string) => setMessages(m => [...m, { id: crypto.randomUUID(), role: 'user', content }]);
 
-    let totalScore = 0;
-    
-    // Required components: 10 points each
-    totalScore += selectedRequired.length * 10;
-    
-    // Optional components: 5 points each
-    totalScore += selectedOptional.length * 5;
-    
-    // Bonus for comprehensive prompt (8+ components)
-    if (selectedComponents.length >= 8) {
-      totalScore += 15;
-    }
-
-    setScore(totalScore);
-    setShowResults(true);
-
-    if (selectedRequired.length === requiredComponents.length) {
-      toast("Excellent! You've created a comprehensive multi-task prompt! 🎉");
-      setTimeout(() => {
-        setGameComplete(true);
-        onComplete(totalScore);
-      }, 3000);
+  const handleSubmitInput = () => {
+    if (input.trim() === '' || currentStep === null) return;
+    const step = steps[currentStep];
+    pushUser(input.trim());
+    setFields(f => ({ ...f, [step.key]: input.trim() }));
+    setInput('');
+    const next = currentStep + 1;
+    if (next < steps.length) {
+      setCurrentStep(next);
+      setTimeout(() => pushBot(steps[next].prompt), 300);
     } else {
-      toast(`Good effort! You included ${selectedRequired.length}/${requiredComponents.length} essential components.`);
+      // build assembled prompt
+      setCurrentStep(next); // mark complete
+      const assembled = assemblePrompt({ ...fields, [step.key]: input.trim() });
       setTimeout(() => {
-        setGameComplete(true);
-        onComplete(totalScore);
-      }, 3000);
+        pushBot('Great! Here is the prompt you built:');
+        pushBot('"' + assembled + '"');
+        pushBot('Now let’s test it! I’ll score it for clarity, detail, and effectiveness.');
+        const result = evaluatePrompt({ ...fields, [step.key]: input.trim() });
+        setEvaluated(result);
+        pushBot(`✅ Score: ${result.score}/10`);
+        result.bullets.forEach(b => pushBot('📌 ' + b));
+        pushBot('Pro Version: "' + result.proVersion + '"');
+        pushBot('Want to try another challenge? Next: plan a surprise birthday party!');
+      }, 400);
     }
   };
 
-  const handleReset = () => {
-    setSelectedComponents([]);
-    setShowResults(false);
-    setScore(0);
+  const handleReplay = () => {
+    setFields({ role: '', task: '', constraints: '', audience: '', specifics: '', format: '' });
+    setMessages([
+      { id: crypto.randomUUID(), role: 'bot', content: 'New mission! Build a prompt for: plan a surprise birthday party. Ready?' }
+    ]);
+    setEvaluated(null);
+    setCurrentStep(null);
+    setFinished(false);
   };
 
-  if (gameComplete) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card className="max-w-md text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl">🧠 Multi-Task Master Complete!</CardTitle>
-            <CardDescription>Score: {score}/85 points</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">You've mastered complex prompt engineering!</p>
-            <Button onClick={onBack}>Continue Learning</Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const requiredComponents = promptComponents.filter(c => c.required);
-  const optionalComponents = promptComponents.filter(c => !c.required);
-  const selectedRequired = selectedComponents.filter(id => 
-    requiredComponents.some(c => c.id === id)
-  );
+  const handleComplete = () => {
+    if (evaluated && !finished) {
+      setFinished(true);
+      onComplete(evaluated.score * 10); // scale to 100
+    }
+  };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Layers className="w-6 h-6 text-primary" />
-          Multi-Task Master
-        </h2>
-        <p className="text-muted-foreground">Build a comprehensive prompt with multiple requirements</p>
-        <div className="text-sm text-muted-foreground">
-          Score: {score}/85 | Required: {selectedRequired.length}/{requiredComponents.length}
-        </div>
-      </div>
-
+    <div className="max-w-3xl mx-auto space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">🎯 Challenge: {scenario.title}</CardTitle>
-          <CardDescription>{scenario.description}</CardDescription>
+          <CardTitle className="text-xl font-bold">🧠 Multi-Task Master (Chatbot Edition)</CardTitle>
+          <CardDescription>Practice building multi-part prompts like a real conversation.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="p-4 bg-accent/50 rounded-lg mb-6">
-            <p className="font-medium">{scenario.objective}</p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Select {scenario.minComponents}-{scenario.maxComponents} components to build your prompt
-            </p>
-          </div>
-
-          {/* Required Components */}
-          <div className="mb-6">
-            <h4 className="font-medium mb-3 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-red-500" />
-              Essential Components (Required)
-            </h4>
-            <div className="grid gap-3 md:grid-cols-2">
-              {requiredComponents.map((component) => (
-                <div
-                  key={component.id}
-                  className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                    selectedComponents.includes(component.id)
-                      ? 'border-primary bg-primary/10'
-                      : 'border-red-300 hover:border-red-500'
-                  } ${
-                    showResults && selectedComponents.includes(component.id)
-                      ? 'border-green-500 bg-green-50'
-                      : showResults && !selectedComponents.includes(component.id)
-                        ? 'border-red-500 bg-red-50'
-                        : ''
-                  }`}
-                  onClick={() => handleComponentToggle(component.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0">
-                      {showResults ? (
-                        selectedComponents.includes(component.id) ? (
-                          <CheckCircle className="w-5 h-5 text-green-600" />
-                        ) : (
-                          <AlertCircle className="w-5 h-5 text-red-600" />
-                        )
-                      ) : (
-                        <div className={`w-5 h-5 rounded border-2 ${
-                          selectedComponents.includes(component.id)
-                            ? 'bg-primary border-primary'
-                            : 'border-red-400'
-                        }`} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs text-red-600 font-medium mb-1">{component.category}</div>
-                      <div className="text-sm">{component.text}</div>
-                    </div>
-                  </div>
+          <div className="h-[460px] overflow-y-auto border rounded-md p-4 bg-muted/30 space-y-4 text-sm">
+            {messages.map(msg => (
+              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-3 py-2 rounded-md shadow-sm whitespace-pre-wrap leading-snug ${
+                  msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-background border'
+                }`}>
+                  {msg.content}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Optional Components */}
-          <div className="mb-6">
-            <h4 className="font-medium mb-3 flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 text-blue-500" />
-              Enhancement Components (Optional)
-            </h4>
-            <div className="grid gap-3 md:grid-cols-2">
-              {optionalComponents.map((component) => (
-                <div
-                  key={component.id}
-                  className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
-                    selectedComponents.includes(component.id)
-                      ? 'border-primary bg-primary/10'
-                      : 'border-blue-300 hover:border-blue-500'
-                  } ${
-                    showResults && selectedComponents.includes(component.id)
-                      ? 'border-green-500 bg-green-50'
-                      : ''
-                  }`}
-                  onClick={() => handleComponentToggle(component.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0">
-                      {showResults && selectedComponents.includes(component.id) ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      ) : (
-                        <div className={`w-5 h-5 rounded border-2 ${
-                          selectedComponents.includes(component.id)
-                            ? 'bg-primary border-primary'
-                            : 'border-blue-400'
-                        }`} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-xs text-blue-600 font-medium mb-1">{component.category}</div>
-                      <div className="text-sm">{component.text}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {showResults && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
-              <h4 className="font-medium text-blue-900 mb-2">📊 Your Prompt Analysis:</h4>
-              <div className="text-sm text-blue-800 space-y-1">
-                <div>✅ Required components: {selectedRequired.length}/{requiredComponents.length}</div>
-                <div>🎯 Optional enhancements: {selectedComponents.filter(id => 
-                  optionalComponents.some(c => c.id === id)
-                ).length}/{optionalComponents.length}</div>
-                <div>📝 Total components: {selectedComponents.length}</div>
-                {selectedComponents.length >= 8 && (
-                  <div className="text-green-700 font-medium">🏆 Bonus: Comprehensive prompt!</div>
-                )}
               </div>
+            ))}
+            {currentStep === null && !evaluated && (
+              <div className="text-center text-xs text-muted-foreground">Click Start to begin.</div>
+            )}
+            {evaluated && (
+              <div className="text-center mt-4">
+                <div className="text-sm font-medium">Session Score: {evaluated.score}/10</div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input Area */}
+          {!evaluated && (
+            <div className="mt-4 flex gap-2">
+              {currentStep === null ? (
+                <Button className="flex-1" onClick={advance}>Start <ArrowRight className="w-4 h-4 ml-1" /></Button>
+              ) : (
+                <>
+                  <input
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') handleSubmitInput(); }}
+                    placeholder={steps[currentStep]?.placeholder || ''}
+                    className="flex-1 px-3 py-2 rounded border bg-background"
+                    disabled={currentStep >= steps.length}
+                  />
+                  <Button onClick={handleSubmitInput} disabled={input.trim()==='' || currentStep >= steps.length}>
+                    Send
+                  </Button>
+                </>
+              )}
             </div>
           )}
 
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={onBack} className="flex-1">
-              Back to Lessons
-            </Button>
-            {showResults ? (
-              <Button onClick={handleReset} className="flex-1">
-                Try Again
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleSubmit} 
-                disabled={selectedComponents.length < scenario.minComponents}
-                className="flex-1"
-              >
-                Analyze My Prompt
-              </Button>
-            )}
-          </div>
+          {evaluated && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button variant="secondary" onClick={handleReplay}><RotateCcw className="w-4 h-4 mr-1" />Replay</Button>
+              <Button onClick={handleComplete} disabled={finished}><Sparkles className="w-4 h-4 mr-1" />Finish & Save</Button>
+              <Button variant="outline" onClick={onBack} className="ml-auto">Back</Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
