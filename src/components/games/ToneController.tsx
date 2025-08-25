@@ -22,7 +22,12 @@ const scenarios: SimpleScenario[] = [
     id: 1,
     roundTitle: "Asking Your Boss for Time Off",
     situation: "You need Friday off during a busy week.",
-    tones: ["Polite & Respectful", "Pushy & Demanding", "Super Casual"],
+    tones: [
+      "Polite & Respectful", // correct
+      "Over‑Apologetic & Hesitant",
+      "Super Casual & Loose",
+      "Direct & Blunt"
+    ],
     correctIndex: 0,
     good: "I know this week is busy, but may I take Friday off? I’ll finish my work early.",
     bad: "Yo boss 😎 I’m out Friday, deal with it.",
@@ -32,7 +37,12 @@ const scenarios: SimpleScenario[] = [
     id: 2,
     roundTitle: "Texting a Friend to Hang Out",
     situation: "You want to ask your friend to hang out Saturday.",
-    tones: ["Fun & Friendly", "Formal & Serious", "Bossy"],
+    tones: [
+      "Fun & Friendly", // correct
+      "Formal & Serious",
+      "Bossy",
+      "Over‑Energetic & Clingy"
+    ],
     correctIndex: 0,
     good: "Hey! Want to hang out Saturday? We could watch a movie.",
     bad: "You must come over Saturday at 2:00. Don’t be late.",
@@ -42,7 +52,12 @@ const scenarios: SimpleScenario[] = [
     id: 3,
     roundTitle: "Talking to a Teacher About Homework",
     situation: "You need more time to finish homework.",
-    tones: ["Polite & Honest", "Excuses & Whiny", "Rude"],
+    tones: [
+      "Polite & Honest", // correct
+      "Excuses & Whiny",
+      "Rude",
+      "Polite but Vague"
+    ],
     correctIndex: 0,
     good: "I’ve been working on the assignment, but I need one more day to finish. Could I have an extension?",
     bad: "Ugh, your homework is way too hard. I’m not doing it.",
@@ -52,7 +67,12 @@ const scenarios: SimpleScenario[] = [
     id: 4,
     roundTitle: "Replying to an Upset Customer",
     situation: "Someone is mad about their late food delivery.",
-    tones: ["Calm & Helpful", "Angry Back", "Joking"],
+    tones: [
+      "Calm & Helpful", // correct
+      "Angry Back",
+      "Joking",
+      "Over‑Apologetic & Dramatic"
+    ],
     correctIndex: 0,
     good: "I’m sorry your food was late. I’ll talk to the driver and make sure it doesn’t happen again.",
     bad: "It’s not my fault. Chill out, dude.",
@@ -62,7 +82,12 @@ const scenarios: SimpleScenario[] = [
     id: 5,
     roundTitle: "Thanking Your Coach",
     situation: "Your coach helped you train for a big game.",
-    tones: ["Warm & Thankful", "Short & Cold", "Silly & Random"],
+    tones: [
+      "Warm & Thankful", // correct
+      "Short & Cold",
+      "Silly & Random",
+      "Formal & Stiff"
+    ],
     correctIndex: 0,
     good: "Thank you for all your help, Coach. I really appreciate your support!",
     bad: "K thx lol.",
@@ -164,13 +189,13 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
             {revealed && (
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-lg bg-green-50 dark:bg-green-900/20">
-                    <div className="font-semibold mb-2">✅ Good</div>
-                    <p className="text-sm leading-snug">“{scenario.good}”</p>
+                  <div className="p-4 border border-green-600/50 rounded-lg bg-green-200/60 dark:bg-green-900/60">
+                    <div className="font-semibold mb-2 text-green-900 dark:text-green-200">✅ Good</div>
+                    <p className="text-sm leading-snug text-green-950 dark:text-green-100">“{scenario.good}”</p>
                   </div>
-                  <div className="p-4 border rounded-lg bg-red-50 dark:bg-red-900/20">
-                    <div className="font-semibold mb-2">❌ Bad</div>
-                    <p className="text-sm leading-snug">“{scenario.bad}”</p>
+                  <div className="p-4 border border-red-600/50 rounded-lg bg-red-200/60 dark:bg-red-900/60">
+                    <div className="font-semibold mb-2 text-red-900 dark:text-red-200">❌ Bad</div>
+                    <p className="text-sm leading-snug text-red-950 dark:text-red-100">“{scenario.bad}”</p>
                   </div>
                 </div>
                 <div className="p-4 border rounded-lg bg-muted/40">
