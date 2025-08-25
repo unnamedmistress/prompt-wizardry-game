@@ -3,7 +3,7 @@ import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Volume2, Check, X } from "lucide-react";
+import { Wand2, Repeat, FileText, MessageSquare, CheckCircle2, Brain, Sparkles, ArrowRight } from "lucide-react";
 
 interface ToneControllerProps {
   onComplete: (score: number) => void;
@@ -11,138 +11,180 @@ interface ToneControllerProps {
   lesson: LearningExperience;
 }
 
-const scenarios = [
+interface WorkshopScenario {
+  id: number;
+  situation: string;
+  audience: string;
+  objective: string;
+  recommendedDirections: string[]; // quick pick tone directives
+  guidance: string; // hint why tone matters here
+}
+
+const scenarios: WorkshopScenario[] = [
   {
     id: 1,
     situation: "You need to ask your boss for time off during a busy period at work.",
-    prompt: "Write a request for time off during peak season",
-    toneOptions: [
-      {
-        tone: "Understanding & Strategic",
-        description: "Shows awareness of timing while making a reasonable case",
-        isCorrect: true,
-        example: "Acknowledges the busy period but explains the necessity and offers solutions"
-      },
-      {
-        tone: "Demanding & Urgent", 
-        description: "Too aggressive for this delicate situation",
-        isCorrect: false,
-        example: "Might create conflict during an already stressful time"
-      },
-      {
-        tone: "Apologetic & Uncertain",
-        description: "Shows lack of confidence in a legitimate request",
-        isCorrect: false,
-        example: "Makes the request seem less valid than it might be"
-      }
-    ]
+    audience: "Manager (stressed, balancing workload)",
+    objective: "Request a specific day off without causing friction",
+    recommendedDirections: ["Professional but understanding", "Respectful and solution-focused", "Polite and proactive"],
+    guidance: "Show awareness of timing + offer mitigation (covering tasks, early handoff)."
   },
   {
     id: 2,
-    situation: "A client complains that your team's work doesn't match their vision. Write a response email.",
-    prompt: "Respond to a client who is unhappy with delivered work",
-    toneOptions: [
-      {
-        tone: "Solution-Focused & Professional",
-        description: "Takes ownership while steering toward resolution",
-        isCorrect: true,
-        example: "Acknowledges the gap and presents clear next steps"
-      },
-      {
-        tone: "Defensive & Technical",
-        description: "Explains why you're right instead of solving the problem",
-        isCorrect: false,
-        example: "Focuses on justification rather than client satisfaction"
-      },
-      {
-        tone: "Overly Apologetic",
-        description: "Takes too much blame without showing competence",
-        isCorrect: false,
-        example: "Undermines confidence in your team's abilities"
-      }
-    ]
+    situation: "You want to text a coworker to swap shifts this weekend.",
+    audience: "Peer teammate",
+    objective: "Get a shift trade while sounding considerate",
+    recommendedDirections: ["Casual but clear", "Friendly and concise", "Polite and appreciative"],
+    guidance: "Keep it human and low-pressure; clarity + respect = better response."
   },
   {
     id: 3,
-    situation: "Write a LinkedIn post about your team winning an industry award.",
-    prompt: "Announce a professional achievement on social media",
-    toneOptions: [
-      {
-        tone: "Grateful & Team-Focused",
-        description: "Celebrates success while crediting others appropriately",
-        isCorrect: true,
-        example: "Shares the win while highlighting team contributions"
-      },
-      {
-        tone: "Excited & Personal",
-        description: "Too casual and self-centered for professional context",
-        isCorrect: false,
-        example: "Makes it about you rather than the achievement or team"
-      },
-      {
-        tone: "Humble & Understated",
-        description: "Doesn't capitalize on the networking opportunity",
-        isCorrect: false,
-        example: "Wastes the chance to showcase expertise and build connections"
-      }
-    ]
+    situation: "You need to reply to an angry customer email about a delayed order.",
+    audience: "Frustrated customer",
+    objective: "Defuse tension + rebuild trust",
+    recommendedDirections: ["Calm and apologetic", "Empathetic but confident", "Reassuring and solution-focused"],
+    guidance: "Validation + ownership + next steps beats defensive explanations."
+  },
+  {
+    id: 4,
+    situation: "You are writing a resignation note to HR and your manager.",
+    audience: "HR / Manager",
+    objective: "Leave on good terms + maintain bridges",
+    recommendedDirections: ["Positive and formal", "Grateful and professional", "Warm but polished"],
+    guidance: "Tone shapes future references; optimistic closure signals professionalism."
+  },
+  {
+    id: 5,
+    situation: "You want to send a thank‑you note to a mentor who helped your growth.",
+    audience: "Mentor",
+    objective: "Express genuine appreciation and impact",
+    recommendedDirections: ["Warm and appreciative", "Sincere and specific", "Grateful and reflective"],
+    guidance: "Specific impact + authentic warmth > generic thanks."
   }
 ];
 
+interface GeneratedSample { id: string; directive: string; text: string; baseline?: boolean }
+
 export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerProps) => {
   const [currentScenario, setCurrentScenario] = useState(0);
-  const [selectedTone, setSelectedTone] = useState<number | null>(null);
+  const [toneInput, setToneInput] = useState("");
+  const [samples, setSamples] = useState<Record<number, GeneratedSample[]>>({});
+  const [reflections, setReflections] = useState<Record<number, { fits?: string; risk?: string; redirect?: string }>>({});
   const [score, setScore] = useState(0);
-  const [showExplanation, setShowExplanation] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
 
   const scenario = scenarios[currentScenario];
+  const scenarioSamples = samples[scenario.id] || [];
+  const scenarioReflection = reflections[scenario.id] || {};
 
-  const handleToneSelect = (toneIndex: number) => {
-    if (showExplanation) return;
-    setSelectedTone(toneIndex);
+  const ensureBaseline = () => {
+    if (scenarioSamples.some(s => s.baseline)) return;
+    const baseline: GeneratedSample = {
+      id: crypto.randomUUID(),
+      directive: "(no tone specified)",
+      baseline: true,
+      text: genericGenerate(scenario, "")
+    };
+    setSamples(prev => ({ ...prev, [scenario.id]: [baseline, ...(prev[scenario.id] || [])] }));
   };
 
-  const handleSubmit = () => {
-    if (selectedTone === null) {
-      toast("Please select a tone!");
+  const genericGenerate = (sc: WorkshopScenario, directive: string) => {
+    // Lightweight template-based generation (placeholder for real model)
+    const base = sc.situation.replace(/You /i, "I ");
+    const toneBits = directive.toLowerCase();
+    let style = "";
+    if (!directive) {
+      style = `Hi, I wanted to address this: ${base}. Let me know.`;
+    } else {
+      if (toneBits.includes("professional") || toneBits.includes("formal")) style += "Maintaining a professional, clear tone. ";
+      if (toneBits.includes("warm") || toneBits.includes("appreciative") || toneBits.includes("grateful")) style += "Expressing genuine appreciation. ";
+      if (toneBits.includes("calm") || toneBits.includes("de-escal")) style += "Keeping language calm and steady. ";
+      if (toneBits.includes("apologetic")) style += "Offering concise apology up front. ";
+      if (toneBits.includes("casual")) style += "Light, conversational phrasing. ";
+      if (toneBits.includes("confident")) style += "Assertive yet respectful framing. ";
+      if (toneBits.includes("solution") || toneBits.includes("proactive")) style += "Proposing next steps proactively. ";
+      style += "";
+      style = style.trim();
+    }
+    const body = (() => {
+      if (scenario.id === 1) {
+        return directive ? `I know this period is busy; ${directive} — I'd like Friday off and have already arranged coverage for my open tasks to keep momentum.` : `I need Friday off. Let me know.`;
+      }
+      if (scenario.id === 2) {
+        return directive ? `Could you swap shifts with me this Saturday? ${directive}. I can cover one of yours next week.` : `Can you swap my shift?`;
+      }
+      if (scenario.id === 3) {
+        return directive ? `I’m sorry about the delay. ${directive}. I've expedited the replacement and will update you by 5PM.` : `Delay happened. We are working on it.`;
+      }
+      if (scenario.id === 4) {
+        return directive ? `I'm submitting my resignation effective two weeks from today. ${directive}. I'm grateful for the growth and will document handoffs.` : `I'm resigning. Two weeks.`;
+      }
+      return directive ? `Thank you for your guidance this year. ${directive}. Your feedback changed how I approach challenges.` : `Thanks for the help.`;
+    })();
+    return directive ? `${body} (${style})` : body;
+  };
+
+  const handleGenerate = () => {
+    if (!toneInput.trim()) {
+      toast("Enter a tone directive first or use suggestions.");
       return;
     }
+    ensureBaseline();
+    const newSample: GeneratedSample = {
+      id: crypto.randomUUID(),
+      directive: toneInput.trim(),
+      text: genericGenerate(scenario, toneInput.trim())
+    };
+    setSamples(prev => ({ ...prev, [scenario.id]: [...(prev[scenario.id] || []), newSample] }));
+    setToneInput("");
+  };
 
-    const selectedOption = scenario.toneOptions[selectedTone];
-    if (selectedOption.isCorrect) {
-      setScore(score + 35);
-      toast("Perfect tone choice! 🎯");
-    } else {
-      toast("Not quite right. Let's see why!");
-    }
-    
-    setShowExplanation(true);
+  const handleQuickPick = (dir: string) => {
+    setToneInput(dir);
+  };
+
+  const updateReflection = (field: keyof typeof scenarioReflection, value: string) => {
+    setReflections(prev => ({ ...prev, [scenario.id]: { ...prev[scenario.id], [field]: value } }));
+  };
+
+  const scenarioComplete = () => {
+    const hasBaseline = scenarioSamples.some(s => s.baseline);
+    const customCount = scenarioSamples.filter(s => !s.baseline).length;
+    const reflectionDone = !!scenarioReflection.fits;
+    return hasBaseline && customCount >= 1 && reflectionDone;
   };
 
   const handleNext = () => {
+    // scoring: 20 base + 5 each extra custom (beyond first) up to 30 total per scenario
+    const customCount = scenarioSamples.filter(s => !s.baseline).length;
+    const earned = 20 + Math.min(Math.max(customCount - 1, 0) * 5, 10); // max 30
+    setScore(prev => prev + earned);
     if (currentScenario < scenarios.length - 1) {
       setCurrentScenario(currentScenario + 1);
-      setSelectedTone(null);
-      setShowExplanation(false);
     } else {
       setGameComplete(true);
-      onComplete(score);
+      onComplete(score + earned);
     }
   };
 
+  // Initialize baseline when scenario first opens for exploration
+  if (!samples[scenario.id]) {
+    // Lazy baseline creation deferred until user acts; we can auto-create here for guidance
+  }
+
   if (gameComplete) {
+    const maxPotential = scenarios.length * 30;
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Card className="max-w-md text-center">
           <CardHeader>
-            <CardTitle className="text-2xl">🎵 Tone Master Complete!</CardTitle>
-            <CardDescription>Final Score: {score}/105 points</CardDescription>
+            <CardTitle className="text-2xl">🎵 Tone Workshop Complete!</CardTitle>
+            <CardDescription>Final Score: {score} / {maxPotential} points</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="mb-4">You've mastered the art of tone control!</p>
-            <Button onClick={onBack}>Continue Learning</Button>
-          </CardContent>
+            <CardContent>
+              <p className="mb-4">You explored how directive wording reshapes AI tone and intent.</p>
+              <Button onClick={onBack}>Continue Learning</Button>
+            </CardContent>
         </Card>
       </div>
     );
@@ -152,16 +194,16 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
     <div className="max-w-4xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">🎵 Tone Controller</CardTitle>
-          <CardDescription className="text-lg font-semibold text-foreground mb-3">Communication Mastery</CardDescription>
+      <CardTitle className="text-2xl font-bold">🎵 Tone & Style Workshop</CardTitle>
+      <CardDescription className="text-lg font-semibold text-foreground mb-3">Communication Mastery</CardDescription>
           <div className="space-y-4 text-sm text-muted-foreground">
             <p>
-              The same message can sound friendly, bossy, or professional depending on the tone you choose. Getting tone right makes all the difference.
+        Instead of guessing, practice steering AI with explicit tone directives. Compare a generic output vs. intentional variants and reflect on fitness.
             </p>
             
             <div>
               <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-              <p>Pick the perfect tone for tricky workplace situations where the wrong choice could backfire.</p>
+        <p>Guide AI tone across changing audiences and goals. Generate, compare, refine, and reflect.</p>
             </div>
 
             <div>
@@ -185,88 +227,112 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
             <div className="p-4 bg-muted rounded-lg border-l-4 border-primary">
               <h4 className="font-medium text-foreground mb-2">🎭 Situation</h4>
               <p className="text-lg font-medium text-foreground">{scenario.situation}</p>
+              <div className="mt-2 text-xs flex flex-wrap gap-4 text-muted-foreground">
+                <span><strong>Audience:</strong> {scenario.audience}</span>
+                <span><strong>Objective:</strong> {scenario.objective}</span>
+              </div>
+              <div className="mt-2 text-xs text-primary/80">
+                Hint: {scenario.guidance}
+              </div>
             </div>
-            
-            <h4 className="font-medium text-foreground mb-4">What tone should the AI use?</h4>
-            
-            <div className="space-y-3">
-              {scenario.toneOptions.map((option, index) => (
-                <div
-                  key={index}
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                    selectedTone === index
-                      ? 'border-primary bg-primary/10'
-                      : 'border-muted hover:border-primary/50'
-                  } ${
-                    showExplanation
-                      ? option.isCorrect
-                        ? 'border-green-500 bg-green-50 text-green-900'
-                        : selectedTone === index && !option.isCorrect
-                          ? 'border-red-500 bg-red-50 text-red-900'
-                          : 'opacity-60'
-                      : 'text-foreground'
-                  }`}
-                  onClick={() => handleToneSelect(index)}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-1">
-                      {showExplanation ? (
-                        option.isCorrect ? (
-                          <Check className="w-5 h-5 text-green-600" />
-                        ) : selectedTone === index ? (
-                          <X className="w-5 h-5 text-red-600" />
-                        ) : (
-                          <div className="w-5 h-5" />
-                        )
-                      ) : (
-                        <div className={`w-5 h-5 rounded-full border-2 ${
-                          selectedTone === index
-                            ? 'bg-primary border-primary'
-                            : 'border-muted-foreground'
-                        }`} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium mb-2">{option.tone}</div>
-                      <div className="text-sm text-muted-foreground">{option.description}</div>
-                      {showExplanation && (
-                        <div className="text-xs text-muted-foreground mt-2 italic">
-                          {option.example}
+            <div className="space-y-5">
+              <div className="p-4 border rounded-lg bg-muted/40">
+                <h4 className="font-semibold mb-2 flex items-center gap-2"><FileText className="w-4 h-4" /> 1. Baseline (No Tone Instruction)</h4>
+                <p className="text-sm text-muted-foreground mb-3">See what happens when you give AI minimal direction. Generate a baseline first.</p>
+                <Button size="sm" variant="outline" onClick={ensureBaseline} disabled={scenarioSamples.some(s => s.baseline)}>
+                  Generate Baseline
+                </Button>
+              </div>
+
+              <div className="p-4 border rounded-lg bg-muted/40 space-y-3">
+                <h4 className="font-semibold flex items-center gap-2"><Wand2 className="w-4 h-4" /> 2. Add Tone Direction</h4>
+                <div className="flex flex-wrap gap-2">
+                  {scenario.recommendedDirections.map(d => (
+                    <Button key={d} size="sm" variant="secondary" onClick={() => handleQuickPick(d)}>{d}</Button>
+                  ))}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <input
+                    value={toneInput}
+                    onChange={e => setToneInput(e.target.value)}
+                    placeholder="e.g. Professional but understanding, concise and calm"
+                    className="flex-1 px-3 py-2 rounded border bg-background text-sm"
+                  />
+                  <Button onClick={handleGenerate} disabled={!toneInput.trim()}><Sparkles className="w-4 h-4 mr-1" />Generate</Button>
+                </div>
+                <p className="text-xs text-muted-foreground">Tip: Combine 2–3 descriptors (tone + attitude + style). Avoid single vague words like "nice".</p>
+              </div>
+
+              {scenarioSamples.length > 0 && (
+                <div className="p-4 border rounded-lg bg-muted/30">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2"><Repeat className="w-4 h-4" /> 3. Compare Variants</h4>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {scenarioSamples.map(sample => (
+                      <div key={sample.id} className={`p-3 rounded border text-sm bg-background/70 ${sample.baseline ? 'border-dashed' : 'border-primary/40'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`text-xs px-2 py-0.5 rounded ${sample.baseline ? 'bg-muted' : 'bg-primary/10 text-primary'} font-medium`}>{sample.directive}</span>
+                          {!sample.baseline && <span className="text-[10px] text-muted-foreground">Custom</span>}
                         </div>
-                      )}
+                        <p className="leading-snug whitespace-pre-wrap">{sample.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-3">Notice shifts in confidence, empathy, directness, and specificity.</p>
+                </div>
+              )}
+
+              {scenarioSamples.filter(s => !s.baseline).length > 0 && (
+                <div className="p-4 border rounded-lg bg-muted/40 space-y-4">
+                  <h4 className="font-semibold flex items-center gap-2"><Brain className="w-4 h-4" /> 4. Reflection</h4>
+                  <div className="grid md:grid-cols-3 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <label className="font-medium text-foreground text-xs uppercase tracking-wide">Fit?</label>
+                      <div className="flex gap-2">
+                        <Button type="button" size="sm" variant={scenarioReflection.fits === 'yes' ? 'default' : 'secondary'} onClick={() => updateReflection('fits','yes')}>Yes</Button>
+                        <Button type="button" size="sm" variant={scenarioReflection.fits === 'no' ? 'default' : 'secondary'} onClick={() => updateReflection('fits','no')}>No</Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="font-medium text-xs uppercase tracking-wide">What risk or mismatch could this cause?</label>
+                      <input
+                        className="w-full px-3 py-2 rounded border bg-background text-xs"
+                        placeholder="e.g. Might sound too casual during crunch week"
+                        value={scenarioReflection.risk || ''}
+                        onChange={e => updateReflection('risk', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-3">
+                      <label className="font-medium text-xs uppercase tracking-wide">How would you redirect AI if off-tone?</label>
+                      <input
+                        className="w-full px-3 py-2 rounded border bg-background text-xs"
+                        placeholder="e.g. Make it more concise and reduce apologetic language"
+                        value={scenarioReflection.redirect || ''}
+                        onChange={e => updateReflection('redirect', e.target.value)}
+                      />
                     </div>
                   </div>
+                  <p className="text-xs text-muted-foreground">Reflection locks in skill: naming risks = faster iteration next time.</p>
                 </div>
-              ))}
-            </div>
+              )}
 
-            {showExplanation && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">💡 Why tone matters in the workplace:</h4>
-                <p className="text-sm text-blue-800">
-                  Professional tone isn't just about being polite. It's about reading the situation, understanding 
-                  your audience, and choosing an approach that gets results while maintaining relationships.
-                </p>
+              <div className="p-3 border rounded bg-muted/20 flex flex-wrap gap-4 text-xs">
+                <div><strong>Status:</strong> {scenarioSamples.some(s => s.baseline) ? 'Baseline ✔' : 'Baseline needed'}</div>
+                <div><strong>Custom Variants:</strong> {scenarioSamples.filter(s => !s.baseline).length}</div>
+                <div><strong>Reflection:</strong> {scenarioReflection.fits ? 'Started ✔' : 'Pending'}</div>
               </div>
-            )}
+            </div>
 
             <div className="flex gap-3 pt-6">
               <Button variant="outline" onClick={onBack} className="flex-1">
                 Back to Lessons
               </Button>
-              {!showExplanation ? (
-                <Button 
-                  onClick={handleSubmit} 
-                  disabled={selectedTone === null}
-                  className="flex-1"
-                >
-                  Submit Choice
-                </Button>
-              ) : (
-                <Button onClick={handleNext} className="flex-1">
-                  {currentScenario < scenarios.length - 1 ? 'Next Scenario' : 'Complete Game'}
-                </Button>
-              )}
+              <Button 
+                onClick={handleNext}
+                disabled={!scenarioComplete()}
+                className="flex-1"
+              >
+                {currentScenario < scenarios.length - 1 ? 'Lock & Next Scenario' : 'Finish Workshop'} <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
             </div>
           </div>
         </CardContent>
