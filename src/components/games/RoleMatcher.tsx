@@ -11,34 +11,42 @@ interface RoleMatcherProps {
   lesson: LearningExperience;
 }
 
+// Unified "Big Day Story" role-matching adventure
 const scenarios = [
   {
     id: 1,
-    scenario: "A startup founder needs help writing a pitch deck for Series A funding to present to VCs next week",
-    roles: ["Marketing copywriter", "Investment banker", "Startup mentor", "Business consultant"],
+    scenario: "You're getting ready for your first part-time job interview at a clothing store tomorrow. You're nervous and want realistic practice.",
+    roles: ["Career coach", "Retail hiring manager", "Public speaking coach", "Resume writer"],
     correctRole: 1,
-    explanation: "An investment banker understands VC expectations, valuation models, and financial projections that VCs scrutinize closely."
+    explanation: "A retail hiring manager knows exactly what store managers look for: customer interaction examples, reliability, and basic situational judgment. That makes their feedback the most targeted practice."
   },
   {
     id: 2,
-    scenario: "A non-profit director needs to write a grant proposal for a $500K environmental conservation project",
-    roles: ["Environmental scientist", "Grant writer", "Fundraising consultant", "Non-profit advisor"],
+    scenario: "After the interview, you realize you need to save money for a new phone instead of spending it on snacks and games. You want help creating a realistic plan you can stick to.",
+    roles: ["Financial coach", "Teen budgeting mentor", "Math tutor", "Shopping advisor"],
     correctRole: 1,
-    explanation: "Grant writers specialize in the specific language, structure, and compliance requirements that funders expect to see."
+    explanation: "A teen budgeting mentor focuses on real-world, age-appropriate spending habits and building sustainable routines—not just abstract financial theory."
   },
   {
     id: 3,
-    scenario: "A tech company's legal team needs help analyzing a complex patent dispute with a competitor",
-    roles: ["Patent attorney", "Tech journalist", "Software engineer", "Business lawyer"],
+    scenario: "You want to celebrate finishing the interview with a few friends. Small budget. Need ideas for food, simple games, and a chill vibe playlist.",
+    roles: ["Event planner", "Budgeting coach", "Party DJ", "Restaurant caterer"],
     correctRole: 0,
-    explanation: "Patent law is highly specialized - a patent attorney understands both the technical aspects and legal precedents specific to IP disputes."
+    explanation: "An event planner can balance budget, flow, activities, and atmosphere together—more holistic than just music, money, or food alone."
   },
   {
     id: 4,
-    scenario: "A restaurant chain wants to optimize their supply chain costs while maintaining food quality standards",
-    roles: ["Restaurant manager", "Supply chain analyst", "Food scientist", "Business consultant"],
+    scenario: "Right after the mini celebration, your parents ask you to cook a quick family dinner. It has to be healthy, fast, and picky-eater friendly.",
+    roles: ["Nutritionist", "Family chef", "Meal prep coach", "Grocery budget planner"],
     correctRole: 1,
-    explanation: "Supply chain analysts specialize in logistics optimization, vendor relationships, and cost analysis across complex distribution networks."
+    explanation: "A family chef focuses on practical, fast, crowd-pleasing meals—balancing taste, nutrition, and simplicity for mixed preferences."
+  },
+  {
+    id: 5,
+    scenario: "On the drive home, a tire suddenly blows out. You've never changed one and need calm, step-by-step help you can follow safely on the roadside.",
+    roles: ["Auto mechanic", "Driving safety instructor", "Roadside assistance operator", "YouTube life hack guru"],
+    correctRole: 0,
+    explanation: "An auto mechanic can deliver precise, order-dependent instructions (jack placement, loosening pattern, safety checks) without distracting gimmicks—critical for doing it right and safely."
   }
 ];
 
@@ -50,6 +58,7 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
   const [gameComplete, setGameComplete] = useState(false);
 
   const scenario = scenarios[currentScenario];
+  const POINTS_PER_SCENARIO = 100 / scenarios.length; // 20 each for 5 scenarios
 
   const handleRoleSelect = (roleIndex: number) => {
     if (showExplanation) return;
@@ -64,7 +73,7 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
 
     const isCorrect = selectedRole === scenario.correctRole;
     if (isCorrect) {
-      setScore(score + 25);
+      setScore(score + POINTS_PER_SCENARIO);
       toast("Perfect match! Great role selection! 🎯");
     } else {
       toast("Not quite right. Let's see why!");
@@ -105,24 +114,24 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
     <div className="max-w-4xl mx-auto space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">👥 Role Matcher</CardTitle>
-          <CardDescription className="text-lg font-semibold text-foreground mb-3">Prompting Fundamentals</CardDescription>
+            <CardTitle className="text-2xl font-bold">👥 Big Day Role Matcher</CardTitle>
+            <CardDescription className="text-lg font-semibold text-foreground mb-3">Prompting Fundamentals</CardDescription>
           <div className="space-y-4 text-sm text-muted-foreground">
             <p>
-              Different tasks need different experts. Just like asking a doctor about medicine or a chef about cooking, AI works better when you give it the right job to do.
+              One big day. Different situations. Each one needs a different kind of expert. Just like real life, you get better AI help when you assign the most relevant role.
             </p>
             
             <div>
               <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-              <p>Match the best AI role to each situation. Think about who would be the perfect expert for each task.</p>
+              <p>Follow the story from interview prep to an unexpected roadside problem. Pick the role that would give the most practical, context-aware help in that exact moment.</p>
             </div>
 
             <div>
               <h4 className="font-semibold text-foreground mb-2">Activity</h4>
               <ol className="list-decimal list-inside space-y-1">
-                <li>Read each situation carefully.</li>
-                <li>Pick the expert who knows the most about that topic.</li>
-                <li>See why that choice works best for getting good results.</li>
+                <li>Read the scene from the day's story.</li>
+                <li>Decide which expert gives the most relevant, actionable help.</li>
+                <li>Learn why that role unlocks better AI responses.</li>
               </ol>
             </div>
           </div>

@@ -18,7 +18,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log("AuthContext: Initial session check", { session: !!session, error });
+      const storageKeys = Object.keys(localStorage).filter(k => k.toLowerCase().includes('supabase'));
+      console.log("AuthContext: Initial session check", { hasSession: !!session, error, storageKeys });
       setSession(session);
       setLoading(false);
     });
@@ -26,7 +27,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Listen for auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('AuthContext: Auth state changed:', event, session ? 'User logged in' : 'User logged out');
+        console.log('AuthContext: Auth state changed:', event, session ? 'User logged in' : 'User logged out', {
+          accessTokenPreview: session?.access_token?.slice(0, 12),
+          expiresAt: session?.expires_at,
+        });
         setSession(session);
         setLoading(false);
       }
