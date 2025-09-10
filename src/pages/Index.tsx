@@ -28,8 +28,9 @@ const allLearningExperiences: LearningExperience[] = lessons as LearningExperien
 const HINT_COST = 10;
 
 const Index = () => {
-  const [gameState, setGameState] = useState<"welcome" | "learning-path" | "playing">("welcome");
+  const [gameState, setGameState] = useState<"welcome" | "learning-path" | "playing" | "sequential">("welcome");
   const [currentExperience, setCurrentExperience] = useState<LearningExperience | null>(null);
+  const [currentGameIndex, setCurrentGameIndex] = useState(0);
   const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint } = useGameStore();
   const [hintsUsed, setHintsUsed] = useState(0);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
@@ -64,7 +65,17 @@ const Index = () => {
   }, [gameState, currentExperience]);
 
   const handleStartLearning = () => {
-    setGameState("learning-path");
+    setGameState("sequential");
+    setCurrentGameIndex(0);
+    setCurrentExperience(allLearningExperiences[0]);
+    setHintsUsed(0);
+  };
+
+  const handleStartSequentialLearning = () => {
+    setGameState("sequential");
+    setCurrentGameIndex(0);
+    setCurrentExperience(allLearningExperiences[0]);
+    setHintsUsed(0);
   };
 
   const handleExperienceSelect = (experience: LearningExperience) => {
@@ -81,14 +92,38 @@ const Index = () => {
       const coinsEarned = starsEarned * 50;
       completeExperience(currentExperience.id, starsEarned, coinsEarned);
       setLastResult({ stars: starsEarned, coins: coinsEarned });
-      setShowCompletionModal(true);
+      
+      if (gameState === "sequential") {
+        // Auto-advance to next game in sequential mode
+        handleSequentialNext();
+      } else {
+        setShowCompletionModal(true);
+      }
+    }
+  };
+
+  const handleSequentialNext = () => {
+    if (currentGameIndex < allLearningExperiences.length - 1) {
+      const nextIndex = currentGameIndex + 1;
+      setCurrentGameIndex(nextIndex);
+      setCurrentExperience(allLearningExperiences[nextIndex]);
+      setHintsUsed(0);
+    } else {
+      // All games completed
+      toast("🎉 Congratulations! You've completed the entire learning journey!");
+      setGameState("learning-path");
+      setCurrentExperience(null);
     }
   };
 
   const handleModalContinue = () => {
     setShowCompletionModal(false);
-    setGameState("learning-path");
-    setCurrentExperience(null);
+    if (gameState === "sequential") {
+      handleSequentialNext();
+    } else {
+      setGameState("learning-path");
+      setCurrentExperience(null);
+    }
   };
 
   const handleModalRetry = () => {
@@ -183,7 +218,7 @@ const Index = () => {
                 🏠 Home
               </Button>
               <Button variant="ghost" onClick={() => setGameState("learning-path")} className="text-sm">
-                🎓 Learn
+                🎓 Review Lessons
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
                 <span>Level {level}</span>
@@ -214,12 +249,21 @@ const Index = () => {
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button 
-                  onClick={handleStartLearning}
+                  onClick={handleStartSequentialLearning}
                   size="lg"
                   className="text-lg px-8 py-4 bg-primary hover:bg-primary/90"
                 >
                   <Play className="w-5 h-5 mr-2" />
                   Start Learning Journey
+                </Button>
+                <Button 
+                  onClick={() => setGameState("learning-path")}
+                  variant="outline"
+                  size="lg"
+                  className="text-lg px-8 py-4"
+                >
+                  <BookOpen className="w-5 h-5 mr-2" />
+                  Review Individual Lessons
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground">
@@ -263,7 +307,9 @@ const Index = () => {
               <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
                 🏠 Home
               </Button>
-              <span className="text-sm font-medium text-primary">🎓 Learn</span>
+              <Button variant="ghost" onClick={handleStartSequentialLearning} className="text-sm">
+                🎮 Play All Games
+              </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
                 <span>Level {level}</span>
                 <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
@@ -277,10 +323,14 @@ const Index = () => {
         <div className="flex-1 pt-16 sm:pt-20 p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center space-y-4 mb-8">
-              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Choose Your Learning Path</h1>
+              <h1 className="text-3xl sm:text-4xl font-bold text-foreground">Review Individual Lessons</h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Master AI prompting and literacy through hands-on interactive experiences. Each experience teaches you specific skills to become an AI expert.
+                Review completed lessons or jump into specific topics. For a guided experience, use "Start Learning Journey" instead.
               </p>
+              <Button onClick={handleStartSequentialLearning} className="mb-4">
+                <Play className="w-4 h-4 mr-2" />
+                Start Sequential Learning Journey
+              </Button>
               <div className="flex justify-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-green-500"></div>
@@ -398,7 +448,7 @@ const Index = () => {
   }
 
   // Playing Screen - Codecademy-style split screen
-  if (gameState === "playing" && currentExperience) {
+  if ((gameState === "playing" || gameState === "sequential") && currentExperience) {
     const GameComponent = (() => {
       switch (currentExperience.gameComponent) {
         case "PromptBuilderGame": return PromptBuilderGame;
@@ -523,6 +573,30 @@ const Index = () => {
 
           {/* Main Game Area */}
           <div className="flex-1 flex flex-col min-h-0">
+            {/* Sequential Mode Progress Header */}
+            {gameState === "sequential" && (
+              <div className="p-4 bg-card border-b border-border">
+                <div className="text-center space-y-3">
+                  <div className="text-sm text-muted-foreground">
+                    Game {currentGameIndex + 1} of {allLearningExperiences.length}
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${((currentGameIndex + 1) / allLearningExperiences.length) * 100}%` }}
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setGameState("learning-path")}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Review Lessons
+                  </Button>
+                </div>
+              </div>
+            )}
             {/* Mobile Sidebar Toggle */}
             <div className="lg:hidden p-3 border-b border-border bg-card">
               <Button 
@@ -540,7 +614,7 @@ const Index = () => {
               <GameComponent
                 lesson={currentExperience}
                 onComplete={shouldUseNoScore ? handleExperienceCompleteNoScore : handleExperienceComplete}
-                onBack={handleBackToLearningPath}
+                onBack={gameState === "sequential" ? () => setGameState("learning-path") : handleBackToLearningPath}
               />
             </div>
           </div>
