@@ -111,23 +111,41 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                 Think of AI like a well‑read parrot: it has seen countless sentences, so when you 
                 prompt it, it guesses the words that usually come next.
               </p>
-              
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-                <p>Explore how AI mimics voices, predicts words, and changes tone in this section.</p>
-              </div>
-
-              <div>
-                <h4 className="font-semibold text-foreground mb-2">Activity</h4>
-                <ol className="list-decimal list-inside space-y-1">
-                  <li>Start a conversation by selecting a character and clicking Send.</li>
-                  <li>Try different characters to see how AI adapts its voice and style.</li>
-                  <li>Notice how the same message gets transformed based on the character's personality.</li>
-                </ol>
-              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Video and Instructions Layout */}
+            <div className="flex gap-4 mb-6">
+              <div className="flex-1">
+                <div className="space-y-4 text-sm text-muted-foreground">
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
+                    <p>Explore how AI mimics voices, predicts words, and changes tone in this section.</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-foreground mb-2">Activity</h4>
+                    <ol className="list-decimal list-inside space-y-1">
+                      <li>Start a conversation by selecting a character and clicking Send.</li>
+                      <li>Try different characters to see how AI adapts its voice and style.</li>
+                      <li>Notice how the same message gets transformed based on the character's personality.</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+              <div className="w-1/4">
+                <div className="aspect-[9/16] w-full">
+                  <iframe
+                    src="https://www.youtube.com/embed/SBcirWAPVK0"
+                    title="AI Introduction Video"
+                    className="w-full h-full rounded-lg"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            </div>
+            
             {/* Chat Messages Area */}
             <div className="h-64 border rounded-lg p-4 overflow-y-auto bg-background space-y-4">
               {messages.length === 0 && (
