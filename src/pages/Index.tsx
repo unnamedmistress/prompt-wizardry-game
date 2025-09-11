@@ -56,7 +56,7 @@ const Index = () => {
   useEffect(() => {
     if (gameState === "playing" && currentExperience) {
       // Only show genie open for the first game (AI Intro)
-      if (currentExperience.id === "ai-intro") {
+      if (currentExperience.id === "what-is-ai") {
         setGenieMessage("🧞 Hi! I'm here if you need a hint or some motivation!");
         setIsGenieOpen(true);
       } else {
@@ -519,7 +519,7 @@ const Index = () => {
         <div className="flex flex-col lg:flex-row flex-1 pt-16 sm:pt-20">
           {/* Learning Sidebar - Codecademy Style */}
            <div className={`${showMobileSidebar ? 'block' : 'hidden lg:block'} fixed lg:relative top-16 sm:top-20 left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] lg:h-auto w-full lg:w-96 bg-card border-r border-border overflow-y-auto shadow-lg lg:shadow-none z-40`}>
-            {currentExperience?.id === "ai-intro" ? (
+            {currentExperience?.id === "what-is-ai" ? (
               <AppSidebar 
                 currentStep={1} 
                 gameTitle={currentExperience.title}
