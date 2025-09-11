@@ -675,7 +675,85 @@ const Index = () => {
     );
   }
 
-  return <div>No content to display</div>;
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Navigation Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <span className="font-bold text-sm sm:text-lg">AI Literacy</span>
+          </div>
+          <div className="hidden sm:flex items-center gap-6">
+            <Button variant="ghost" onClick={() => setGameState("welcome")} className="text-sm">
+              🏠 Home
+            </Button>
+            <Button variant="ghost" onClick={() => setGameState("learning-path")} className="text-sm">
+              🎓 Review Lessons
+            </Button>
+            <span className="text-sm text-muted-foreground flex items-center gap-2">
+              <span>Level {level}</span>
+              <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+              <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 pt-16 sm:pt-20">
+        <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
+          <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-12">
+            <div className="space-y-4 sm:space-y-6">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground">
+                Master AI Literacy
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
+                Learn effective AI prompting and fact-checking through interactive experiences. 
+                From basic prompts to advanced techniques and verification skills.
+              </p>
+              <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+                Think of AI like a well-read parrot: it has seen countless sentences, so when you
+                prompt it, it guesses the words that usually come next.
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={handleStartSequentialLearning}
+                size="lg"
+                className="text-lg px-8 py-4 bg-primary hover:bg-primary/90"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Start Learning Journey
+              </Button>
+              <Button 
+                onClick={() => setGameState("learning-path")}
+                variant="outline"
+                size="lg"
+                className="text-lg px-8 py-4"
+              >
+                <BookOpen className="w-5 h-5 mr-2" />
+                Review Individual Lessons
+              </Button>
+            </div>
+            <div className="text-sm text-muted-foreground">
+              {allLearningExperiences.length} interactive experiences • All skill levels
+            </div>
+
+            {completedExperienceIds.length > 0 && (
+              <div className="mt-8 p-4 bg-primary/10 rounded-lg border border-primary/20">
+                <div className="text-primary font-medium">Your Progress</div>
+                <div className="text-sm text-muted-foreground mt-1">
+                  {completedExperienceIds.length} of {allLearningExperiences.length} experiences completed
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Index;
