@@ -73,7 +73,7 @@ const Index = () => {
   };
 
   const handleStartSequentialLearning = () => {
-    setGameState("sequential");
+    setGameState("playing");
     setCurrentGameIndex(0);
     setCurrentExperience(allLearningExperiences[0]);
     setHintsUsed(0);
