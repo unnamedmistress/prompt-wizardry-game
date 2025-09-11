@@ -22,13 +22,14 @@ export function AppSidebar({ currentStep = 1, gameTitle, showMobileSidebar, setS
           </div>
 
           {/* Video */}
-          <div className="aspect-[9/16] w-full">
+          <div className="aspect-[9/16] w-full mb-4">
             <iframe
               src="https://www.youtube.com/embed/SBcirWAPVK0"
               title="AI Introduction Video"
-              className="w-full h-full rounded-lg"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              className="w-full h-full rounded-lg border"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
+              loading="lazy"
             />
           </div>
           
