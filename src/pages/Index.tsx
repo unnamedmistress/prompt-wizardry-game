@@ -23,6 +23,7 @@ import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft,
 import GenieMentor from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
 import { getModelHint } from "@/lib/hintGenerator";
+import { AppSidebar } from "@/components/AppSidebar";
 
 const allLearningExperiences: LearningExperience[] = lessons as LearningExperience[];
 const HINT_COST = 10;
@@ -518,57 +519,66 @@ const Index = () => {
         <div className="flex flex-col lg:flex-row flex-1 pt-16 sm:pt-20">
           {/* Learning Sidebar - Codecademy Style */}
           <div className={`${showMobileSidebar ? 'block' : 'hidden lg:block'} fixed lg:relative top-16 sm:top-20 left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] lg:h-auto w-full lg:w-96 bg-card border-r border-border overflow-y-auto shadow-lg lg:shadow-none z-40`}>
-            <div className="p-4 sm:p-6">
-              <div className="space-y-4 sm:space-y-6">
-                {/* Close button for mobile */}
-                <div className="lg:hidden flex justify-between items-center mb-4">
-                  <h3 className="font-semibold">Learning Guide</h3>
-                  <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(false)}>
-                    ✕
-                  </Button>
-                </div>
-
-                {/* Current Experience Info */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl sm:text-2xl">{currentExperience.icon}</span>
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-base">{currentExperience.title}</h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.category}</p>
-                    </div>
+            {currentExperience?.id === "ai-intro" ? (
+              <AppSidebar 
+                currentStep={1} 
+                gameTitle={currentExperience.title}
+                showMobileSidebar={showMobileSidebar}
+                setShowMobileSidebar={setShowMobileSidebar}
+              />
+            ) : (
+              <div className="p-4 sm:p-6">
+                <div className="space-y-4 sm:space-y-6">
+                  {/* Close button for mobile */}
+                  <div className="lg:hidden flex justify-between items-center mb-4">
+                    <h3 className="font-semibold">Learning Guide</h3>
+                    <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(false)}>
+                      ✕
+                    </Button>
                   </div>
-                  <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.description}</p>
-                </div>
 
-                {/* Objective */}
-                <div className="space-y-2">
-                  <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
-                    <Target className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                    Your Mission
-                  </h4>
-                  <p className="text-xs sm:text-sm bg-primary/5 p-2 sm:p-3 rounded-lg border border-primary/20">
-                    {currentExperience.objective}
-                  </p>
-                </div>
+                  {/* Current Experience Info */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl sm:text-2xl">{currentExperience.icon}</span>
+                      <div>
+                        <h3 className="font-semibold text-sm sm:text-base">{currentExperience.title}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.category}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.description}</p>
+                  </div>
 
-                {/* What You'll Learn */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
-                    <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                    What You'll Learn
-                  </h4>
-                  <ul className="space-y-2">
-                    {currentExperience.whatYoullLearn.map((item, index) => (
-                      <li key={index} className="flex items-start gap-2 text-xs sm:text-sm">
-                        <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                        <span className="text-muted-foreground">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  {/* Objective */}
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
+                      <Target className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                      Your Mission
+                    </h4>
+                    <p className="text-xs sm:text-sm bg-primary/5 p-2 sm:p-3 rounded-lg border border-primary/20">
+                      {currentExperience.objective}
+                    </p>
+                  </div>
 
+                  {/* What You'll Learn */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
+                      <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                      What You'll Learn
+                    </h4>
+                    <ul className="space-y-2">
+                      {currentExperience.whatYoullLearn.map((item, index) => (
+                        <li key={index} className="flex items-start gap-2 text-xs sm:text-sm">
+                          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                          <span className="text-muted-foreground">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Main Game Area */}
