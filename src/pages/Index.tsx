@@ -20,8 +20,6 @@ import StoryEngineGame from "@/components/games/StoryEngineGame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import GenieMentor from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
 import { getModelHint } from "@/lib/hintGenerator";
@@ -479,64 +477,148 @@ const Index = () => {
     const hintDisabled = coins < HINT_COST || hintsUsed >= (currentExperience.hints?.length ?? 0) + 1;
 
     return (
-      <div className="min-h-screen w-full bg-background flex">
-        <AppSidebar 
-          currentExperience={currentExperience} 
-          currentGameIndex={currentGameIndex} 
-          gameState={gameState} 
-        />
-        
-        <div className="flex-1 flex flex-col min-h-screen">
-          {/* Compact Navigation Header */}
-          <div className="border-b border-border bg-background">
-            <div className="flex items-center justify-between px-4 py-2">
-              <div className="flex items-center gap-3">
-                <SidebarTrigger />
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">{currentExperience.icon}</span>
-                  <span className="font-semibold text-sm">{currentExperience.title}</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                {gameState === "sequential" && (
-                  <div className="text-xs text-muted-foreground">
-                    {currentGameIndex + 1} of {allLearningExperiences.length}
-                  </div>
-                )}
-                <div className="hidden sm:flex items-center gap-3 text-sm">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(currentExperience.difficulty)}`}>
-                    {currentExperience.difficulty}
-                  </span>
-                  <span className="flex items-center gap-1"><Coins className="w-3 h-3 text-yellow-500" />{coins}</span>
-                  <span className="flex items-center gap-1"><Star className="w-3 h-3 text-yellow-500" />{stars}</span>
-                </div>
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Navigation Header */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackToLearningPath}
+                className="text-sm"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{currentExperience.icon}</span>
+                <span className="font-bold text-sm sm:text-base">{currentExperience.title}</span>
               </div>
             </div>
-            
-            {/* Progress bar for sequential mode */}
+            <div className="hidden sm:flex items-center gap-4">
+              <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(currentExperience.difficulty)}`}>
+                {currentExperience.difficulty}
+              </span>
+              <span className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Level {level}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+              </span>
+            </div>
+            <div className="sm:hidden">
+              <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(!showMobileSidebar)}>
+                <Menu className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Split Screen Layout */}
+        <div className="flex flex-col lg:flex-row flex-1 pt-16 sm:pt-20">
+          {/* Learning Sidebar - Codecademy Style */}
+          <div className={`${showMobileSidebar ? 'block' : 'hidden lg:block'} fixed lg:relative top-16 sm:top-20 left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] lg:h-auto w-full lg:w-96 bg-card border-r border-border overflow-y-auto shadow-lg lg:shadow-none z-40`}>
+            <div className="p-4 sm:p-6">
+              <div className="space-y-4 sm:space-y-6">
+                {/* Close button for mobile */}
+                <div className="lg:hidden flex justify-between items-center mb-4">
+                  <h3 className="font-semibold">Learning Guide</h3>
+                  <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(false)}>
+                    ✕
+                  </Button>
+                </div>
+
+                {/* Current Experience Info */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl sm:text-2xl">{currentExperience.icon}</span>
+                    <div>
+                      <h3 className="font-semibold text-sm sm:text-base">{currentExperience.title}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.category}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.description}</p>
+                </div>
+
+                {/* Objective */}
+                <div className="space-y-2">
+                  <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
+                    <Target className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                    Your Mission
+                  </h4>
+                  <p className="text-xs sm:text-sm bg-primary/5 p-2 sm:p-3 rounded-lg border border-primary/20">
+                    {currentExperience.objective}
+                  </p>
+                </div>
+
+                {/* What You'll Learn */}
+                <div className="space-y-3">
+                  <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
+                    <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
+                    What You'll Learn
+                  </h4>
+                  <ul className="space-y-2">
+                    {currentExperience.whatYoullLearn.map((item, index) => (
+                      <li key={index} className="flex items-start gap-2 text-xs sm:text-sm">
+                        <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
+                        <span className="text-muted-foreground">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          {/* Main Game Area */}
+          <div className="flex-1 flex flex-col min-h-0">
+            {/* Sequential Mode Progress Header */}
             {gameState === "sequential" && (
-              <div className="px-4 pb-2">
-                <div className="w-full bg-muted rounded-full h-1.5">
-                  <div 
-                    className="bg-primary h-1.5 rounded-full transition-all duration-300" 
-                    style={{ width: `${((currentGameIndex + 1) / allLearningExperiences.length) * 100}%` }}
-                  />
+              <div className="p-4 bg-card border-b border-border">
+                <div className="text-center space-y-3">
+                  <div className="text-sm text-muted-foreground">
+                    Game {currentGameIndex + 1} of {allLearningExperiences.length}
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300" 
+                      style={{ width: `${((currentGameIndex + 1) / allLearningExperiences.length) * 100}%` }}
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setGameState("learning-path")}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Review Lessons
+                  </Button>
                 </div>
               </div>
             )}
-          </div>
+            {/* Mobile Sidebar Toggle */}
+            <div className="lg:hidden p-3 border-b border-border bg-card">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full"
+                onClick={() => setShowMobileSidebar(true)}
+              >
+                📚 View Learning Guide
+              </Button>
+            </div>
 
-          {/* Main Game Content */}
-          <div className="flex-1 p-4 overflow-y-auto">
-            <GameComponent
-              lesson={currentExperience}
-              onComplete={shouldUseNoScore ? handleExperienceCompleteNoScore : handleExperienceComplete}
-              onBack={gameState === "sequential" ? () => setGameState("learning-path") : handleBackToLearningPath}
-            />
+            {/* Game Content Area */}
+            <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto">
+              <GameComponent
+                lesson={currentExperience}
+                onComplete={shouldUseNoScore ? handleExperienceCompleteNoScore : handleExperienceComplete}
+                onBack={gameState === "sequential" ? () => setGameState("learning-path") : handleBackToLearningPath}
+              />
+            </div>
           </div>
         </div>
-        
-        {/* Modals and overlays */}
         <Dialog open={showCompletionModal}>
           <DialogContent className="text-center [&>button]:hidden">
             <DialogHeader>
@@ -571,7 +653,6 @@ const Index = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        
         <GenieMentor
           message={genieMessage}
           isOpen={isGenieOpen}
