@@ -25,8 +25,8 @@ const prompts: RoundData[] = [
       { text: "Age range and relationship goals (serious, casual, friendship)", correct: true },
       { text: "Tone of writing (light and witty, professional, romantic)", correct: true },
       { text: "Desired character length (short bio vs 200 words)", correct: true },
-      { text: "Number of emojis the AI model internally prefers", correct: false },
-      { text: "Exact app algorithm weighting formula", correct: false }
+      { text: "Number of emojis the AI model internally prefers (not relevant)", correct: false },
+      { text: "Exact app algorithm weighting formula (impossible to know)", correct: false }
     ]
   },
   {
@@ -37,8 +37,8 @@ const prompts: RoundData[] = [
       { text: "Hobbies or passions to highlight", correct: true },
       { text: "Whether 'short' means one line or a paragraph", correct: true },
       { text: "Relationship goals (long-term vs casual)", correct: true },
-      { text: "Favorite brand of phone charger", correct: false },
-      { text: "Exact sunrise time tomorrow", correct: false }
+      { text: "Favorite brand of phone charger (not relevant)", correct: false },
+      { text: "Exact sunrise time tomorrow (impossible to predict)", correct: false }
     ]
   },
   {
@@ -50,7 +50,7 @@ const prompts: RoundData[] = [
       { text: "Age and audience (who you want to attract)", correct: true },
       { text: "How much detail to include (quick blurb vs storytelling style)", correct: true },
       { text: "Tone (funny, witty, serious, adventurous)", correct: true },
-      { text: "Favorite operating system version number", correct: false }
+      { text: "Favorite operating system version number (not relevant)", correct: false }
     ]
   },
   {
@@ -61,8 +61,8 @@ const prompts: RoundData[] = [
       { text: "Relationship goals (serious partner, casual, friendship)", correct: true },
       { text: "Writing style (short punchy lines vs longer storytelling)", correct: true },
       { text: "Fun facts or quirks (hidden talents, favorite food, pets)", correct: true },
-      { text: "Server response latency of the dating app", correct: false },
-      { text: "The humidity level in your city right now", correct: false }
+      { text: "Server response latency of the dating app (not relevant)", correct: false },
+      { text: "The humidity level in your city right now (not relevant)", correct: false }
     ]
   },
   {
@@ -74,7 +74,7 @@ const prompts: RoundData[] = [
       { text: "Personality traits (funny, empathetic, competitive, easy-going)", correct: true },
       { text: "Constraints (150 characters vs 200 words)", correct: true },
       { text: "Dealbreakers/boundaries (must love pets, non-smoker, etc.)", correct: true },
-      { text: "Exact probability of first-date match success", correct: false }
+      { text: "Exact probability of first-date match success (impossible to know)", correct: false }
     ]
   }
 ];
@@ -234,11 +234,14 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                 {(() => {
                   const correctSelections = selectedDetails.filter(i => prompt.options[i].correct).length;
                   const incorrectSelections = selectedDetails.filter(i => !prompt.options[i].correct).length;
+                  const totalSelected = selectedDetails.length;
                   return (
                     <div className="text-sm text-blue-800 space-y-1">
-                      <div>✅ Correct: {correctSelections} / {correctTotal}</div>
-                      <div>❌ Incorrect chosen: {incorrectSelections}</div>
-                      <div>📊 Specificity Score: {Math.round((correctSelections / correctTotal) * 100)}%</div>
+                      <div>✅ Correct details selected: {correctSelections} / {correctTotal} available</div>
+                      <div>❌ Incorrect details selected: {incorrectSelections}</div>
+                      <div>📊 Total selected: {totalSelected}</div>
+                      <div>📈 Accuracy: {totalSelected > 0 ? Math.round((correctSelections / totalSelected) * 100) : 0}%</div>
+                      <div>🎯 Coverage: {Math.round((correctSelections / correctTotal) * 100)}%</div>
                     </div>
                   );
                 })()}
