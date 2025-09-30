@@ -20,7 +20,7 @@ import StoryEngineGame from "@/components/games/StoryEngineGame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
-import GenieMentor from "@/components/GenieMentor";
+import { GenieMentor } from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
 import { getModelHint } from "@/lib/hintGenerator";
 import { AppSidebar } from "@/components/AppSidebar";

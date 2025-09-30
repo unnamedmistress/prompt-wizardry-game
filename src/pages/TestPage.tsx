@@ -3,7 +3,7 @@ import { PlayerDashboard } from '@/components/PlayerDashboard';
 import { PromptTester } from '@/components/PromptTester';
 import { AchievementToast } from '@/components/AchievementToast';
 import { MentorAvatar } from '@/components/MentorAvatar';
-import { GenieMentor } from '@/components/GenieMentor';
+import { DynamicMentor } from '@/components/DynamicMentor';
 import { AvatarCustomizer } from '@/components/AvatarCustomizer';
 import { WorkspaceTheme } from '@/components/WorkspaceTheme';
 import { EnhancedPromptBuilder } from '@/components/EnhancedPromptBuilder';
@@ -201,8 +201,8 @@ export default function TestPage() {
           />
         )}
 
-        {/* Genie Mentor */}
-        <GenieMentor context="greeting" />
+        {/* Dynamic Mentor */}
+        <DynamicMentor context="greeting" />
       </div>
     </div>
   );
