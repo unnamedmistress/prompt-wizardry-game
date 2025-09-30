@@ -8,6 +8,13 @@ import { AvatarCustomizer } from '@/components/AvatarCustomizer';
 import { WorkspaceTheme } from '@/components/WorkspaceTheme';
 import { EnhancedPromptBuilder } from '@/components/EnhancedPromptBuilder';
 import { LearningTrackSelector } from '@/components/LearningTrackSelector';
+import { AIIntroGame } from '@/components/games/AIIntroGame';
+import { PromptBuilderGame } from '@/components/games/PromptBuilderGame';
+import { ToneController } from '@/components/games/ToneController';
+import { RoleMatcher } from '@/components/games/RoleMatcher';
+import { GameCard } from '@/components/GameCard';
+import { GameHeader } from '@/components/GameHeader';
+import { LearningTrack } from '@/types/game';
 import { usePlayerStore } from '@/store/usePlayerStore';
 import { AI_MENTORS, getMentorsForLevel } from '@/data/mentors';
 import { Button } from '@/components/ui/button';
@@ -18,6 +25,7 @@ import { Sparkles, Trophy, User, Zap, Palette, Wand2, Target } from 'lucide-reac
 
 export default function TestPage() {
   const [activeAchievement, setActiveAchievement] = useState<Achievement | null>(null);
+  const [activeGame, setActiveGame] = useState<string | null>(null);
   const { 
     level, 
     addXp, 
@@ -65,7 +73,7 @@ export default function TestPage() {
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 lg:grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8 lg:grid-cols-8">
             <TabsTrigger value="dashboard">
               <User className="w-4 h-4 mr-2" />
               Dashboard
@@ -89,6 +97,10 @@ export default function TestPage() {
             <TabsTrigger value="tracks">
               <Target className="w-4 h-4 mr-2" />
               Tracks
+            </TabsTrigger>
+            <TabsTrigger value="games">
+              <Trophy className="w-4 h-4 mr-2" />
+              Games
             </TabsTrigger>
             <TabsTrigger value="testing">
               <Zap className="w-4 h-4 mr-2" />
@@ -142,6 +154,28 @@ export default function TestPage() {
                 </div>
               )}
             </Card>
+          </TabsContent>
+
+          <TabsContent value="games" className="space-y-4">
+            {!activeGame ? (
+              <>
+                <h2 className="text-2xl font-bold mb-4">Choose a Game</h2>
+                <div className="grid gap-4 md:grid-cols-2">
+                  <GameCard title="AI Introduction Quiz" description="Learn AI prompting basics" difficulty="Beginner" category="Fundamentals" icon="🎓" requiredLevel={1} currentLevel={level} isCompleted={false} onPlay={() => setActiveGame('intro')} />
+                  <GameCard title="Prompt Builder Challenge" description="Create effective prompts" difficulty="Intermediate" category="Practice" icon="🏗️" requiredLevel={2} currentLevel={level} isCompleted={false} onPlay={() => setActiveGame('builder')} />
+                  <GameCard title="Tone Controller" description="Master tone adjustment" difficulty="Intermediate" category="Communication" icon="🎭" requiredLevel={2} currentLevel={level} isCompleted={false} onPlay={() => setActiveGame('tone')} />
+                  <GameCard title="Role Matcher" description="Match AI roles to tasks" difficulty="Beginner" category="Strategy" icon="👥" requiredLevel={1} currentLevel={level} isCompleted={false} onPlay={() => setActiveGame('role')} />
+                </div>
+              </>
+            ) : (
+              <>
+                <GameHeader title={activeGame === 'intro' ? 'AI Introduction Quiz' : activeGame === 'builder' ? 'Prompt Builder Challenge' : activeGame === 'tone' ? 'Tone Controller' : 'Role Matcher'} onBack={() => setActiveGame(null)} />
+                {activeGame === 'intro' && <AIIntroGame />}
+                {activeGame === 'builder' && <PromptBuilderGame />}
+                {activeGame === 'tone' && <ToneController />}
+                {activeGame === 'role' && <RoleMatcher />}
+              </>
+            )}
           </TabsContent>
 
           <TabsContent value="testing">
