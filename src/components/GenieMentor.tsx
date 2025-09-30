@@ -1,50 +1,71 @@
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import React from "react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
 
 interface GenieMentorProps {
   message: string;
   isOpen: boolean;
-  onClose: () => void;
-  onGetHint: () => Promise<void>;
-  hintCost: number;
-  hintDisabled: boolean;
+  onClose?: () => void;
+  onGetHint?: () => void;
+  hintCost?: number;
+  hintDisabled?: boolean;
 }
 
-export function GenieMentor({ 
-  message, 
-  isOpen, 
-  onClose, 
-  onGetHint, 
-  hintCost, 
-  hintDisabled 
-}: GenieMentorProps) {
+const GenieMentor: React.FC<GenieMentorProps> = ({
+  message,
+  isOpen,
+  onClose,
+  onGetHint,
+  hintCost,
+  hintDisabled,
+}) => {
+  if (!isOpen) {
+    return onGetHint ? (
+      <button
+        aria-label={hintCost ? `Get a hint for ${hintCost} coins` : 'Get a hint'}
+        onClick={onGetHint}
+        disabled={hintDisabled}
+        className="fixed bottom-4 right-4 z-50 bg-purple-600 text-white p-3 rounded-full shadow-lg"
+      >
+        ?
+      </button>
+    ) : null;
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <span className="text-4xl">🧞</span>
-            Genie's Wisdom
-          </DialogTitle>
-          <DialogDescription>
-            {message}
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button 
-            variant="outline" 
+    <div className="fixed bottom-4 right-4 z-50 flex items-end gap-2">
+      <span className="text-4xl" aria-hidden="true">🧞</span>
+      <div className="relative">
+        <div
+          className="bg-purple-600 text-white rounded-lg p-3 pr-8 shadow-lg text-sm"
+          role="status"
+        >
+          {message}
+          {onClose && (
+            <button
+              aria-label="Close"
+              onClick={onClose}
+              className="absolute top-1 right-1 text-white/80 hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+        <div className="absolute -bottom-2 right-6 w-4 h-4 bg-purple-600 rotate-45" />
+        {onGetHint && (
+          <Button
             onClick={onGetHint}
             disabled={hintDisabled}
+            className="mt-2 w-full text-xs"
+            aria-label={hintCost ? `Get a hint for ${hintCost} coins` : 'Get Hint'}
           >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Get Hint ({hintCost} coins)
+            Get Hint (-{hintCost}🪙)
           </Button>
-          <Button onClick={onClose}>Got it!</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        )}
+      </div>
+    </div>
   );
-}
+};
 
 export default GenieMentor;
+

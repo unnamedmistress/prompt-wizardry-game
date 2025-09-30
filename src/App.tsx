@@ -8,7 +8,6 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
-import TestPage from "./pages/TestPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,7 +30,6 @@ const App = () => (
             />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/test" element={<TestPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
