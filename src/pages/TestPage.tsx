@@ -3,13 +3,18 @@ import { PlayerDashboard } from '@/components/PlayerDashboard';
 import { PromptTester } from '@/components/PromptTester';
 import { AchievementToast } from '@/components/AchievementToast';
 import { MentorAvatar } from '@/components/MentorAvatar';
+import { GenieMentor } from '@/components/GenieMentor';
+import { AvatarCustomizer } from '@/components/AvatarCustomizer';
+import { WorkspaceTheme } from '@/components/WorkspaceTheme';
+import { EnhancedPromptBuilder } from '@/components/EnhancedPromptBuilder';
+import { LearningTrackSelector } from '@/components/LearningTrackSelector';
 import { usePlayerStore } from '@/store/usePlayerStore';
 import { AI_MENTORS, getMentorsForLevel } from '@/data/mentors';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Achievement } from '@/types/game';
-import { Sparkles, Trophy, User, Zap } from 'lucide-react';
+import { Sparkles, Trophy, User, Zap, Palette, Wand2, Target } from 'lucide-react';
 
 export default function TestPage() {
   const [activeAchievement, setActiveAchievement] = useState<Achievement | null>(null);
@@ -52,26 +57,38 @@ export default function TestPage() {
         {/* Header */}
         <div className="text-center space-y-2 mb-8">
           <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Phase 1: Core Game Engine
+            Phase 2: Immersive Experience
           </h1>
           <p className="text-muted-foreground">
-            Enhanced state management, AI integration, mentors & achievements
+            Enhanced mentorship, customization, workspace themes & learning tracks
           </p>
         </div>
 
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-7 lg:grid-cols-7">
             <TabsTrigger value="dashboard">
               <User className="w-4 h-4 mr-2" />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="prompt-tester">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Prompt Tester
+            <TabsTrigger value="prompt-builder">
+              <Wand2 className="w-4 h-4 mr-2" />
+              Builder
             </TabsTrigger>
             <TabsTrigger value="mentors">
               <Trophy className="w-4 h-4 mr-2" />
               Mentors
+            </TabsTrigger>
+            <TabsTrigger value="avatar">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Avatar
+            </TabsTrigger>
+            <TabsTrigger value="themes">
+              <Palette className="w-4 h-4 mr-2" />
+              Themes
+            </TabsTrigger>
+            <TabsTrigger value="tracks">
+              <Target className="w-4 h-4 mr-2" />
+              Tracks
             </TabsTrigger>
             <TabsTrigger value="testing">
               <Zap className="w-4 h-4 mr-2" />
@@ -83,8 +100,20 @@ export default function TestPage() {
             <PlayerDashboard />
           </TabsContent>
 
-          <TabsContent value="prompt-tester">
-            <PromptTester />
+          <TabsContent value="prompt-builder">
+            <EnhancedPromptBuilder />
+          </TabsContent>
+
+          <TabsContent value="avatar">
+            <AvatarCustomizer />
+          </TabsContent>
+
+          <TabsContent value="themes">
+            <WorkspaceTheme />
+          </TabsContent>
+
+          <TabsContent value="tracks">
+            <LearningTrackSelector />
           </TabsContent>
 
           <TabsContent value="mentors">
@@ -146,18 +175,18 @@ export default function TestPage() {
               </div>
 
               <div className="mt-6 p-4 bg-muted rounded-lg space-y-2">
-                <h3 className="font-bold">✅ Phase 1 Features Implemented:</h3>
+                <h3 className="font-bold">✅ Phase 2 Features Implemented:</h3>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>✓ Enhanced state management with XP, coins, stars</li>
-                  <li>✓ Skill level tracking (5 core skills)</li>
-                  <li>✓ Achievement system with celebrations</li>
-                  <li>✓ AI mentor characters (5 unique personalities)</li>
-                  <li>✓ Lovable AI integration for prompt scoring</li>
-                  <li>✓ Real-time prompt feedback & suggestions</li>
-                  <li>✓ Adaptive difficulty tracking</li>
-                  <li>✓ Streak system with daily tracking</li>
-                  <li>✓ Player dashboard with progress visualization</li>
-                  <li>✓ Particle effects for achievements</li>
+                  <li>✓ Dynamic AI mentor dialogue system</li>
+                  <li>✓ Context-aware mentor responses</li>
+                  <li>✓ Avatar customization with unlockables</li>
+                  <li>✓ Workspace theme system (6 themes)</li>
+                  <li>✓ Interactive prompt builder with templates</li>
+                  <li>✓ Component-based prompt crafting</li>
+                  <li>✓ Industry-specific learning tracks</li>
+                  <li>✓ 5 specialized learning paths</li>
+                  <li>✓ Level-gated progression system</li>
+                  <li>✓ Visual customization rewards</li>
                 </ul>
               </div>
             </Card>
@@ -171,6 +200,9 @@ export default function TestPage() {
             onComplete={() => setActiveAchievement(null)}
           />
         )}
+
+        {/* Genie Mentor */}
+        <GenieMentor context="greeting" />
       </div>
     </div>
   );

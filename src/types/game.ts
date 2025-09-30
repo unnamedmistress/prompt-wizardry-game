@@ -60,6 +60,16 @@ export type LearningTrack =
   | 'personal'
   | 'general';
 
+export interface LearningTrackInfo {
+  id: LearningTrack;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  skills: string[];
+  unlockLevel: number;
+}
+
 export interface PromptScore {
   overall: number; // 0-100
   clarity: number;
