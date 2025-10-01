@@ -3,6 +3,9 @@ import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ContextualHint } from "@/components/ContextualHint";
+import { InsightTooltip } from "@/components/InsightTooltip";
+import { AnimatedText } from "@/components/AnimatedText";
 
 interface AIIntroGameProps {
   onComplete: (score: number) => void;
@@ -181,14 +184,20 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
             <p className="text-lg font-medium">Honesty is the best ___</p>
             <div className="grid grid-cols-2 gap-2">
               {[
-                "Policy",
-                "Banana",
-                "Spaceship",
-                "Revenge"
+                { word: "Policy", hint: "This is the most common phrase completion" },
+                { word: "Banana", hint: "This doesn't fit the pattern" },
+                { word: "Spaceship", hint: "AI rarely predicts random words" },
+                { word: "Revenge", hint: "This contradicts the meaning" }
               ].map(opt => (
-                <Button key={opt} onClick={() => handleOptionClick(opt)} variant="secondary">
-                  {opt}
-                </Button>
+                <ContextualHint key={opt.word} hint={opt.hint}>
+                  <Button 
+                    onClick={() => handleOptionClick(opt.word)} 
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    {opt.word}
+                  </Button>
+                </ContextualHint>
               ))}
             </div>
             <div className="flex justify-between mt-4">
@@ -259,24 +268,30 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
             <div className="text-xs text-muted-foreground -mt-2">Tip: You can click a tone word below OR drag it into the highlighted box. Click the box to clear.</div>
             <div className="flex flex-wrap gap-2">
               {toneWords.map(word => (
-                <button
-                  key={word}
-                  draggable
-                  onDragStart={e => handleDragStart(e, word)}
-                  onClick={() => handleToneClick(word)}
-                  className={
-                    `px-3 py-1 rounded-md border text-sm font-medium shadow-sm transition-all
-                    ${selectedTone === word ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted border-muted-foreground/30'}
-                    focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
-                  type="button"
-                >
-                  {word}
-                </button>
+                <ContextualHint key={word} hint="Click or drag me!" delayMs={4000}>
+                  <InsightTooltip 
+                    insight={`"${word}" changes how the message is perceived`}
+                    example={toneResponses[word] ? `Try it to see the ${word} version` : undefined}
+                  >
+                    <button
+                      draggable
+                      onDragStart={e => handleDragStart(e, word)}
+                      onClick={() => handleToneClick(word)}
+                      className={
+                        `px-3 py-1 rounded-md border text-sm font-medium shadow-sm transition-all
+                        ${selectedTone === word ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted border-muted-foreground/30'}
+                        focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
+                      type="button"
+                    >
+                      {word}
+                    </button>
+                  </InsightTooltip>
+                </ContextualHint>
               ))}
             </div>
             {selectedTone && (
-              <div className="p-3 border rounded bg-muted">
-                {toneResponses[selectedTone]}
+              <div className="p-3 border rounded bg-muted animate-slide-up">
+                <AnimatedText text={toneResponses[selectedTone]} speed={15} />
               </div>
             )}
             <div className="flex justify-between mt-4">
