@@ -2,8 +2,11 @@ import { useState } from "react";
 import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { Search, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Search, CheckCircle, XCircle, AlertCircle, Shield, AlertTriangle } from "lucide-react";
+import { CelebrationEffect } from "@/components/CelebrationEffect";
+import { VisualBadge } from "@/components/VisualBadge";
 
 interface SourceHunterProps {
   onComplete: (score: number) => void;
@@ -88,6 +91,7 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const scenario = scenarios[currentScenario];
 
@@ -119,6 +123,7 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
     setShowResults(true);
 
     if (selectedCredibleCount === credibleSources.length && selectedNonCredibleCount === 0) {
+      setShowCelebration(true);
       toast("Perfect! You identified all credible sources! 🎯");
     } else if (selectedCredibleCount > selectedNonCredibleCount) {
       toast("Good job! You found most credible sources! 👍");
@@ -155,14 +160,48 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
     );
   }
 
+  const credibleCount = scenario.sources.filter(s => s.credible).length;
+  const selectedCredibleCount = selectedSources.filter(id => 
+    scenario.sources.find(s => s.id === id)?.credible
+  ).length;
+  const trustScore = selectedSources.length > 0 
+    ? Math.round((selectedCredibleCount / selectedSources.length) * 100) 
+    : 0;
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
+      {showCelebration && (
+        <CelebrationEffect
+          type="stars"
+          amount={100}
+          onComplete={() => setShowCelebration(false)}
+        />
+      )}
+      
+      <div className="text-center space-y-3">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Search className="w-6 h-6 text-primary" />
+          <Search className="w-7 h-7 text-primary animate-pulse" />
           Source Hunter
         </h2>
         <p className="text-muted-foreground">Find credible sources to verify AI claims</p>
+        
+        {/* Trust Score Display */}
+        {!showResults && selectedSources.length > 0 && (
+          <div className="max-w-md mx-auto space-y-2 animate-fade-in">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Trust Score</span>
+              <span className={`font-bold ${
+                trustScore >= 80 ? 'text-green-600' : 
+                trustScore >= 50 ? 'text-amber-600' : 
+                'text-red-600'
+              }`}>
+                {trustScore}%
+              </span>
+            </div>
+            <Progress value={trustScore} className="h-2" />
+          </div>
+        )}
+        
         <div className="text-sm text-muted-foreground">
           Scenario {currentScenario + 1} of {scenarios.length} | Score: {score}
         </div>
@@ -189,55 +228,118 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
-            {scenario.sources.map((source) => (
-              <div
-                key={source.id}
-                className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  selectedSources.includes(source.id)
-                    ? 'border-primary bg-primary/10'
-                    : 'border-muted hover:border-primary/50'
-                } ${
-                  showResults
-                    ? source.credible
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-red-500 bg-red-50'
-                    : ''
-                }`}
-                onClick={() => handleSourceClick(source.id)}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 mt-1">
-                    {showResults ? (
-                      source.credible ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
+            {scenario.sources.map((source) => {
+              const isSelected = selectedSources.includes(source.id);
+              const showAsCorrect = showResults && source.credible;
+              const showAsWrong = showResults && !source.credible;
+              
+              // Determine badge type
+              let badgeType: "verified" | "credible" | "biased" | "unverified" | "peer-reviewed" = "unverified";
+              if (source.type === "Academic Study") badgeType = "peer-reviewed";
+              else if (source.credible) badgeType = "credible";
+              else if (source.type.includes("Blog") || source.type.includes("Social")) badgeType = "unverified";
+              else badgeType = "biased";
+              
+              return (
+                <div
+                  key={source.id}
+                  className={`relative p-5 border-2 rounded-xl cursor-pointer transition-all duration-300 transform ${
+                    isSelected && !showResults
+                      ? 'border-primary bg-primary/10 scale-102 shadow-md'
+                      : 'border-muted hover:border-primary/50 hover:scale-101'
+                  } ${
+                    showAsCorrect
+                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-green-200'
+                      : showAsWrong
+                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-red-200'
+                        : ''
+                  }`}
+                  onClick={() => handleSourceClick(source.id)}
+                >
+                  {/* Credibility badge in top right */}
+                  {showResults && (
+                    <div className="absolute -top-2 -right-2 animate-scale-in">
+                      <VisualBadge type={badgeType} />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 mt-1">
+                      {showResults ? (
+                        source.credible ? (
+                          <Shield className="w-6 h-6 text-green-600 animate-scale-in" />
+                        ) : (
+                          <AlertTriangle className="w-6 h-6 text-red-600 animate-scale-in" />
+                        )
                       ) : (
-                        <XCircle className="w-5 h-5 text-red-600" />
-                      )
-                    ) : (
-                      <div className={`w-5 h-5 rounded-full border-2 ${
-                        selectedSources.includes(source.id)
-                          ? 'bg-primary border-primary'
-                          : 'border-muted-foreground'
-                      }`} />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-medium text-sm mb-1">{source.title}</h4>
-                    <p className="text-xs text-muted-foreground mb-2">{source.type}</p>
-                    <p className="text-xs">{source.description}</p>
+                        <div className={`w-6 h-6 rounded-full border-2 transition-all ${
+                          isSelected
+                            ? 'bg-primary border-primary shadow-sm scale-110'
+                            : 'border-muted-foreground'
+                        }`} />
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <h4 className="font-semibold text-sm">{source.title}</h4>
+                      <p className="text-xs text-muted-foreground font-medium">{source.type}</p>
+                      <p className="text-xs leading-relaxed">{source.description}</p>
+                      
+                      {/* Show credibility indicator on hover (when not showing results) */}
+                      {!showResults && (
+                        <div className="pt-2">
+                          {source.credible ? (
+                            <div className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
+                              <Shield className="w-3 h-3" />
+                              <span>Potentially credible</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400">
+                              <AlertTriangle className="w-3 h-3" />
+                              <span>Verify carefully</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {showResults && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">Source Analysis:</h4>
-              <div className="space-y-2 text-sm text-blue-800">
-                <p>✅ <strong>Credible:</strong> Academic studies, medical organizations, government agencies</p>
-                <p>❌ <strong>Less Credible:</strong> Personal blogs, biased industry sources, unverified social media</p>
-                <p>💡 <strong>Tip:</strong> Always cross-reference multiple credible sources!</p>
+            <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl animate-fade-in">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center gap-2">
+                <Search className="w-5 h-5" />
+                Source Analysis:
+              </h4>
+              <div className="space-y-3 text-sm text-blue-800 dark:text-blue-200">
+                <div className="flex items-start gap-2">
+                  <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <p><strong>Credible Sources:</strong> Academic studies, peer-reviewed journals, medical organizations, government agencies, established institutions</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <p><strong>Less Credible:</strong> Personal blogs, biased industry sources, unverified social media posts, marketing materials</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <p><strong>Best Practice:</strong> Always cross-reference multiple credible sources and check publication dates!</p>
+                </div>
+              </div>
+              
+              {/* Trust score summary */}
+              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium">Your Trust Score:</span>
+                  <span className={`font-bold text-base ${
+                    trustScore >= 80 ? 'text-green-600' : 
+                    trustScore >= 50 ? 'text-amber-600' : 
+                    'text-red-600'
+                  }`}>
+                    {trustScore}%
+                  </span>
+                </div>
               </div>
             </div>
           )}

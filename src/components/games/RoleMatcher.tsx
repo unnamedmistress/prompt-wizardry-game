@@ -3,7 +3,8 @@ import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Users, Target } from "lucide-react";
+import { Users, Target, Briefcase, DollarSign, PartyPopper, ChefHat, Wrench } from "lucide-react";
+import { CelebrationEffect } from "@/components/CelebrationEffect";
 
 interface RoleMatcherProps {
   onComplete: (score: number) => void;
@@ -18,35 +19,70 @@ const scenarios = [
     scenario: "You're getting ready for your first part-time job interview at a clothing store tomorrow. You're nervous and want realistic practice.",
     roles: ["Career coach", "Retail hiring manager", "Public speaking coach", "Resume writer"],
     correctRole: 1,
-    explanation: "A retail hiring manager knows exactly what store managers look for: customer interaction examples, reliability, and basic situational judgment. That makes their feedback the most targeted practice."
+    explanation: "A retail hiring manager knows exactly what store managers look for: customer interaction examples, reliability, and basic situational judgment. That makes their feedback the most targeted practice.",
+    icon: Briefcase,
+    roleExpertise: [
+      "General career advice",
+      "Retail-specific interview prep",
+      "Presentation skills",
+      "Document creation"
+    ]
   },
   {
     id: 2,
     scenario: "After the interview, you realize you need to save money for a new phone instead of spending it on snacks and games. You want help creating a realistic plan you can stick to.",
     roles: ["Financial coach", "Teen budgeting mentor", "Math tutor", "Shopping advisor"],
     correctRole: 1,
-    explanation: "A teen budgeting mentor focuses on real-world, age-appropriate spending habits and building sustainable routines—not just abstract financial theory."
+    explanation: "A teen budgeting mentor focuses on real-world, age-appropriate spending habits and building sustainable routines—not just abstract financial theory.",
+    icon: DollarSign,
+    roleExpertise: [
+      "General financial advice",
+      "Age-appropriate budgeting",
+      "Mathematical calculations",
+      "Purchase recommendations"
+    ]
   },
   {
     id: 3,
     scenario: "You want to celebrate finishing the interview with a few friends. Small budget. Need ideas for food, simple games, and a chill vibe playlist.",
     roles: ["Event planner", "Budgeting coach", "Party DJ", "Restaurant caterer"],
     correctRole: 0,
-    explanation: "An event planner can balance budget, flow, activities, and atmosphere together—more holistic than just music, money, or food alone."
+    explanation: "An event planner can balance budget, flow, activities, and atmosphere together—more holistic than just music, money, or food alone.",
+    icon: PartyPopper,
+    roleExpertise: [
+      "Holistic event planning",
+      "Financial management",
+      "Music curation",
+      "Food services"
+    ]
   },
   {
     id: 4,
     scenario: "Right after the mini celebration, your parents ask you to cook a quick family dinner. It has to be healthy, fast, and picky-eater friendly.",
     roles: ["Nutritionist", "Family chef", "Meal prep coach", "Grocery budget planner"],
     correctRole: 1,
-    explanation: "A family chef focuses on practical, fast, crowd-pleasing meals—balancing taste, nutrition, and simplicity for mixed preferences."
+    explanation: "A family chef focuses on practical, fast, crowd-pleasing meals—balancing taste, nutrition, and simplicity for mixed preferences.",
+    icon: ChefHat,
+    roleExpertise: [
+      "Nutritional science",
+      "Practical family cooking",
+      "Meal planning",
+      "Budget management"
+    ]
   },
   {
     id: 5,
     scenario: "On the drive home, a tire suddenly blows out. You've never changed one and need calm, step-by-step help you can follow safely on the roadside.",
     roles: ["Auto mechanic", "Driving safety instructor", "Roadside assistance operator", "YouTube life hack guru"],
     correctRole: 0,
-    explanation: "An auto mechanic can deliver precise, order-dependent instructions (jack placement, loosening pattern, safety checks) without distracting gimmicks—critical for doing it right and safely."
+    explanation: "An auto mechanic can deliver precise, order-dependent instructions (jack placement, loosening pattern, safety checks) without distracting gimmicks—critical for doing it right and safely.",
+    icon: Wrench,
+    roleExpertise: [
+      "Technical auto repair",
+      "Safety procedures",
+      "Emergency assistance",
+      "General tips and tricks"
+    ]
   }
 ];
 
@@ -56,6 +92,8 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [hoveredRole, setHoveredRole] = useState<number | null>(null);
 
   const scenario = scenarios[currentScenario];
   const POINTS_PER_SCENARIO = 100 / scenarios.length; // 20 each for 5 scenarios
@@ -74,6 +112,7 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
     const isCorrect = selectedRole === scenario.correctRole;
     if (isCorrect) {
       setScore(score + POINTS_PER_SCENARIO);
+      setShowCelebration(true);
       toast("Perfect match! Great role selection! 🎯");
     } else {
       toast("Not quite right. Let's see why!");
@@ -110,8 +149,18 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
     );
   }
 
+  const ScenarioIcon = scenario.icon;
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {showCelebration && (
+        <CelebrationEffect
+          type="stars"
+          amount={POINTS_PER_SCENARIO}
+          onComplete={() => setShowCelebration(false)}
+        />
+      )}
+      
       <Card>
         <CardHeader>
             <CardTitle className="text-2xl font-bold">👥 Big Day Role Matcher</CardTitle>
@@ -144,46 +193,73 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
           </div>
 
           <div className="space-y-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5 text-primary" />
-              <h4 className="font-medium">Scenario</h4>
+            <div className="flex items-center gap-3 mb-4 p-4 bg-gradient-to-r from-primary/10 to-accent/10 rounded-lg border border-primary/20">
+              <ScenarioIcon className="w-8 h-8 text-primary animate-pulse" />
+              <div className="flex-1">
+                <h4 className="font-semibold text-lg">Scenario {currentScenario + 1}</h4>
+                <p className="text-sm text-muted-foreground">Choose the best AI role for this situation</p>
+              </div>
             </div>
             
             <p className="text-lg font-medium mb-6">{scenario.scenario}</p>
             
             <h4 className="font-medium mb-4">Which role should the AI take?</h4>
             
-            <div className="grid gap-3 md:grid-cols-2">
-              {scenario.roles.map((role, index) => (
-                <div
-                  key={index}
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                    selectedRole === index
-                      ? 'border-primary bg-primary/10'
-                      : 'border-muted hover:border-primary/50'
-                  } ${
-                    showExplanation
-                      ? index === scenario.correctRole
-                        ? 'border-green-500 bg-green-50 text-green-900'
-                        : selectedRole === index && index !== scenario.correctRole
-                          ? 'border-red-500 bg-red-50 text-red-900'
-                          : 'opacity-60'
-                      : 'text-foreground'
-                  }`}
-                  onClick={() => handleRoleSelect(index)}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
-                      selectedRole === index
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'border-muted-foreground text-muted-foreground'
-                    }`}>
-                      {index + 1}
+            <div className="grid gap-4 md:grid-cols-2">
+              {scenario.roles.map((role, index) => {
+                const isHovered = hoveredRole === index;
+                const isSelected = selectedRole === index;
+                const isCorrect = index === scenario.correctRole;
+                const showAsCorrect = showExplanation && isCorrect;
+                const showAsWrong = showExplanation && isSelected && !isCorrect;
+
+                return (
+                  <div
+                    key={index}
+                    className={`relative p-5 border-2 rounded-xl cursor-pointer transition-all duration-300 transform ${
+                      isSelected && !showExplanation
+                        ? 'border-primary bg-primary/10 scale-105 shadow-lg'
+                        : 'border-muted hover:border-primary/50 hover:scale-102'
+                    } ${
+                      showAsCorrect
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100 shadow-green-200'
+                        : showAsWrong
+                          ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100'
+                          : showExplanation && !isCorrect
+                            ? 'opacity-50'
+                            : 'text-foreground'
+                    }`}
+                    onClick={() => handleRoleSelect(index)}
+                    onMouseEnter={() => !showExplanation && setHoveredRole(index)}
+                    onMouseLeave={() => setHoveredRole(null)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`flex-shrink-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all ${
+                        isSelected && !showExplanation
+                          ? 'bg-primary text-primary-foreground border-primary shadow-md scale-110'
+                          : showAsCorrect
+                            ? 'bg-green-500 text-white border-green-500'
+                            : showAsWrong
+                              ? 'bg-red-500 text-white border-red-500'
+                              : 'border-muted-foreground text-muted-foreground'
+                      }`}>
+                        {showAsCorrect ? '✓' : showAsWrong ? '✗' : index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <span className="font-semibold text-base">{role}</span>
+                        
+                        {/* Flip card effect on hover - show expertise */}
+                        {isHovered && !showExplanation && (
+                          <div className="mt-2 text-xs text-muted-foreground animate-fade-in">
+                            <div className="font-medium mb-1">Expertise:</div>
+                            {scenario.roleExpertise[index]}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <span className="font-medium">{role}</span>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {showExplanation && (

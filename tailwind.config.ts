@@ -137,7 +137,13 @@ export default {
 				'pulse-hint': 'pulse-hint 2s ease-in-out infinite',
 				'sparkle': 'sparkle 0.6s ease-out forwards',
 				'bounce-in': 'bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards',
-				'slide-up': 'slide-up 0.4s ease-out forwards'
+				'slide-up': 'slide-up 0.4s ease-out forwards',
+				'scale-in': 'scale-in 0.2s ease-out',
+				'fade-in': 'fade-in 0.3s ease-out'
+			},
+			scale: {
+				'101': '1.01',
+				'102': '1.02'
 			}
 		}
 	},

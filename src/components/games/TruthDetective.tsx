@@ -3,7 +3,8 @@ import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, Target } from "lucide-react";
+import { CheckCircle, XCircle, Target, Search, AlertTriangle } from "lucide-react";
+import { CelebrationEffect } from "@/components/CelebrationEffect";
 
 interface TruthDetectiveProps {
   onComplete: (score: number) => void;
@@ -53,6 +54,8 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
   const [gameComplete, setGameComplete] = useState(false);
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [hoveredStatement, setHoveredStatement] = useState<number | null>(null);
 
   const currentHallucination = hallucinations[currentRound];
 
@@ -78,6 +81,7 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
 
     if (isCorrect) {
       setScore(score + 100);
+      setShowCelebration(true);
       toast("Correct! Great fact-checking skills! 🎉");
     } else {
       toast("Not quite right. Let's see the explanation.");
@@ -116,9 +120,17 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {showCelebration && (
+        <CelebrationEffect
+          type="stars"
+          amount={100}
+          onComplete={() => setShowCelebration(false)}
+        />
+      )}
+      
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Target className="w-6 h-6 text-primary" />
+          <Search className="w-7 h-7 text-primary animate-pulse" />
           Truth Detective
         </h2>
         <p className="text-muted-foreground">Find the 2 true statements and identify the AI hallucination</p>
@@ -135,47 +147,81 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {currentHallucination.statements.map((statement, index) => (
-            <div
-              key={index}
-              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                selectedStatements.includes(index)
-                  ? 'border-primary bg-primary/10'
-                  : 'border-muted hover:border-primary/50'
-              } ${
-                showExplanation
-                  ? currentHallucination.correct.includes(index)
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-red-500 bg-red-50'
-                  : ''
-              }`}
-              onClick={() => handleStatementSelect(index)}
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-1">
-                  {showExplanation ? (
-                    currentHallucination.correct.includes(index) ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+          {currentHallucination.statements.map((statement, index) => {
+            const isSelected = selectedStatements.includes(index);
+            const isCorrect = currentHallucination.correct.includes(index);
+            const isLie = index === currentHallucination.lie;
+            const isHovered = hoveredStatement === index;
+            const showAsCorrect = showExplanation && isCorrect;
+            const showAsLie = showExplanation && isLie;
+            
+            return (
+              <div
+                key={index}
+                className={`relative p-5 border-2 rounded-xl cursor-pointer transition-all duration-300 transform ${
+                  isSelected && !showExplanation
+                    ? 'border-primary bg-primary/10 scale-102 shadow-md'
+                    : 'border-muted hover:border-primary/50 hover:scale-101'
+                } ${
+                  showAsCorrect
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-green-200'
+                    : showAsLie
+                      ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-red-200 animate-pulse-hint'
+                      : ''
+                }`}
+                onClick={() => handleStatementSelect(index)}
+                onMouseEnter={() => !showExplanation && setHoveredStatement(index)}
+                onMouseLeave={() => setHoveredStatement(null)}
+              >
+                {/* Detective magnifying glass overlay when hovering */}
+                {isHovered && !showExplanation && (
+                  <div className="absolute -top-3 -right-3 animate-bounce-in">
+                    <Search className="w-8 h-8 text-primary drop-shadow-lg" />
+                  </div>
+                )}
+                
+                {/* Suspicion meter for lie statement */}
+                {!showExplanation && isLie && isHovered && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 animate-fade-in">
+                    <div className="bg-amber-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                      <AlertTriangle className="w-3 h-3" />
+                      Suspicious?
+                    </div>
+                  </div>
+                )}
+                
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    {showExplanation ? (
+                      isCorrect ? (
+                        <CheckCircle className="w-6 h-6 text-green-600 animate-scale-in" />
+                      ) : (
+                        <XCircle className="w-6 h-6 text-red-600 animate-scale-in" />
+                      )
                     ) : (
-                      <XCircle className="w-5 h-5 text-red-600" />
-                    )
-                  ) : (
-                    <div className={`w-5 h-5 rounded-full border-2 ${
-                      selectedStatements.includes(index)
-                        ? 'bg-primary border-primary'
-                        : 'border-muted-foreground'
-                    }`} />
-                  )}
+                      <div className={`w-6 h-6 rounded-full border-2 transition-all ${
+                        isSelected
+                          ? 'bg-primary border-primary shadow-sm scale-110'
+                          : 'border-muted-foreground'
+                      }`} />
+                    )}
+                  </div>
+                  <p className="text-sm flex-1 leading-relaxed">{statement}</p>
                 </div>
-                <p className="text-sm">{statement}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {showExplanation && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">Explanation:</h4>
-              <p className="text-sm text-blue-800">{currentHallucination.explanation}</p>
+            <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl animate-fade-in">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Why This Was a Hallucination:
+              </h4>
+              <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">{currentHallucination.explanation}</p>
+              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300">
+                <strong>💡 Detective Tip:</strong> Always verify claims that sound too specific or surprising. Real facts can usually be cross-referenced with multiple credible sources.
+              </div>
             </div>
           )}
 

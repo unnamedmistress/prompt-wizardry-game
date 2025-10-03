@@ -2,8 +2,10 @@ import { useState } from "react";
 import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Search, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { Search, CheckCircle, XCircle, AlertTriangle, Sparkles } from "lucide-react";
+import { CelebrationEffect } from "@/components/CelebrationEffect";
 
 interface DetailDetectiveProps {
   onComplete: (score: number) => void;
@@ -12,69 +14,81 @@ interface DetailDetectiveProps {
 }
 
 // Dating Profile Edition – rounds with distractor (incorrect) options so it's never "all correct"
-interface RoundOption { text: string; correct: boolean }
+interface RoundOption { 
+  text: string; 
+  correct: boolean;
+  category: "personality" | "constraints" | "tone" | "content" | "irrelevant";
+}
 interface RoundData { id: number; prompt: string; options: RoundOption[] }
+
+const categoryColors = {
+  personality: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
+  constraints: "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400",
+  tone: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400",
+  content: "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400",
+  irrelevant: "bg-gray-100 text-gray-600 border-gray-300 dark:bg-gray-900/30 dark:text-gray-400",
+};
 
 const prompts: RoundData[] = [
   {
     id: 1,
     prompt: "Help me write a dating profile.",
     options: [
-      { text: "Personality traits (funny, kind, adventurous, thoughtful, etc.)", correct: true },
-      { text: "Hobbies and interests (music, sports, books, travel)", correct: true },
-      { text: "Age range and relationship goals (serious, casual, friendship)", correct: true },
-      { text: "Tone of writing (light and witty, professional, romantic)", correct: true },
-      { text: "Desired character length (short bio vs 200 words)", correct: true },
-      { text: "Number of emojis the AI model internally prefers (not relevant)", correct: false },
-      { text: "Exact app algorithm weighting formula (impossible to know)", correct: false }
+      { text: "Personality traits (funny, kind, adventurous, thoughtful, etc.)", correct: true, category: "personality" },
+      { text: "Hobbies and interests (music, sports, books, travel)", correct: true, category: "content" },
+      { text: "Age range and relationship goals (serious, casual, friendship)", correct: true, category: "constraints" },
+      { text: "Tone of writing (light and witty, professional, romantic)", correct: true, category: "tone" },
+      { text: "Desired character length (short bio vs 200 words)", correct: true, category: "constraints" },
+      { text: "Number of emojis the AI model internally prefers (not relevant)", correct: false, category: "irrelevant" },
+      { text: "Exact app algorithm weighting formula (impossible to know)", correct: false, category: "irrelevant" }
     ]
   },
   {
     id: 2,
     prompt: "Write me a short dating profile that makes me sound fun.",
     options: [
-      { text: "What kind of 'fun' (jokes, travel, nightlife, quirky hobbies)", correct: true },
-      { text: "Hobbies or passions to highlight", correct: true },
-      { text: "Whether 'short' means one line or a paragraph", correct: true },
-      { text: "Relationship goals (long-term vs casual)", correct: true },
-      { text: "Favorite brand of phone charger (not relevant)", correct: false },
-      { text: "Exact sunrise time tomorrow (impossible to predict)", correct: false }
+      { text: "What kind of 'fun' (jokes, travel, nightlife, quirky hobbies)", correct: true, category: "tone" },
+      { text: "Hobbies or passions to highlight", correct: true, category: "content" },
+      { text: "Whether 'short' means one line or a paragraph", correct: true, category: "constraints" },
+      { text: "Relationship goals (long-term vs casual)", correct: true, category: "content" },
+      { text: "Favorite brand of phone charger (not relevant)", correct: false, category: "irrelevant" },
+      { text: "Exact sunrise time tomorrow (impossible to predict)", correct: false, category: "irrelevant" }
     ]
   },
   {
     id: 3,
     prompt: "Make a dating profile for me. I like movies and music.",
     options: [
-      { text: "Which genres of movies/music (horror vs rom-com, rap vs classical)", correct: true },
-      { text: "Personality traits to match tone", correct: true },
-      { text: "Age and audience (who you want to attract)", correct: true },
-      { text: "How much detail to include (quick blurb vs storytelling style)", correct: true },
-      { text: "Tone (funny, witty, serious, adventurous)", correct: true },
-      { text: "Favorite operating system version number (not relevant)", correct: false }
+      { text: "Which genres of movies/music (horror vs rom-com, rap vs classical)", correct: true, category: "content" },
+      { text: "Personality traits to match tone", correct: true, category: "personality" },
+      { text: "Age and audience (who you want to attract)", correct: true, category: "constraints" },
+      { text: "How much detail to include (quick blurb vs storytelling style)", correct: true, category: "constraints" },
+      { text: "Tone (funny, witty, serious, adventurous)", correct: true, category: "tone" },
+      { text: "Favorite operating system version number (not relevant)", correct: false, category: "irrelevant" }
     ]
   },
   {
     id: 4,
     prompt: "Help me write a witty profile. I’m adventurous and outgoing.",
     options: [
-      { text: "Specific examples of adventurous/outgoing activities (hiking, skydiving, karaoke nights)", correct: true },
-      { text: "Relationship goals (serious partner, casual, friendship)", correct: true },
-      { text: "Writing style (short punchy lines vs longer storytelling)", correct: true },
-      { text: "Fun facts or quirks (hidden talents, favorite food, pets)", correct: true },
-      { text: "Server response latency of the dating app (not relevant)", correct: false },
-      { text: "The humidity level in your city right now (not relevant)", correct: false }
+      { text: "Specific examples of adventurous/outgoing activities (hiking, skydiving, karaoke nights)", correct: true, category: "content" },
+      { text: "Relationship goals (serious partner, casual, friendship)", correct: true, category: "content" },
+      { text: "Writing style (short punchy lines vs longer storytelling)", correct: true, category: "tone" },
+      { text: "Fun facts or quirks (hidden talents, favorite food, pets)", correct: true, category: "personality" },
+      { text: "Server response latency of the dating app (not relevant)", correct: false, category: "irrelevant" },
+      { text: "The humidity level in your city right now (not relevant)", correct: false, category: "irrelevant" }
     ]
   },
   {
     id: 5,
     prompt: "Create a dating bio that shows I’m 25, love board games, and want a long-term relationship.",
     options: [
-      { text: "Tone (lighthearted, romantic, professional, nerdy)", correct: true },
-      { text: "Favorite board games or styles (strategy, party games, classics)", correct: true },
-      { text: "Personality traits (funny, empathetic, competitive, easy-going)", correct: true },
-      { text: "Constraints (150 characters vs 200 words)", correct: true },
-      { text: "Dealbreakers/boundaries (must love pets, non-smoker, etc.)", correct: true },
-      { text: "Exact probability of first-date match success (impossible to know)", correct: false }
+      { text: "Tone (lighthearted, romantic, professional, nerdy)", correct: true, category: "tone" },
+      { text: "Favorite board games or styles (strategy, party games, classics)", correct: true, category: "content" },
+      { text: "Personality traits (funny, empathetic, competitive, easy-going)", correct: true, category: "personality" },
+      { text: "Constraints (150 characters vs 200 words)", correct: true, category: "constraints" },
+      { text: "Dealbreakers/boundaries (must love pets, non-smoker, etc.)", correct: true, category: "content" },
+      { text: "Exact probability of first-date match success (impossible to know)", correct: false, category: "irrelevant" }
     ]
   }
 ];
@@ -85,6 +99,8 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
   const [score, setScore] = useState(0);
   const [showResults, setShowResults] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [justSelected, setJustSelected] = useState<number | null>(null);
 
   const prompt = prompts[currentPrompt];
   const correctTotal = prompt.options.filter(o => o.correct).length;
@@ -93,8 +109,11 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
     if (showResults) return;
     if (selectedDetails.includes(index)) {
       setSelectedDetails(selectedDetails.filter(d => d !== index));
+      setJustSelected(null);
     } else {
       setSelectedDetails([...selectedDetails, index]);
+      setJustSelected(index);
+      setTimeout(() => setJustSelected(null), 600);
     }
   };
 
@@ -146,6 +165,14 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {showCelebration && (
+        <CelebrationEffect
+          type="stars"
+          amount={correctTotal * 10}
+          onComplete={() => setShowCelebration(false)}
+        />
+      )}
+      
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">❤️ Specificity & Details (Dating Profile Edition)</CardTitle>
@@ -197,27 +224,63 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                   const isCorrect = opt.correct;
                   const revealCorrect = showResults && isCorrect;
                   const revealWrong = showResults && isSelected && !isCorrect;
+                  const isJustSelected = justSelected === index;
+                  
                   return (
                     <div
                       key={index}
-                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all text-sm
-                        ${isSelected && !showResults ? 'border-primary bg-primary/10' : 'border-muted hover:border-primary/50'}
-                        ${revealCorrect ? 'border-green-500 bg-green-50 text-green-900' : ''}
-                        ${revealWrong ? 'border-red-500 bg-red-50 text-red-900' : ''}
-                        ${!isSelected && showResults && !isCorrect ? 'opacity-60' : ''}`}
+                      className={`relative p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 text-sm transform ${
+                        isSelected && !showResults 
+                          ? 'border-primary bg-primary/10 scale-102' 
+                          : 'border-muted hover:border-primary/50 hover:scale-101'
+                      } ${
+                        revealCorrect 
+                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100' 
+                          : ''
+                      } ${
+                        revealWrong 
+                          ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100' 
+                          : ''
+                      } ${
+                        !isSelected && showResults && !isCorrect ? 'opacity-50' : ''
+                      }`}
                       onClick={() => handleDetailSelect(index)}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex-shrink-0">
+                      {isJustSelected && (
+                        <div className="absolute -top-2 -right-2 animate-sparkle">
+                          <Sparkles className="w-5 h-5 text-accent" />
+                        </div>
+                      )}
+                      
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 mt-0.5">
                           {showResults ? (
-                            revealCorrect ? <CheckCircle className="w-4 h-4 text-green-600" /> : (
-                              revealWrong ? <XCircle className="w-4 h-4 text-red-600" /> : <div className="w-4 h-4 rounded border-2 border-muted-foreground/40" />
+                            revealCorrect ? (
+                              <CheckCircle className="w-5 h-5 text-green-600" />
+                            ) : revealWrong ? (
+                              <XCircle className="w-5 h-5 text-red-600" />
+                            ) : (
+                              <div className="w-5 h-5 rounded border-2 border-muted-foreground/40" />
                             )
                           ) : (
-                            <div className={`w-4 h-4 rounded border-2 ${isSelected ? 'bg-primary border-primary' : 'border-muted-foreground'}`} />
+                            <div className={`w-5 h-5 rounded border-2 transition-all ${
+                              isSelected 
+                                ? 'bg-primary border-primary shadow-sm' 
+                                : 'border-muted-foreground'
+                            }`} />
                           )}
                         </div>
-                        <span className="flex-1">{opt.text}</span>
+                        <div className="flex-1 space-y-2">
+                          <span className="block">{opt.text}</span>
+                          {!showResults && (
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs ${categoryColors[opt.category]}`}
+                            >
+                              {opt.category}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
