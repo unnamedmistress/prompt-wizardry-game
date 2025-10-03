@@ -72,14 +72,55 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
 
   const isComplete = selectedConstraints.length > 0 && selectedDelimiters.length > 0 && selectedScope;
 
+  // Calculate precision score
+  const precisionScore = (selectedConstraints.length * 25) + (selectedDelimiters.length * 15) + (selectedScope ? 40 : 0);
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <Card className="border-2 border-primary/20">
+      <Card className="border-2 border-primary/20 bg-gradient-to-r from-green-50 to-blue-50">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-primary">Fitness Precision Trainer</CardTitle>
+          <CardTitle className="text-2xl text-primary flex items-center justify-center gap-2">
+            <Target className="w-6 h-6" />
+            Fitness Precision Trainer
+          </CardTitle>
           <CardDescription className="text-lg">
             Use exact constraints and delimiters to get perfectly targeted workout routines
           </CardDescription>
+          
+          {/* Bullseye Target Visualization */}
+          {(selectedConstraints.length > 0 || selectedDelimiters.length > 0 || selectedScope) && (
+            <div className="mt-4 flex items-center justify-center gap-8">
+              <div className="relative w-32 h-32">
+                <div className="absolute inset-0 rounded-full border-4 border-red-300 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full border-4 border-amber-300 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full border-4 border-green-300 flex items-center justify-center">
+                      <div className={`w-8 h-8 rounded-full transition-all ${
+                        precisionScore >= 80 ? 'bg-green-500 animate-pulse' :
+                        precisionScore >= 50 ? 'bg-amber-500' :
+                        'bg-red-500'
+                      }`}>
+                        <div className="w-full h-full rounded-full flex items-center justify-center text-white text-xs font-bold">
+                          {precisionScore}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Target className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 text-primary transition-all ${
+                  precisionScore >= 80 ? 'scale-150' : 'scale-100'
+                }`} />
+              </div>
+              <div className="text-left">
+                <div className="text-sm font-medium">Precision Score</div>
+                <div className="text-3xl font-bold text-primary">{precisionScore}%</div>
+                <div className="text-xs text-muted-foreground">
+                  {precisionScore >= 80 ? '🎯 Bullseye!' :
+                   precisionScore >= 50 ? '👍 Good aim' :
+                   '🎯 Keep targeting'}
+                </div>
+              </div>
+            </div>
+          )}
         </CardHeader>
       </Card>
 

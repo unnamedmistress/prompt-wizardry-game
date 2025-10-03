@@ -160,19 +160,81 @@ const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ lesson, onComplet
             </Card>
           </div>
 
-          {/* Generated Prompt Preview */}
+          {/* Live Document Preview */}
           {isComplete && (
-            <Card className="border-2 border-green-500/20 bg-green-50/50">
+            <Card className="border-2 border-primary/20 bg-gradient-to-br from-blue-50 to-purple-50 animate-fade-in">
               <CardHeader>
-                <CardTitle className="text-lg text-green-700">Your Professional Prompt</CardTitle>
+                <CardTitle className="text-lg text-primary flex items-center gap-2">
+                  <FileText className="w-5 h-5" />
+                  Live Document Preview
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {/* Mock document preview */}
+                <div className="bg-white p-6 rounded-lg border-2 border-primary/20 shadow-lg">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between border-b pb-2">
+                      <span className="font-bold text-lg">
+                        {contents.find(c => c.id === selectedContent)?.name}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date().toLocaleDateString()}
+                      </span>
+                    </div>
+                    
+                    {selectedFormat === 'table' && (
+                      <div className="border rounded overflow-hidden">
+                        <div className="grid grid-cols-3 gap-0">
+                          <div className="bg-muted p-2 border-b font-semibold text-sm">Item</div>
+                          <div className="bg-muted p-2 border-b border-l font-semibold text-sm">Details</div>
+                          <div className="bg-muted p-2 border-b border-l font-semibold text-sm">Status</div>
+                          <div className="p-2 text-sm">Task 1</div>
+                          <div className="p-2 border-l text-sm">Description</div>
+                          <div className="p-2 border-l text-sm">✓ Complete</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedFormat === 'list' && (
+                      <ol className="list-decimal list-inside space-y-2 text-sm">
+                        <li>First agenda item with details...</li>
+                        <li>Second important topic...</li>
+                        <li>Action items and next steps...</li>
+                      </ol>
+                    )}
+                    
+                    {selectedFormat === 'script' && (
+                      <div className="space-y-2 text-sm">
+                        <p><strong>Subject:</strong> {contents.find(c => c.id === selectedContent)?.name}</p>
+                        <p><strong>Dear Team,</strong></p>
+                        <p className="ml-4">Email content structured professionally...</p>
+                        <p className="ml-4">Best regards,</p>
+                      </div>
+                    )}
+                    
+                    {selectedFormat === 'chart' && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-24 text-sm font-medium">Progress:</div>
+                          <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full w-3/4 bg-primary" />
+                          </div>
+                          <span className="text-sm">75%</span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div className="p-2 bg-blue-50 rounded"><div className="text-2xl font-bold">12</div><div className="text-xs">Total</div></div>
+                          <div className="p-2 bg-green-50 rounded"><div className="text-2xl font-bold">9</div><div className="text-xs">Done</div></div>
+                          <div className="p-2 bg-amber-50 rounded"><div className="text-2xl font-bold">3</div><div className="text-xs">Pending</div></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="bg-background p-4 rounded-lg border">
+                  <div className="text-xs text-muted-foreground mb-2">Generated Prompt:</div>
                   <code className="text-sm text-foreground">{generatePrompt()}</code>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  This prompt will create professional, well-organized business documents!
-                </p>
               </CardContent>
             </Card>
           )}

@@ -137,25 +137,70 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
     );
   }
 
+  // Darken screen as time runs out
+  const screenDarkness = timeLeft <= 20 ? (20 - timeLeft) / 20 : 0;
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-bold flex items-center justify-center gap-2">
-          <Key className="w-6 h-6 text-primary" />
-          Prompt Escape Room
-        </h2>
-        <p className="text-muted-foreground">Find the problematic prompt before time runs out!</p>
-        <div className="flex items-center justify-center gap-4 text-sm">
-          <span>Room {currentRoom + 1} of {escapeRooms.length}</span>
-          <span>Score: {score}</span>
-          <div className={`flex items-center gap-1 ${timeLeft <= 10 ? 'text-red-600' : 'text-muted-foreground'}`}>
-            <Timer className="w-4 h-4" />
-            {timeLeft}s
-          </div>
-        </div>
+    <div 
+      className="max-w-4xl mx-auto space-y-6 relative transition-all duration-500"
+      style={{ 
+        filter: `brightness(${1 - screenDarkness * 0.3})`,
+      }}
+    >
+      {/* Escape Room Environment */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-900/20 to-red-900/20 rounded-lg blur-xl" />
+        <Card className="relative border-4 border-amber-600 bg-gradient-to-br from-amber-50 to-red-50 shadow-2xl">
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-500 via-red-500 to-amber-500 animate-pulse" />
+          
+          <CardHeader className="text-center pb-4">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
+              <CardTitle className="text-2xl font-bold">
+                {showExplanation ? '🔓 Door Unlocked!' : '🔒 Prompt Escape Room'}
+              </CardTitle>
+              <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
+            </div>
+            <CardDescription className="text-base font-medium">
+              Find the problematic prompt before time runs out!
+            </CardDescription>
+            
+            {/* Status Bar */}
+            <div className="flex items-center justify-center gap-6 mt-4 text-sm">
+              <div className="flex items-center gap-2 px-3 py-1 bg-background rounded-full">
+                <span className="font-medium">Room</span>
+                <span className="font-bold text-primary">{currentRoom + 1}/{escapeRooms.length}</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1 bg-background rounded-full">
+                <span className="font-medium">Score</span>
+                <span className="font-bold text-green-600">{score}</span>
+              </div>
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all ${
+                timeLeft <= 10 ? 'bg-red-100 text-red-700 animate-pulse' : 
+                timeLeft <= 30 ? 'bg-amber-100 text-amber-700' :
+                'bg-background'
+              }`}>
+                <Timer className="w-4 h-4" />
+                <span className="font-bold">{timeLeft}s</span>
+              </div>
+            </div>
+            
+            {/* Timer Progress Bar */}
+            <div className="w-full h-2 bg-background rounded-full overflow-hidden mt-3">
+              <div 
+                className={`h-full transition-all duration-1000 ${
+                  timeLeft <= 10 ? 'bg-red-500' :
+                  timeLeft <= 30 ? 'bg-amber-500' :
+                  'bg-green-500'
+                }`}
+                style={{ width: `${(timeLeft / 60) * 100}%` }}
+              />
+            </div>
+          </CardHeader>
+        </Card>
       </div>
 
-      <Card className="border-2 border-amber-400 bg-amber-50">
+      <Card className="border-2 border-amber-400 bg-amber-50 shadow-xl">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2">
             <Lock className="w-5 h-5 text-amber-600" />

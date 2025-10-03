@@ -146,11 +146,20 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
     );
   }
 
+  // Theme background colors
+  const themeStyle = {
+    backgroundImage: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%)',
+    backgroundAttachment: 'fixed'
+  };
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">🎨 Creative Challenge</CardTitle>
+    <div className="max-w-5xl mx-auto space-y-6" style={themeStyle}>
+      <Card className="border-2 border-purple-200 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
+          <CardTitle className="text-2xl font-bold flex items-center gap-2">
+            <Palette className="w-6 h-6 text-purple-600" />
+            🎨 Creative Challenge
+          </CardTitle>
           <CardDescription className="text-lg font-semibold text-foreground mb-3">Creative Applications</CardDescription>
           <div className="space-y-4 text-sm text-muted-foreground">
             <p>
@@ -180,8 +189,15 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
           </div>
 
           {creativityElements.map((element) => (
-            <div key={element.id} className="space-y-3">
-              <h4 className="font-medium text-primary">{element.category}</h4>
+            <div key={element.id} className="space-y-3 animate-fade-in">
+              <h4 className="font-medium text-primary flex items-center gap-2">
+                {element.id === 1 && <Lightbulb className="w-4 h-4" />}
+                {element.id === 2 && <Star className="w-4 h-4" />}
+                {element.id === 3 && <Star className="w-4 h-4" />}
+                {element.id === 4 && <Star className="w-4 h-4" />}
+                {element.id === 5 && <Star className="w-4 h-4" />}
+                {element.category}
+              </h4>
               <div className="grid gap-2 md:grid-cols-2">
                 {element.options.map((option, index) => {
                   const isSelected = selections[element.id] === index;
@@ -190,16 +206,16 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
                   return (
                     <div
                       key={index}
-                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all text-sm ${
+                      className={`p-3 border-2 rounded-lg cursor-pointer transition-all text-sm hover-scale ${
                         isSelected
-                          ? 'border-primary bg-primary/10'
+                          ? 'border-primary bg-primary/10 shadow-md'
                           : 'border-muted hover:border-primary/50'
                       } ${
                         isRevealed
                           ? option.isGood
-                            ? 'border-green-500 bg-green-50 text-green-900'
+                            ? 'border-green-500 bg-green-50 text-green-900 dark:bg-green-900/30 dark:text-green-400 animate-bounce-in'
                             : isSelected
-                              ? 'border-yellow-500 bg-yellow-50 text-yellow-900'
+                              ? 'border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-400'
                               : 'opacity-60'
                           : 'text-foreground'
                       }`}
@@ -209,24 +225,25 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
                         <div className="flex-shrink-0 mt-1">
                           {isRevealed ? (
                             option.isGood ? (
-                              <Star className="w-4 h-4 text-green-600" />
+                              <Star className="w-5 h-5 text-green-600 animate-spin" style={{ animationDuration: '2s' }} />
                             ) : isSelected ? (
-                              <span className="text-yellow-600">⚠️</span>
+                              <span className="text-yellow-600 text-lg">⚠️</span>
                             ) : (
                               <div className="w-4 h-4" />
                             )
                           ) : (
-                            <div className={`w-4 h-4 rounded border-2 ${
+                            <div className={`w-4 h-4 rounded border-2 transition-all ${
                               isSelected
-                                ? 'bg-primary border-primary'
+                                ? 'bg-primary border-primary scale-110'
                                 : 'border-muted-foreground'
                             }`} />
                           )}
                         </div>
                         <div className="flex-1">
-                          <div>{option.text}</div>
+                          <div className="font-medium">{option.text}</div>
                           {isRevealed && (
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                              <Star className="w-3 h-3" />
                               {option.points} points - {option.isGood ? 'Great for creativity!' : 'Could be more specific'}
                             </div>
                           )}
