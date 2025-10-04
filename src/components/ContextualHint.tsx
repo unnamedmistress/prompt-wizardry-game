@@ -1,50 +1,24 @@
-import { useEffect, useState } from "react";
-import { Lightbulb } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 interface ContextualHintProps {
-  children: React.ReactNode;
-  hint: string;
-  delayMs?: number;
+  message: string;
+  type?: "info" | "warning" | "success";
 }
 
-export const ContextualHint = ({ children, hint, delayMs = 3000 }: ContextualHintProps) => {
-  const [showHint, setShowHint] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
-
-  useEffect(() => {
-    if (hasInteracted) return;
-
-    const timer = setTimeout(() => {
-      setShowHint(true);
-    }, delayMs);
-
-    return () => clearTimeout(timer);
-  }, [delayMs, hasInteracted]);
-
-  const handleInteraction = () => {
-    setHasInteracted(true);
-    setShowHint(false);
+export function ContextualHint({ message, type = "info" }: ContextualHintProps) {
+  const colors = {
+    info: "border-primary/30 bg-primary/5 text-primary",
+    warning: "border-yellow-500/30 bg-yellow-500/5 text-yellow-600 dark:text-yellow-400",
+    success: "border-green-500/30 bg-green-500/5 text-green-600 dark:text-green-400"
   };
 
   return (
-    <div 
-      className="relative"
-      onClick={handleInteraction}
-      onMouseEnter={handleInteraction}
-    >
-      {children}
-      {showHint && !hasInteracted && (
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 z-10 animate-bounce-in pointer-events-none">
-          <div className="bg-accent text-accent-foreground px-3 py-2 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2 whitespace-nowrap">
-            <Lightbulb className="w-3 h-3" />
-            {hint}
-          </div>
-          <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-accent rotate-45" />
-        </div>
-      )}
-      {showHint && !hasInteracted && (
-        <div className="absolute inset-0 rounded-lg animate-pulse-hint ring-2 ring-accent/50 pointer-events-none" />
-      )}
-    </div>
+    <Card className={`p-3 ${colors[type]} animate-fade-in`}>
+      <div className="flex items-start gap-2">
+        <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+        <p className="text-xs leading-relaxed">{message}</p>
+      </div>
+    </Card>
   );
-};
+}

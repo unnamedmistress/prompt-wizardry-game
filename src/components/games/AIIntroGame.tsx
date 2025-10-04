@@ -233,7 +233,7 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                 { word: "Spaceship", hint: "AI rarely predicts random words", prob: 1 },
                 { word: "Revenge", hint: "This contradicts the meaning", prob: 3 }
               ].map(opt => (
-                <ContextualHint key={opt.word} hint={opt.hint}>
+                <InsightTooltip key={opt.word} content={opt.hint}>
                   <Button 
                     onClick={() => handleOptionClick(opt.word)} 
                     variant="secondary"
@@ -244,7 +244,7 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                       <div className={`w-2 h-2 rounded-full animate-pulse ${opt.prob > 50 ? 'bg-green-500' : 'bg-red-400'}`} />
                     </div>
                   </Button>
-                </ContextualHint>
+                </InsightTooltip>
               ))}
             </div>
             <div className="flex justify-between mt-4">
@@ -315,11 +315,15 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
             <div className="text-xs text-muted-foreground -mt-2">Tip: You can click a tone word below OR drag it into the highlighted box. Click the box to clear.</div>
             <div className="flex flex-wrap gap-2">
               {toneWords.map(word => (
-                <ContextualHint key={word} hint="Click or drag me!" delayMs={4000}>
-                  <InsightTooltip 
-                    insight={`"${word}" changes how the message is perceived`}
-                    example={toneResponses[word] ? `Try it to see the ${word} version` : undefined}
-                  >
+                <InsightTooltip 
+                  key={word}
+                  content={
+                    <div className="text-xs">
+                      <p className="font-medium">"{word}" changes how the message is perceived</p>
+                      {toneResponses[word] && <p className="mt-1 text-muted-foreground">Try it to see the {word} version</p>}
+                    </div>
+                  }
+                >
                     <button
                       draggable
                       onDragStart={e => handleDragStart(e, word)}
@@ -333,7 +337,6 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                       {word}
                     </button>
                   </InsightTooltip>
-                </ContextualHint>
               ))}
             </div>
             {selectedTone && (

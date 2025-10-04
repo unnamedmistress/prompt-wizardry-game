@@ -8,8 +8,11 @@ interface GameStore {
   level: number;
   completedChallenges: number;
   completedExperienceIds: string[];
+  firstTimeExperiences: string[];
   completeExperience: (id: string, starsEarned: number, coinsEarned: number) => void;
   purchaseHint: (lessonId: string, hintIndex: number, cost: number) => boolean;
+  markExperienceAsViewed: (id: string) => void;
+  isFirstTime: (id: string) => boolean;
 }
 
 export const useGameStore = create<GameStore>()(
@@ -20,6 +23,7 @@ export const useGameStore = create<GameStore>()(
       level: 1,
       completedChallenges: 0,
       completedExperienceIds: [],
+      firstTimeExperiences: [],
       completeExperience: (id, starsEarned, coinsEarned) => {
         set((state) => {
           const alreadyCompleted = state.completedExperienceIds.includes(id);
@@ -41,6 +45,16 @@ export const useGameStore = create<GameStore>()(
         set({ coins: coins - cost });
         logEvent('hint_purchased', { lessonId, hintIndex, cost });
         return true;
+      },
+      markExperienceAsViewed: (id) => {
+        set((state) => ({
+          firstTimeExperiences: state.firstTimeExperiences.includes(id) 
+            ? state.firstTimeExperiences 
+            : [...state.firstTimeExperiences, id]
+        }));
+      },
+      isFirstTime: (id) => {
+        return !get().firstTimeExperiences.includes(id);
       },
     }),
     { name: 'promptwizard-store' }

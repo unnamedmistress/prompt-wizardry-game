@@ -166,10 +166,10 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
                     const isSelected = i === selectedTone;
                     const isCorrect = i === scenario.correctIndex;
                     return (
-                      <ContextualHint key={t} hint="Try clicking a tone!">
-                        <InsightTooltip 
-                          insight={isCorrect ? "This is the most effective tone for this situation" : "Consider how this tone might be perceived"}
-                        >
+                      <InsightTooltip 
+                        key={t}
+                        content={isCorrect ? "This is the most effective tone for this situation" : "Consider how this tone might be perceived"}
+                      >
                           <button
                             onClick={() => handleToneClick(i)}
                             className={`w-full p-4 border rounded-lg text-sm text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 hover:border-primary hover:shadow-md ${isSelected ? 'border-primary bg-primary/5' : ''} relative group`}
@@ -182,7 +182,6 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
                             </div>
                           </button>
                         </InsightTooltip>
-                      </ContextualHint>
                     );
                   })}
                 </div>

@@ -20,7 +20,7 @@ import StoryEngineGame from "@/components/games/StoryEngineGame";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, BookOpen, Target, Trophy, CheckCircle, Menu, Play, ArrowLeft, Coins, Star, Lock } from "lucide-react";
-import GenieMentor from "@/components/GenieMentor";
+import { GenieMentor } from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
 import { getModelHint } from "@/lib/hintGenerator";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -32,11 +32,11 @@ const Index = () => {
   const [gameState, setGameState] = useState<"welcome" | "learning-path" | "playing" | "sequential">("welcome");
   const [currentExperience, setCurrentExperience] = useState<LearningExperience | null>(null);
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
-  const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint } = useGameStore();
+  const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint, markExperienceAsViewed, isFirstTime } = useGameStore();
   const [hintsUsed, setHintsUsed] = useState(0);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  const [genieMessage, setGenieMessage] = useState("");
-  const [isGenieOpen, setIsGenieOpen] = useState(false);
+  const [showGenieHint, setShowGenieHint] = useState(false);
+  const [genieHintMessage, setGenieHintMessage] = useState("");
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [lastResult, setLastResult] = useState<{ stars: number; coins: number }>({ stars: 0, coins: 0 });
   
@@ -52,18 +52,6 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem('aiLiteracy_gameState', gameState);
   }, [gameState]);
-
-  useEffect(() => {
-    if (gameState === "playing" && currentExperience) {
-      // Only show genie open for the first game (AI Intro)
-      if (currentExperience.id === "what-is-ai") {
-        setGenieMessage("🧞 Hi! I'm here if you need a hint or some motivation!");
-        setIsGenieOpen(true);
-      } else {
-        setIsGenieOpen(false);
-      }
-    }
-  }, [gameState, currentExperience]);
 
   const handleStartLearning = () => {
     setGameState("sequential");
@@ -146,8 +134,9 @@ const Index = () => {
     const hints = currentExperience.hints || [];
 
     if (hintsUsed >= hints.length + 1) {
-      setGenieMessage("No more hints available.");
-      setIsGenieOpen(true);
+      setGenieHintMessage("No more hints available for this challenge.");
+      setShowGenieHint(true);
+      setTimeout(() => setShowGenieHint(false), 5000);
       return;
     }
 
@@ -155,30 +144,34 @@ const Index = () => {
     if (hintsUsed < hints.length) {
       const purchased = purchaseHint(currentExperience.id, hintsUsed, HINT_COST);
       if (!purchased) {
-        setGenieMessage("Not enough coins for a hint.");
-        setIsGenieOpen(true);
+        setGenieHintMessage(`You need ${HINT_COST} coins for a hint. Keep playing to earn more!`);
+        setShowGenieHint(true);
+        setTimeout(() => setShowGenieHint(false), 5000);
         return;
       }
       const hintText = hints[hintsUsed];
       setHintsUsed(prev => prev + 1);
-      setGenieMessage(hintText);
-      setIsGenieOpen(true);
+      setGenieHintMessage(hintText);
+      setShowGenieHint(true);
+      setTimeout(() => setShowGenieHint(false), 8000);
       return;
     }
 
     // Fetch model-generated hint
     const purchased = purchaseHint(currentExperience.id, hintsUsed, HINT_COST);
     if (!purchased) {
-      setGenieMessage("Not enough coins for a hint.");
-      setIsGenieOpen(true);
+      setGenieHintMessage(`You need ${HINT_COST} coins for a hint. Keep playing to earn more!`);
+      setShowGenieHint(true);
+      setTimeout(() => setShowGenieHint(false), 5000);
       return;
     }
 
-    setGenieMessage("🔮 Thinking of a hint for you...");
-    setIsGenieOpen(true);
+    setGenieHintMessage("🔮 Thinking of a hint for you...");
+    setShowGenieHint(true);
     const modelHint = await getModelHint(currentExperience.id);
     setHintsUsed(hints.length + 1);
-    setGenieMessage(modelHint);
+    setGenieHintMessage(modelHint);
+    setTimeout(() => setShowGenieHint(false), 10000);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -515,74 +508,10 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Split Screen Layout */}
-        <div className="flex flex-col lg:flex-row flex-1 pt-16 sm:pt-20">
-          {/* Learning Sidebar - Codecademy Style */}
-           <div className={`${showMobileSidebar ? 'block' : 'hidden lg:block'} fixed lg:relative top-16 sm:top-20 left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-5rem)] lg:h-auto w-full lg:w-96 bg-card border-r border-border overflow-y-auto shadow-lg lg:shadow-none z-40`}>
-            {currentExperience?.id === "what-is-ai" ? (
-              <AppSidebar 
-                currentStep={1} 
-                gameTitle={currentExperience.title}
-                showMobileSidebar={showMobileSidebar}
-                setShowMobileSidebar={setShowMobileSidebar}
-              />
-            ) : (
-              <div className="p-4 sm:p-6">
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Close button for mobile */}
-                  <div className="lg:hidden flex justify-between items-center mb-4">
-                    <h3 className="font-semibold">Learning Guide</h3>
-                    <Button variant="ghost" size="sm" onClick={() => setShowMobileSidebar(false)}>
-                      ✕
-                    </Button>
-                  </div>
-
-                  {/* Current Experience Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl sm:text-2xl">{currentExperience.icon}</span>
-                      <div>
-                        <h3 className="font-semibold text-sm sm:text-base">{currentExperience.title}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.category}</p>
-                      </div>
-                    </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">{currentExperience.description}</p>
-                  </div>
-
-                  {/* Objective */}
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
-                      <Target className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                      Your Mission
-                    </h4>
-                    <p className="text-xs sm:text-sm bg-primary/5 p-2 sm:p-3 rounded-lg border border-primary/20">
-                      {currentExperience.objective}
-                    </p>
-                  </div>
-
-                  {/* What You'll Learn */}
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-xs sm:text-sm flex items-center gap-2">
-                      <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                      What You'll Learn
-                    </h4>
-                    <ul className="space-y-2">
-                      {currentExperience.whatYoullLearn.map((item, index) => (
-                        <li key={index} className="flex items-start gap-2 text-xs sm:text-sm">
-                          <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-                          <span className="text-muted-foreground">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Main Game Area */}
-          <div className="flex-1 flex flex-col min-h-0">
+        {/* Full Width Game Layout */}
+        <div className="flex flex-1 pt-16 sm:pt-20">
+          {/* Main Game Area - Now Full Width */}
+          <div className="flex-1 flex flex-col min-h-0 max-w-6xl mx-auto w-full px-4">
             {/* Sequential Mode Progress Header */}
             {gameState === "sequential" && (
               <div className="p-4 bg-card border-b border-border">
@@ -663,13 +592,12 @@ const Index = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        
+        {/* Floating Genie Mentor */}
         <GenieMentor
-          message={genieMessage}
-          isOpen={isGenieOpen}
-          onClose={() => setIsGenieOpen(false)}
-          onGetHint={handleGetHint}
-          hintCost={HINT_COST}
-          hintDisabled={hintDisabled}
+          hint={genieHintMessage}
+          isVisible={showGenieHint}
+          onDismiss={() => setShowGenieHint(false)}
         />
       </div>
     );
