@@ -21,6 +21,14 @@ interface SimpleScenario {
   tip: string;
 }
 
+const toneEmotions: Record<number, { emoji: string; mood: string }> = {
+  0: { emoji: "😊", mood: "bg-blue-50 dark:bg-blue-950/30" },
+  1: { emoji: "😰", mood: "bg-amber-50 dark:bg-amber-950/30" },
+  2: { emoji: "😎", mood: "bg-purple-50 dark:bg-purple-950/30" },
+  3: { emoji: "😤", mood: "bg-red-50 dark:bg-red-950/30" },
+  4: { emoji: "🙂", mood: "bg-green-50 dark:bg-green-950/30" },
+};
+
 const scenarios: SimpleScenario[] = [
   {
     id: 1,
@@ -133,7 +141,7 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <Card>
+      <Card className={`transition-colors duration-500 ${revealed && selectedTone !== null ? toneEmotions[selectedTone]?.mood : ''}`}>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">🎭 Tone & Style Game: Say It the Right Way</CardTitle>
           <CardDescription className="text-lg font-semibold text-foreground mb-3">Round {round + 1} of {scenarios.length}</CardDescription>
@@ -164,9 +172,14 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
                         >
                           <button
                             onClick={() => handleToneClick(i)}
-                            className={`w-full p-4 border rounded-lg text-sm text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 hover:border-primary hover:shadow-md ${isSelected ? 'border-primary bg-primary/5' : ''}`}
+                            className={`w-full p-4 border rounded-lg text-sm text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary/40 hover:border-primary hover:shadow-md ${isSelected ? 'border-primary bg-primary/5' : ''} relative group`}
                           >
-                            {t}
+                            <div className="flex items-center justify-between">
+                              <span>{t}</span>
+                              <span className="text-2xl opacity-60 group-hover:scale-125 transition-transform">
+                                {toneEmotions[i]?.emoji}
+                              </span>
+                            </div>
                           </button>
                         </InsightTooltip>
                       </ContextualHint>
@@ -178,13 +191,29 @@ export const ToneController = ({ lesson, onComplete, onBack }: ToneControllerPro
 
             {revealed && (
               <div className="space-y-6 animate-slide-up">
+                {/* Tone Emotion Indicator */}
+                {selectedTone !== null && (
+                  <div className="text-center animate-scale-in">
+                    <div className="text-6xl mb-2">{toneEmotions[selectedTone]?.emoji}</div>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedTone === scenario.correctIndex ? "Perfect tone match!" : "Consider a different approach"}
+                    </p>
+                  </div>
+                )}
+                
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="p-4 border border-green-600/50 rounded-lg bg-green-200/60 dark:bg-green-900/60 animate-slide-up">
-                    <div className="font-semibold mb-2 text-green-900 dark:text-green-200">✅ Good</div>
+                    <div className="font-semibold mb-2 text-green-900 dark:text-green-200 flex items-center gap-2">
+                      <span>✅ Good</span>
+                      <span className="text-2xl">😊</span>
+                    </div>
                     <p className="text-sm leading-snug text-green-950 dark:text-green-100">"<AnimatedText text={scenario.good} speed={20} />"</p>
                   </div>
                   <div className="p-4 border border-red-600/50 rounded-lg bg-red-200/60 dark:bg-red-900/60 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-                    <div className="font-semibold mb-2 text-red-900 dark:text-red-200">❌ Bad</div>
+                    <div className="font-semibold mb-2 text-red-900 dark:text-red-200 flex items-center gap-2">
+                      <span>❌ Bad</span>
+                      <span className="text-2xl">😤</span>
+                    </div>
                     <p className="text-sm leading-snug text-red-950 dark:text-red-100">"<AnimatedText text={scenario.bad} speed={20} />"</p>
                   </div>
                 </div>

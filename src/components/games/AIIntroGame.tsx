@@ -119,8 +119,26 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                       ? "bg-primary text-primary-foreground" 
                       : "bg-muted text-foreground border"
                   }`}>
-                    <div className="text-xs opacity-70 mb-1">
-                      {m.role === "user" ? "You" : "AI Assistant"}
+                    <div className="text-xs opacity-70 mb-1 flex items-center gap-2">
+                      {m.role === "user" ? "You" : (
+                        <>
+                          <span>AI Assistant</span>
+                          {/* Waveform animation for AI responses */}
+                          <div className="flex gap-0.5 items-center h-3">
+                            {[1, 2, 3, 4].map((bar) => (
+                              <div
+                                key={bar}
+                                className="w-0.5 bg-primary animate-pulse rounded-full"
+                                style={{
+                                  height: `${Math.random() * 8 + 4}px`,
+                                  animationDelay: `${bar * 0.1}s`,
+                                  animationDuration: '0.8s'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="text-sm">{m.text}</div>
                   </div>
@@ -182,20 +200,49 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-lg font-medium">Honesty is the best ___</p>
+            
+            {/* Probability Visualization */}
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <p className="text-xs text-muted-foreground mb-3">AI Prediction Likelihood:</p>
+              <div className="space-y-2">
+                {[
+                  { word: "Policy", probability: 94, color: "bg-green-500" },
+                  { word: "Banana", probability: 2, color: "bg-red-400" },
+                  { word: "Spaceship", probability: 1, color: "bg-red-500" },
+                  { word: "Revenge", probability: 3, color: "bg-amber-500" }
+                ].map(opt => (
+                  <div key={opt.word} className="flex items-center gap-2">
+                    <span className="text-xs w-20 font-medium">{opt.word}</span>
+                    <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${opt.color} transition-all duration-1000 ease-out animate-fade-in flex items-center justify-end pr-2`}
+                        style={{ width: `${opt.probability}%` }}
+                      >
+                        <span className="text-xs font-bold text-white">{opt.probability}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               {[
-                { word: "Policy", hint: "This is the most common phrase completion" },
-                { word: "Banana", hint: "This doesn't fit the pattern" },
-                { word: "Spaceship", hint: "AI rarely predicts random words" },
-                { word: "Revenge", hint: "This contradicts the meaning" }
+                { word: "Policy", hint: "This is the most common phrase completion", prob: 94 },
+                { word: "Banana", hint: "This doesn't fit the pattern", prob: 2 },
+                { word: "Spaceship", hint: "AI rarely predicts random words", prob: 1 },
+                { word: "Revenge", hint: "This contradicts the meaning", prob: 3 }
               ].map(opt => (
                 <ContextualHint key={opt.word} hint={opt.hint}>
                   <Button 
                     onClick={() => handleOptionClick(opt.word)} 
                     variant="secondary"
-                    className="w-full"
+                    className="w-full relative"
                   >
-                    {opt.word}
+                    <div className="flex items-center gap-2">
+                      <span>{opt.word}</span>
+                      <div className={`w-2 h-2 rounded-full animate-pulse ${opt.prob > 50 ? 'bg-green-500' : 'bg-red-400'}`} />
+                    </div>
                   </Button>
                 </ContextualHint>
               ))}
