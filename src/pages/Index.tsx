@@ -198,9 +198,9 @@ const Index = () => {
 
   // Welcome Screen
   if (gameState === "welcome") {
-    return (
-      <div className="min-h-screen bg-background flex flex-col">
-        {/* Navigation Header */}
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col">
+      {/* Navigation Header */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
             <div className="flex items-center gap-2">
@@ -289,7 +289,7 @@ const Index = () => {
     }, {} as Record<string, LearningExperience[]>);
 
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 flex flex-col">
         {/* Navigation Header */}
         <div className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4">
@@ -347,7 +347,7 @@ const Index = () => {
                     </span>
                   </div>
 
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     {experiences.map((experience) => {
                       const isCompleted = completedExperienceIds.includes(experience.id);
                       const isLocked = experience.requiredStars !== undefined && stars < experience.requiredStars;

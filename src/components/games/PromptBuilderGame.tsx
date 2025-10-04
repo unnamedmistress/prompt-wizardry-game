@@ -292,10 +292,17 @@ export function PromptBuilderGame({ lesson, onComplete, onBack }: PromptBuilderG
 
         <Card className="bg-gradient-card border-primary/20">
           <CardHeader>
-            <CardTitle className="text-foreground">Level 1: Basic Prompt Structure</CardTitle>
-            <CardDescription>
-              Learn that good prompts follow: Role → Task → Context → Tone
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-foreground">Level 1</CardTitle>
+                <CardDescription>
+                  Role → Task → Context → Tone
+                </CardDescription>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                1/3
+              </Badge>
+            </div>
           </CardHeader>
         </Card>
 
@@ -420,10 +427,17 @@ Thank you for your understanding,
       <div className="max-w-6xl mx-auto space-y-6">
         <Card className="bg-gradient-card border-primary/20">
           <CardHeader>
-            <CardTitle className="text-foreground">Level 2: Experiment with Tone</CardTitle>
-            <CardDescription>
-              See how different tones change the AI's output. Which would work best for your boss?
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-foreground">Level 2</CardTitle>
+                <CardDescription>
+                  Test different tones
+                </CardDescription>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                2/3
+              </Badge>
+            </div>
           </CardHeader>
         </Card>
 
@@ -511,10 +525,17 @@ Thank you for your understanding,
       <div className="max-w-4xl mx-auto space-y-6">
         <Card className="bg-gradient-card border-primary/20">
           <CardHeader>
-            <CardTitle className="text-foreground">Level 3: The Word "Please"</CardTitle>
-            <CardDescription>
-              Explore micro-language choices. Click the slots to add "please" and see the effect.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-foreground">Level 3</CardTitle>
+                <CardDescription>
+                  Does "please" matter?
+                </CardDescription>
+              </div>
+              <Badge variant="outline" className="text-xs">
+                3/3
+              </Badge>
+            </div>
           </CardHeader>
         </Card>
 

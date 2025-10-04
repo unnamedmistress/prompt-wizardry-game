@@ -175,27 +175,13 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
       
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">❤️ Specificity & Details (Dating Profile Edition)</CardTitle>
-          <CardDescription className="text-lg font-semibold text-foreground mb-3">Prompting Fundamentals</CardDescription>
-          <div className="space-y-4 text-sm text-muted-foreground">
-            <p>
-              Vague prompts give vague answers. Watch how adding specifics turns a bland dating bio prompt into something the AI can actually nail.
-            </p>
-            
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">Your Mission</h4>
-              <p>Identify every missing detail that would help the AI write a compelling, authentic dating profile.</p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-foreground mb-2">Activity</h4>
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Read the draft prompt for the dating bio.</li>
-                <li>Click all the important details the AI still needs.</li>
-                <li>Select every missing piece to maximize your score.</li>
-              </ol>
-            </div>
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            <Search className="w-5 h-5 text-primary" />
+            Specificity & Details
+          </CardTitle>
+          <CardDescription>
+            Round {currentPrompt + 1}/{prompts.length} · Score: {score}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="text-center space-y-2 mb-6">
