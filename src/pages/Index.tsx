@@ -64,10 +64,15 @@ const Index = () => {
   };
 
   const handleStartSequentialLearning = () => {
-    setGameState("playing");
+    if (allLearningExperiences.length === 0) return;
+
+    const [firstExperience] = allLearningExperiences;
+
+    setGameState("sequential");
     setCurrentGameIndex(0);
-    setCurrentExperience(allLearningExperiences[0]);
+    setCurrentExperience(firstExperience);
     setHintsUsed(0);
+    setShowCompletionModal(false);
   };
 
   const handleExperienceSelect = (experience: LearningExperience) => {
