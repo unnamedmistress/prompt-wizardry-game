@@ -24,6 +24,9 @@ import { GenieMentor } from "@/components/GenieMentor";
 import { useGameStore } from "@/store/useGameStore";
 import { getModelHint } from "@/lib/hintGenerator";
 import { AppSidebar } from "@/components/AppSidebar";
+import { WizardProgressBar } from "@/components/WizardProgressBar";
+import { AchievementGrimoire } from "@/components/AchievementGrimoire";
+import { DailySpellTrial } from "@/components/DailySpellTrial";
 
 const allLearningExperiences: LearningExperience[] = lessons as LearningExperience[];
 const HINT_COST = 10;
@@ -32,7 +35,7 @@ const Index = () => {
   const [gameState, setGameState] = useState<"welcome" | "learning-path" | "playing" | "sequential">("welcome");
   const [currentExperience, setCurrentExperience] = useState<LearningExperience | null>(null);
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
-  const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint, markExperienceAsViewed, isFirstTime } = useGameStore();
+  const { coins, stars, level, completedExperienceIds, completeExperience, purchaseHint, markExperienceAsViewed, isFirstTime, xp, wizardRank, arcaneTokens } = useGameStore();
   const [hintsUsed, setHintsUsed] = useState(0);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showGenieHint, setShowGenieHint] = useState(false);
@@ -215,9 +218,10 @@ const Index = () => {
                 🎓 Review Lessons
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>Level {level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+                <span className="font-semibold text-primary">{wizardRank}</span>
+                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-blue-500" />{xp}</span>
+                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
               </span>
             </div>
           </div>
@@ -305,9 +309,10 @@ const Index = () => {
                 🎮 Play All Games
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <span>Level {level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+                <span className="font-semibold text-primary">{wizardRank}</span>
+                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-blue-500" />{xp}</span>
+                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
+                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
               </span>
             </div>
           </div>
@@ -335,6 +340,16 @@ const Index = () => {
                   <span className="text-muted-foreground">{allLearningExperiences.length - completedExperienceIds.length} Available</span>
                 </div>
               </div>
+            </div>
+
+            {/* New Progression Components */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
+              <WizardProgressBar />
+              <DailySpellTrial />
+            </div>
+
+            <div className="mb-8">
+              <AchievementGrimoire />
             </div>
 
             <div className="space-y-8">
