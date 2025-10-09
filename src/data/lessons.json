@@ -19,7 +19,9 @@
     ],
     "goodExamples": [],
     "badExamples": [],
-    "gameComponent": "AIIntroGame"
+    "gameComponent": "AIIntroGame",
+    "moduleTier": "Initiate",
+    "maxAttempts": 3
   },
   {
     "id": "role-mastery",
@@ -50,7 +52,36 @@
       "Give me party ideas",
       "What should I do for a birthday?"
     ],
-    "gameComponent": "RoleMatcher"
+    "gameComponent": "RoleMatcher",
+    "moduleTier": "Initiate",
+    "maxAttempts": 3,
+    "hintPenalty": 5,
+    "evaluationRubric": [
+      {
+        "name": "Role Clarity",
+        "description": "Clear role assignment for AI",
+        "weight": 0.25,
+        "keywords": ["you are", "act as", "role"]
+      },
+      {
+        "name": "Context",
+        "description": "Provides relevant context and constraints",
+        "weight": 0.25,
+        "keywords": ["budget", "guests", "preferences"]
+      },
+      {
+        "name": "Specificity",
+        "description": "Includes specific details and requirements",
+        "weight": 0.25,
+        "keywords": ["ideas", "suggestions", "include"]
+      },
+      {
+        "name": "Format",
+        "description": "Specifies desired output format",
+        "weight": 0.25,
+        "keywords": ["format", "structure", "organize"]
+      }
+    ]
   },
   {
     "id": "specificity-details",
@@ -82,7 +113,10 @@
       "Make me sound good on dating apps",
       "Help with my bio"
     ],
-    "gameComponent": "DetailDetective"
+    "gameComponent": "DetailDetective",
+    "moduleTier": "Adept",
+    "maxAttempts": 3,
+    "hintPenalty": 10
   },
   {
     "id": "tone-control",
@@ -146,7 +180,10 @@
       "Plan a proposal",
       "How should I ask someone to marry me?"
     ],
-    "gameComponent": "MultiTaskMaster"
+    "gameComponent": "MultiTaskMaster",
+    "moduleTier": "Archmage",
+    "maxAttempts": 3,
+    "hintPenalty": 15
   },
   {
     "id": "creative-prompts",
