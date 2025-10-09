@@ -214,26 +214,57 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
         </Card>
       </div>
 
-      {/* Perspective Preview */}
+      {/* Perspective Lens Visualization */}
       {isComplete && (
-        <Card className="border-2 border-amber-500/20 bg-amber-50/50">
+        <Card className="border-2 border-amber-500/20 bg-gradient-to-br from-amber-50 to-orange-50 animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-lg text-amber-700">Perspective Analysis</CardTitle>
+            <CardTitle className="text-lg text-amber-700 flex items-center gap-2">
+              <Camera className="w-5 h-5" />
+              Perspective Lens Active
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4 text-sm">
-              <div>
-                <span className="font-medium text-blue-700">Reviewer: </span>
-                {perspectives.find(p => p.id === selectedPerspective)?.name}
+          <CardContent className="space-y-4">
+            {/* Lens view simulation */}
+            <div className="relative p-6 bg-background rounded-lg border-4 border-amber-300">
+              <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
+              <div className="absolute top-2 right-2 text-xs text-amber-600 font-mono">REC ●</div>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                    {React.createElement(perspectives.find(p => p.id === selectedPerspective)?.icon || Camera, { className: "w-6 h-6 text-blue-600" })}
+                  </div>
+                  <div>
+                    <div className="font-bold text-blue-700">
+                      {perspectives.find(p => p.id === selectedPerspective)?.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground italic">
+                      "{perspectives.find(p => p.id === selectedPerspective)?.voice}"
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="h-px bg-border" />
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="p-3 bg-purple-50 rounded border border-purple-200">
+                    <div className="font-medium text-purple-700 mb-1">Reviewing</div>
+                    <div className="text-xs">{scenarios.find(s => s.id === selectedScenario)?.name}</div>
+                  </div>
+                  <div className="p-3 bg-green-50 rounded border border-green-200">
+                    <div className="font-medium text-green-700 mb-1">Focus</div>
+                    <div className="text-xs">{focuses.find(f => f.id === selectedFocus)?.name}</div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <span className="font-medium text-purple-700">Movie: </span>
-                {scenarios.find(s => s.id === selectedScenario)?.name}
+              
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-amber-600 font-mono">
+                PERSPECTIVE LOCKED
               </div>
-              <div>
-                <span className="font-medium text-green-700">Approach: </span>
-                {focuses.find(f => f.id === selectedFocus)?.name}
-              </div>
+            </div>
+            
+            <div className="text-xs text-center text-muted-foreground italic">
+              The same movie seen through different eyes tells a completely different story
             </div>
           </CardContent>
         </Card>

@@ -1,20 +1,17 @@
-import {
-  Tooltip, TooltipTrigger, TooltipContent
-} from "@/components/ui/tooltip";
+import { ReactNode } from "react";
+import { InsightTooltip } from "./InsightTooltip";
 
 interface KeyTermProps {
-  term: string;
+  children: ReactNode;
   definition: string;
-  children?: React.ReactNode;
 }
 
-export const KeyTerm = ({ term, definition, children }: KeyTermProps) => (
-  <Tooltip>
-    <TooltipTrigger className="underline decoration-dotted cursor-help">
-      {children ?? term}
-    </TooltipTrigger>
-    <TooltipContent className="max-w-xs text-sm">
-      {definition}
-    </TooltipContent>
-  </Tooltip>
-);
+export function KeyTerm({ children, definition }: KeyTermProps) {
+  return (
+    <InsightTooltip content={definition}>
+      <span className="underline decoration-dotted decoration-primary/50 cursor-help hover:decoration-primary transition-colors">
+        {children}
+      </span>
+    </InsightTooltip>
+  );
+}

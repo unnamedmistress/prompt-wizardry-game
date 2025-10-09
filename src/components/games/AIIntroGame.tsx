@@ -3,6 +3,9 @@ import type { LearningExperience } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ContextualHint } from "@/components/ContextualHint";
+import { InsightTooltip } from "@/components/InsightTooltip";
+import { AnimatedText } from "@/components/AnimatedText";
 
 interface AIIntroGameProps {
   onComplete: (score: number) => void;
@@ -116,8 +119,26 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                       ? "bg-primary text-primary-foreground" 
                       : "bg-muted text-foreground border"
                   }`}>
-                    <div className="text-xs opacity-70 mb-1">
-                      {m.role === "user" ? "You" : "AI Assistant"}
+                    <div className="text-xs opacity-70 mb-1 flex items-center gap-2">
+                      {m.role === "user" ? "You" : (
+                        <>
+                          <span>AI Assistant</span>
+                          {/* Waveform animation for AI responses */}
+                          <div className="flex gap-0.5 items-center h-3">
+                            {[1, 2, 3, 4].map((bar) => (
+                              <div
+                                key={bar}
+                                className="w-0.5 bg-primary animate-pulse rounded-full"
+                                style={{
+                                  height: `${Math.random() * 8 + 4}px`,
+                                  animationDelay: `${bar * 0.1}s`,
+                                  animationDuration: '0.8s'
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="text-sm">{m.text}</div>
                   </div>
@@ -179,16 +200,51 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-lg font-medium">Honesty is the best ___</p>
+            
+            {/* Probability Visualization */}
+            <div className="p-4 bg-muted/50 rounded-lg border">
+              <p className="text-xs text-muted-foreground mb-3">AI Prediction Likelihood:</p>
+              <div className="space-y-2">
+                {[
+                  { word: "Policy", probability: 94, color: "bg-green-500" },
+                  { word: "Banana", probability: 2, color: "bg-red-400" },
+                  { word: "Spaceship", probability: 1, color: "bg-red-500" },
+                  { word: "Revenge", probability: 3, color: "bg-amber-500" }
+                ].map(opt => (
+                  <div key={opt.word} className="flex items-center gap-2">
+                    <span className="text-xs w-20 font-medium">{opt.word}</span>
+                    <div className="flex-1 h-6 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full ${opt.color} transition-all duration-1000 ease-out animate-fade-in flex items-center justify-end pr-2`}
+                        style={{ width: `${opt.probability}%` }}
+                      >
+                        <span className="text-xs font-bold text-white">{opt.probability}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               {[
-                "Policy",
-                "Banana",
-                "Spaceship",
-                "Revenge"
+                { word: "Policy", hint: "This is the most common phrase completion", prob: 94 },
+                { word: "Banana", hint: "This doesn't fit the pattern", prob: 2 },
+                { word: "Spaceship", hint: "AI rarely predicts random words", prob: 1 },
+                { word: "Revenge", hint: "This contradicts the meaning", prob: 3 }
               ].map(opt => (
-                <Button key={opt} onClick={() => handleOptionClick(opt)} variant="secondary">
-                  {opt}
-                </Button>
+                <InsightTooltip key={opt.word} content={opt.hint}>
+                  <Button 
+                    onClick={() => handleOptionClick(opt.word)} 
+                    variant="secondary"
+                    className="w-full relative"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{opt.word}</span>
+                      <div className={`w-2 h-2 rounded-full animate-pulse ${opt.prob > 50 ? 'bg-green-500' : 'bg-red-400'}`} />
+                    </div>
+                  </Button>
+                </InsightTooltip>
               ))}
             </div>
             <div className="flex justify-between mt-4">
@@ -259,24 +315,33 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
             <div className="text-xs text-muted-foreground -mt-2">Tip: You can click a tone word below OR drag it into the highlighted box. Click the box to clear.</div>
             <div className="flex flex-wrap gap-2">
               {toneWords.map(word => (
-                <button
+                <InsightTooltip 
                   key={word}
-                  draggable
-                  onDragStart={e => handleDragStart(e, word)}
-                  onClick={() => handleToneClick(word)}
-                  className={
-                    `px-3 py-1 rounded-md border text-sm font-medium shadow-sm transition-all
-                    ${selectedTone === word ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted border-muted-foreground/30'}
-                    focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
-                  type="button"
+                  content={
+                    <div className="text-xs">
+                      <p className="font-medium">"{word}" changes how the message is perceived</p>
+                      {toneResponses[word] && <p className="mt-1 text-muted-foreground">Try it to see the {word} version</p>}
+                    </div>
+                  }
                 >
-                  {word}
-                </button>
+                    <button
+                      draggable
+                      onDragStart={e => handleDragStart(e, word)}
+                      onClick={() => handleToneClick(word)}
+                      className={
+                        `px-3 py-1 rounded-md border text-sm font-medium shadow-sm transition-all
+                        ${selectedTone === word ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted border-muted-foreground/30'}
+                        focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer`}
+                      type="button"
+                    >
+                      {word}
+                    </button>
+                  </InsightTooltip>
               ))}
             </div>
             {selectedTone && (
-              <div className="p-3 border rounded bg-muted">
-                {toneResponses[selectedTone]}
+              <div className="p-3 border rounded bg-muted animate-slide-up">
+                <AnimatedText text={toneResponses[selectedTone]} speed={15} />
               </div>
             )}
             <div className="flex justify-between mt-4">

@@ -270,13 +270,42 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
     <div className="max-w-3xl mx-auto space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl font-bold">🧠 Multi-Task Master (Chatbot Edition)</CardTitle>
-          <CardDescription>Practice building multi-part prompts like a real conversation.</CardDescription>
+          <CardTitle className="text-xl font-bold">🧠 Multi-Task Master</CardTitle>
+          <CardDescription>Build powerful prompts by adding components one at a time</CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Visual Pipeline Progress */}
+          {currentStep !== null && !evaluated && (
+            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium">Building Your Prompt</span>
+                <span className="text-xs text-muted-foreground">{currentStep}/{steps.length} components</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {steps.map((step, idx) => (
+                  <div key={step.key} className="flex items-center gap-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      idx < currentStep ? 'bg-green-500 text-white' :
+                      idx === currentStep ? 'bg-primary text-primary-foreground animate-pulse' :
+                      'bg-muted text-muted-foreground'
+                    }`}>
+                      {idx < currentStep ? '✓' : idx + 1}
+                    </div>
+                    {idx < steps.length - 1 && (
+                      <div className={`h-0.5 w-8 transition-colors ${
+                        idx < currentStep ? 'bg-green-500' : 'bg-muted'
+                      }`} />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="relative h-[460px] overflow-y-auto border rounded-md p-4 bg-muted/30 space-y-4 text-sm">
             {provisionalScore > 0 && !evaluated && currentStep !== null && (
               <div className="absolute top-2 right-2 flex items-center gap-1 text-[11px] font-medium bg-primary/10 border border-primary/30 text-primary px-2 py-1 rounded-full backdrop-blur-sm shadow-sm animate-pulse">
+                <Sparkles className="w-3 h-3" />
                 <span>Score ~ {provisionalScore}/10</span>
               </div>
             )}
@@ -294,13 +323,24 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
             )}
             {evaluated && (
               <div className="mt-4 space-y-3">
-                <div className="text-center text-sm font-medium">Session Score: {evaluated.score}/10</div>
-                <div className="flex flex-wrap gap-2 justify-center">
+                <div className="text-center text-lg font-bold text-primary animate-scale-in">
+                  <Sparkles className="w-6 h-6 inline mr-2" />
+                  Session Score: {evaluated.score}/10
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                   {Object.entries(evaluated.categories).map(([cat, status]) => {
-                    const color = status === 'good' ? 'bg-green-100 text-green-800 border-green-300' : status === 'warn' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-red-100 text-red-800 border-red-300';
-                    const label = status === 'good' ? 'Good' : status === 'warn' ? 'Needs More' : 'Missing';
+                    const configs = {
+                      good: { color: 'bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400', icon: '✓', label: 'Good' },
+                      warn: { color: 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400', icon: '⚠', label: 'Improve' },
+                      bad: { color: 'bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-400', icon: '✗', label: 'Missing' }
+                    };
+                    const config = configs[status];
                     return (
-                      <span key={cat} className={`text-xs px-2 py-1 rounded border font-medium ${color}`}>{cat}: {label}</span>
+                      <div key={cat} className={`text-xs px-2 py-2 rounded border font-medium ${config.color} flex flex-col items-center gap-1 animate-fade-in`}>
+                        <span className="text-base">{config.icon}</span>
+                        <span className="font-bold">{cat}</span>
+                        <span className="text-[10px]">{config.label}</span>
+                      </div>
                     );
                   })}
                 </div>

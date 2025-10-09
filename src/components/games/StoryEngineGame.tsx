@@ -279,28 +279,72 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
         </Card>
       </div>
 
-      {/* Story Recipe */}
+      {/* Story Arc Visualization */}
       {isComplete && (
-        <Card className="border-2 border-amber-500/20 bg-amber-50/50">
+        <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50 to-pink-50 animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-lg text-amber-700">Your Story Recipe</CardTitle>
+            <CardTitle className="text-lg text-purple-700 flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              Story Arc Blueprint
+            </CardTitle>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <span className="font-medium text-blue-700">Genre: </span>
-              {genres.find(g => g.id === selectedGenre)?.name}
+          <CardContent className="space-y-4">
+            {/* Plot Mountain */}
+            <div className="relative h-48 bg-background rounded-lg border p-4">
+              <svg viewBox="0 0 400 150" className="w-full h-full">
+                {/* Mountain path */}
+                <path
+                  d="M 20 130 L 80 100 L 140 70 L 200 30 L 260 70 L 320 100 L 380 130"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  fill="none"
+                  className="text-purple-500"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                
+                {/* Dots with labels */}
+                <g>
+                  <circle cx="20" cy="130" r="5" className="fill-blue-500" />
+                  <text x="20" y="145" className="text-xs fill-current" textAnchor="middle">Setup</text>
+                </g>
+                <g>
+                  <circle cx="140" cy="70" r="5" className="fill-green-500" />
+                  <text x="140" y="65" className="text-xs fill-current" textAnchor="middle">Rising</text>
+                </g>
+                <g>
+                  <circle cx="200" cy="30" r="6" className="fill-red-500 animate-pulse" />
+                  <text x="200" y="20" className="text-xs fill-current font-bold" textAnchor="middle">Climax</text>
+                </g>
+                <g>
+                  <circle cx="260" cy="70" r="5" className="fill-amber-500" />
+                  <text x="260" y="65" className="text-xs fill-current" textAnchor="middle">Falling</text>
+                </g>
+                <g>
+                  <circle cx="380" cy="130" r="5" className="fill-purple-500" />
+                  <text x="380" y="145" className="text-xs fill-current" textAnchor="middle">Resolution</text>
+                </g>
+              </svg>
             </div>
-            <div>
-              <span className="font-medium text-green-700">Structure: </span>
-              {structures.find(s => s.id === selectedStructure)?.name}
-            </div>
-            <div>
-              <span className="font-medium text-purple-700">Elements: </span>
-              {selectedElements.map(id => elements.find(e => e.id === id)?.name).join(', ')}
-            </div>
-            <div>
-              <span className="font-medium text-orange-700">Tone: </span>
-              {tones.find(t => t.id === selectedTone)?.name}
+
+            {/* Narrative Building Blocks */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 bg-blue-100 rounded-lg border-2 border-blue-300 animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
+                <div className="font-bold text-blue-700 text-xs mb-1">Genre</div>
+                <div className="text-xs">{genres.find(g => g.id === selectedGenre)?.name}</div>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg border-2 border-green-300 animate-slide-in-right" style={{ animationDelay: '0.2s' }}>
+                <div className="font-bold text-green-700 text-xs mb-1">Structure</div>
+                <div className="text-xs">{structures.find(s => s.id === selectedStructure)?.name}</div>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-lg border-2 border-purple-300 animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
+                <div className="font-bold text-purple-700 text-xs mb-1">Elements</div>
+                <div className="text-xs">{selectedElements.length} added</div>
+              </div>
+              <div className="p-3 bg-orange-100 rounded-lg border-2 border-orange-300 animate-slide-in-right" style={{ animationDelay: '0.4s' }}>
+                <div className="font-bold text-orange-700 text-xs mb-1">Tone</div>
+                <div className="text-xs">{tones.find(t => t.id === selectedTone)?.name}</div>
+              </div>
             </div>
           </CardContent>
         </Card>

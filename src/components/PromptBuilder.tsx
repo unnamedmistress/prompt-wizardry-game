@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, Lightbulb, Wand2 } from "lucide-react";
+import { PromptScoreMeter } from "./PromptScoreMeter";
 
 interface PromptBuilderProps {
   challenge: {
@@ -102,6 +103,8 @@ export function PromptBuilder({ challenge, onComplete, onBack }: PromptBuilderPr
             onChange={(e) => setUserPrompt(e.target.value)}
             className="min-h-[120px] bg-background border-border"
           />
+          
+          <PromptScoreMeter prompt={userPrompt} />
           
           <div className="flex gap-2">
             <Button 
