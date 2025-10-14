@@ -232,6 +232,7 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
   const renderSuggestions = () => {
     if (currentStep === null || evaluated || customMode) return null;
     const step = steps[currentStep];
+    if (!step) return null;
     return (
       <div className="mt-4 space-y-2">
         <div className="flex flex-wrap gap-2">

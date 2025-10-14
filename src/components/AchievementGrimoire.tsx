@@ -75,10 +75,10 @@ export function AchievementGrimoire() {
 
   const checkUnlocked = (achievement: typeof ACHIEVEMENTS[0]) => {
     if (achievement.requirement === 'completedChallenges') {
-      return completedChallenges >= achievement.threshold;
+      return completedChallenges >= Number(achievement.threshold);
     }
     if (achievement.requirement === 'dailyStreak') {
-      return dailyStreak >= achievement.threshold;
+      return dailyStreak >= Number(achievement.threshold);
     }
     if (achievement.requirement === 'wizardRank') {
       const ranks = ['Apprentice', 'Initiate', 'Adept', 'Sage', 'Archmage'];
