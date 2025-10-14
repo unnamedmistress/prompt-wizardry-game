@@ -151,41 +151,6 @@
     "gameComponent": "ToneController"
   },
   {
-    "id": "multi-task",
-    "title": "Complex Multi-Task Prompts",
-    "description": "Combine multiple requirements into one powerful prompt",
-    "difficulty": "Advanced",
-    "requiredStars": 6,
-    "category": "Prompting Fundamentals",
-    "icon": "⚡",
-    "objective": "Get AI to plan a surprise proposal that's personal, memorable, and perfectly executed",
-    "whatYoullLearn": [
-      "Break down complex tasks into components",
-      "Include personal details for customization",
-      "Specify different types of help needed",
-      "Add multiple constraints and considerations"
-    ],
-    "hints": [
-      "Break down all the components (location, timing, backup plans)",
-      "Include personal details that make it special",
-      "Specify what you need help with (planning vs. execution)",
-      "Add constraints like budget, privacy, weather considerations"
-    ],
-    "goodExamples": [
-      "You are a romantic event planner with experience in proposals. Help me plan a surprise proposal for my partner who loves sunsets, quiet moments, and meaningful locations. We met at a coffee shop, she loves hiking, budget is $1000. I need location ideas, timing advice, backup weather plans, and a step-by-step timeline. Make it personal but not overly elaborate.",
-      "Act as a proposal consultant. Plan a marriage proposal for someone who values experiences over material things, loves their hometown, and is close to family. Include ideas for incorporating family, choosing the right moment, and making it feel authentic rather than performative. Consider seasonal factors and meaningful locations."
-    ],
-    "badExamples": [
-      "Help me propose",
-      "Plan a proposal",
-      "How should I ask someone to marry me?"
-    ],
-    "gameComponent": "MultiTaskMaster",
-    "moduleTier": "Archmage",
-    "maxAttempts": 3,
-    "hintPenalty": 15
-  },
-  {
     "id": "creative-prompts",
     "title": "Creative & Fun Prompts",
     "description": "Unlock AI's creative potential with imaginative scenarios",
