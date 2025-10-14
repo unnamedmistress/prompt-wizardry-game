@@ -75,8 +75,8 @@ const Login = () => {
           </p>
         </div>
         <div className="flex flex-col gap-2 w-full max-w-xs">
-          <Button onClick={() => handleSignIn("google")}>Play with Google</Button>
-          <Button onClick={() => handleSignIn("azure")}>Play with Azure</Button>
+          <Button onClick={() => handleSignIn("google")}>Play for free using Google</Button>
+          <Button onClick={() => handleSignIn("azure")}>Play for free using Microsoft</Button>
         </div>
       </div>
     </div>
