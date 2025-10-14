@@ -156,26 +156,26 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
           <CardHeader className="text-center pb-4">
             <div className="flex items-center justify-center gap-3 mb-2">
               <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
-              <CardTitle className="text-2xl font-bold text-foreground">
+              <CardTitle className="text-2xl font-bold text-amber-900">
                 {showExplanation ? '🔓 Door Unlocked!' : '🔒 Prompt Escape Room'}
               </CardTitle>
               <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
             </div>
-            <CardDescription className="text-base font-medium text-muted-foreground">
-              Find the problematic prompt before time runs out!
-            </CardDescription>
+              <CardDescription className="text-base font-medium text-amber-800">
+                Find the problematic prompt before time runs out!
+              </CardDescription>
             
             {/* Status Bar */}
             <div className="flex items-center justify-center gap-6 mt-4 text-sm">
-              <div className="flex items-center gap-2 px-3 py-1 bg-background rounded-full">
+              <div className="flex items-center gap-2 px-3 py-1 bg-background text-foreground rounded-full">
                 <span className="font-medium">Room</span>
                 <span className="font-bold text-primary">{currentRoom + 1}/{escapeRooms.length}</span>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 bg-background rounded-full">
+              <div className="flex items-center gap-2 px-3 py-1 bg-background text-foreground rounded-full">
                 <span className="font-medium">Score</span>
                 <span className="font-bold text-green-600">{score}</span>
               </div>
-              <div className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all ${
+              <div className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all text-foreground ${
                 timeLeft <= 10 ? 'bg-red-100 text-red-700 animate-pulse' : 
                 timeLeft <= 30 ? 'bg-amber-100 text-amber-700' :
                 'bg-background'
@@ -202,7 +202,7 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
 
       <Card className="border-2 border-amber-400 bg-amber-50 shadow-xl">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-amber-900">
             <Lock className="w-5 h-5 text-amber-600" />
             {room.title}
           </CardTitle>
@@ -216,13 +216,13 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
             <p className="text-sm text-red-700 italic">"{room.aiResponse}"</p>
           </div>
 
-          <h4 className="font-medium mb-4">Which prompt likely caused this response?</h4>
+          <h4 className="font-medium mb-4 text-amber-900">Which prompt likely caused this response?</h4>
           
           <div className="grid gap-3">
             {room.prompts.map((prompt, index) => (
               <div
                 key={index}
-                className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                className={`p-4 border-2 rounded-lg cursor-pointer transition-all bg-white ${
                   selectedPrompt === index
                     ? 'border-primary bg-primary/10'
                     : 'border-muted hover:border-primary/50'
@@ -245,13 +245,13 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                         selectedPrompt === index
                           ? 'bg-primary text-white border-primary'
-                          : 'border-muted-foreground text-muted-foreground'
+                          : 'border-slate-400 text-slate-700'
                       }`}>
                         {index + 1}
                       </div>
                     )}
                   </div>
-                  <p className="text-sm">{prompt}</p>
+                  <p className="text-sm text-slate-800">{prompt}</p>
                 </div>
               </div>
             ))}
