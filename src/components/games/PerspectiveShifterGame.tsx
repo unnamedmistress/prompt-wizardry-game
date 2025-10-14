@@ -16,6 +16,11 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
   const [selectedFocus, setSelectedFocus] = useState<string>('');
   const [showResult, setShowResult] = useState(false);
 
+  // Scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const perspectives = [
     { 
       id: 'director', 
@@ -238,7 +243,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
                     <div className="font-bold text-blue-700">
                       {perspectives.find(p => p.id === selectedPerspective)?.name}
                     </div>
-                    <div className="text-xs text-muted-foreground italic">
+                    <div className="text-xs text-gray-600 italic">
                       "{perspectives.find(p => p.id === selectedPerspective)?.voice}"
                     </div>
                   </div>
@@ -263,7 +268,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
               </div>
             </div>
             
-            <div className="text-xs text-center text-muted-foreground italic">
+            <div className="text-xs text-center text-gray-600 italic">
               The same movie seen through different eyes tells a completely different story
             </div>
           </CardContent>
@@ -280,7 +285,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
             <div className="bg-background p-4 rounded-lg border">
               <code className="text-sm">{generatePrompt()}</code>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
+            <p className="text-sm text-gray-600 mt-2">
               This prompt will generate a review that authentically captures the chosen perspective's voice and priorities!
             </p>
           </CardContent>
