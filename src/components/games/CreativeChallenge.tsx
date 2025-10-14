@@ -156,7 +156,7 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
     <div className="max-w-5xl mx-auto space-y-6" style={themeStyle}>
       <Card className="border-2 border-purple-200 shadow-lg">
         <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50">
-          <CardTitle className="text-2xl font-bold flex items-center gap-2">
+          <CardTitle className="text-2xl font-bold flex items-center gap-2 text-foreground">
             <Palette className="w-6 h-6 text-purple-600" />
             🎨 Creative Challenge
           </CardTitle>
@@ -258,7 +258,7 @@ export const CreativeChallenge = ({ lesson, onComplete, onBack }: CreativeChalle
 
           {showResults && (
             <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg">
-              <h4 className="font-medium text-purple-900 mb-2 flex items-center gap-2">
+              <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                 <Palette className="w-4 h-4" />
                 🎨 Your Creative Prompt Results:
               </h4>

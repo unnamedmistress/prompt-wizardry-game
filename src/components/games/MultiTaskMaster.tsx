@@ -279,7 +279,7 @@ export const MultiTaskMaster = ({ lesson, onComplete, onBack }: MultiTaskMasterP
           {currentStep !== null && !evaluated && (
             <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Building Your Prompt</span>
+                <span className="text-sm font-medium text-foreground">Building Your Prompt</span>
                 <span className="text-xs text-muted-foreground">{currentStep}/{steps.length} components</span>
               </div>
               <div className="flex items-center gap-2">

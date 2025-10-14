@@ -88,7 +88,7 @@ export function DailySpellTrial() {
     <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <Calendar className="w-5 h-5 text-orange-600" />
             Daily Spell Trial
           </CardTitle>
@@ -99,7 +99,7 @@ export function DailySpellTrial() {
             </Badge>
           )}
         </div>
-        <CardDescription>
+        <CardDescription className="text-muted-foreground">
           Complete today's challenge to earn bonus XP and maintain your streak
         </CardDescription>
       </CardHeader>

@@ -59,7 +59,7 @@ export function MultiAttemptWrapper({
       <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-primary/20">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">{lessonTitle}</CardTitle>
+            <CardTitle className="text-lg text-foreground">{lessonTitle}</CardTitle>
             <Badge variant={isComplete ? "default" : "outline"}>
               Attempt {currentAttempt} of {maxAttempts}
             </Badge>

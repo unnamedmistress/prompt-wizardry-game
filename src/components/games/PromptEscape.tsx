@@ -156,12 +156,12 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
           <CardHeader className="text-center pb-4">
             <div className="flex items-center justify-center gap-3 mb-2">
               <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
-              <CardTitle className="text-2xl font-bold">
+              <CardTitle className="text-2xl font-bold text-foreground">
                 {showExplanation ? '🔓 Door Unlocked!' : '🔒 Prompt Escape Room'}
               </CardTitle>
               <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
             </div>
-            <CardDescription className="text-base font-medium">
+            <CardDescription className="text-base font-medium text-muted-foreground">
               Find the problematic prompt before time runs out!
             </CardDescription>
             
