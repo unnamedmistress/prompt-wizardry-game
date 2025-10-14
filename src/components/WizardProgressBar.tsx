@@ -31,8 +31,8 @@ export function WizardProgressBar() {
           <div className="flex items-center gap-2">
             <span className="text-2xl">{currentRank.icon}</span>
             <div>
-              <p className="font-semibold text-sm text-foreground">{currentRank.title}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="font-semibold text-sm text-gray-900">{currentRank.title}</p>
+              <p className="text-xs text-gray-600">
                 {xp} XP {nextRank && `• ${nextRank.minXP - xp} to ${nextRank.name}`}
               </p>
             </div>

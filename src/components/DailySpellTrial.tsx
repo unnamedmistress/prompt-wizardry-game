@@ -88,7 +88,7 @@ export function DailySpellTrial() {
     <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-foreground">
+          <CardTitle className="flex items-center gap-2 text-gray-900">
             <Calendar className="w-5 h-5 text-orange-600" />
             Daily Spell Trial
           </CardTitle>
@@ -99,7 +99,7 @@ export function DailySpellTrial() {
             </Badge>
           )}
         </div>
-        <CardDescription className="text-muted-foreground">
+        <CardDescription className="text-gray-600">
           Complete today's challenge to earn bonus XP and maintain your streak
         </CardDescription>
       </CardHeader>
@@ -107,8 +107,8 @@ export function DailySpellTrial() {
         <div className="p-4 bg-white rounded-lg border border-orange-200">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="font-semibold text-lg text-foreground">{todaysChallenge.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{todaysChallenge.description}</p>
+              <h3 className="font-semibold text-lg text-gray-900">{todaysChallenge.title}</h3>
+              <p className="text-sm text-gray-600 mt-1">{todaysChallenge.description}</p>
             </div>
             {isCompleted && (
               <Badge variant="default" className="flex items-center gap-1">
@@ -118,7 +118,7 @@ export function DailySpellTrial() {
             )}
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+          <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               <span>{Math.floor(todaysChallenge.timeLimit / 60)} min limit</span>
