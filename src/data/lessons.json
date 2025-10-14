@@ -151,38 +151,6 @@
     "gameComponent": "ToneController"
   },
   {
-    "id": "creative-prompts",
-    "title": "Creative & Fun Prompts",
-    "description": "Unlock AI's creative potential with imaginative scenarios",
-    "difficulty": "Advanced",
-    "requiredStars": 6,
-    "category": "Prompting Fundamentals",
-    "icon": "🎪",
-    "objective": "Get AI to help create a murder mystery dinner party that will blow your friends' minds",
-    "whatYoullLearn": [
-      "Set creative roles for AI",
-      "Include constraints for complexity",
-      "Specify exactly what you need",
-      "Consider your audience's interests"
-    ],
-    "hints": [
-      "Set the creative role (mystery writer, party planner, etc.)",
-      "Include constraints (number of people, complexity level)",
-      "Specify what you need (characters, plot, clues, timeline)",
-      "Mention the audience and their interests"
-    ],
-    "goodExamples": [
-      "You are a mystery writer and party planner. Create a murder mystery dinner party for 8 friends who love puzzles and drama. Set it in the 1920s, include character descriptions with motives, clues that reveal throughout dinner, and a shocking but logical conclusion. Make it interactive but not too complex for first-time players.",
-      "Act as an escape room designer. Design a murder mystery experience for a dinner party with 6 people. Include props they can find around a house, red herrings, character backstories with secrets, and multiple possible suspects until the final reveal. Keep it fun and engaging rather than dark or disturbing."
-    ],
-    "badExamples": [
-      "Create a murder mystery",
-      "Help with a party game",
-      "Make a mystery for dinner"
-    ],
-    "gameComponent": "CreativeChallenge"
-  },
-  {
     "id": "format-crafter",
     "title": "Office Format Master",
     "description": "Structure AI output for business presentations and documents",

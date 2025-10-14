@@ -11,7 +11,6 @@ import AIIntroGame from "@/components/games/AIIntroGame";
 import { RoleMatcher } from "@/components/games/RoleMatcher";
 import { DetailDetective } from "@/components/games/DetailDetective";
 import { ToneController } from "@/components/games/ToneController";
-import { CreativeChallenge } from "@/components/games/CreativeChallenge";
 import FormatCrafterGame from "@/components/games/FormatCrafterGame";
 import PrecisionTargeterGame from "@/components/games/PrecisionTargeterGame";
 import PerspectiveShifterGame from "@/components/games/PerspectiveShifterGame";
@@ -469,7 +468,6 @@ const Index = () => {
         case "RoleMatcher": return RoleMatcher;
         case "DetailDetective": return DetailDetective;
         case "ToneController": return ToneController;
-        case "CreativeChallenge": return CreativeChallenge;
         case "FormatCrafterGame": return FormatCrafterGame;
         case "PrecisionTargeterGame": return PrecisionTargeterGame;
         case "PerspectiveShifterGame": return PerspectiveShifterGame;
