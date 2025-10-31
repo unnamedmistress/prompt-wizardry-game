@@ -78,7 +78,7 @@ Dashboards run off aggregated `events`. Planner rationales and outcomes stay aud
 ### Phase 2 – Game Catalogue Expansion (Weeks 3–5)
 - Port remaining seven games, ensuring each abides by contract and hint ladder.
 - Enrich content library per skill with easy/medium/hard variants.
-- Add Memory Vault mixed-review mode triggered after six plays.
+- Add Memory Vault mixed-review mode triggered after three consecutive wins.
 
 ### Phase 3 – UX Polish & Safety (Week 6)
 - Implement “Why this next?” rationale banner and “Stop for now” save state button.
