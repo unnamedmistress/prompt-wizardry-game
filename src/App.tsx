@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import WorkbookLink from "@/components/WorkbookLink";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
@@ -19,6 +20,7 @@ const App = () => (
       <Sonner />
       <AuthProvider>
         <BrowserRouter>
+          <WorkbookLink />
           <Routes>
             <Route path="/" element={<Index />} />
             {/* <Route path="/login" element={<Login />} /> */}
