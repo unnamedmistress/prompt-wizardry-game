@@ -151,7 +151,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
                 onClick={() => setSelectedPerspective(perspective.id)}
                 className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
                   selectedPerspective === perspective.id
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    ? 'border-[#4A8EFF] bg-[#4A8EFF]/5 text-[#4A8EFF]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -181,7 +181,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
                 onClick={() => setSelectedScenario(scenario.id)}
                 className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
                   selectedScenario === scenario.id
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
+                    ? 'border-[#8C5CF6] bg-[#8C5CF6]/5 text-[#8C5CF6]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -206,7 +206,7 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
                 onClick={() => setSelectedFocus(focus.id)}
                 className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
                   selectedFocus === focus.id
-                    ? 'border-green-500 bg-green-50 text-green-700'
+                    ? 'border-[#1AC676] bg-[#1AC676]/5 text-[#1AC676]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -221,29 +221,29 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
 
       {/* Perspective Lens Visualization */}
       {isComplete && (
-        <Card className="border-2 border-amber-500/20 bg-gradient-to-br from-amber-50 to-orange-50 animate-fade-in">
+        <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-[#FFB200]/5 animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-lg text-amber-700 flex items-center gap-2">
+            <CardTitle className="text-lg text-primary flex items-center gap-2">
               <Camera className="w-5 h-5" />
               Perspective Lens Active
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Lens view simulation */}
-            <div className="relative p-6 bg-background rounded-lg border-4 border-amber-300">
-              <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-amber-500 animate-pulse" />
-              <div className="absolute top-2 right-2 text-xs text-amber-600 font-mono">REC ●</div>
+            <div className="relative p-6 bg-background rounded-lg border-4 border-primary/40">
+              <div className="absolute top-2 left-2 w-3 h-3 rounded-full bg-primary animate-pulse" />
+              <div className="absolute top-2 right-2 text-xs text-primary font-mono">REC ●</div>
               
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                    {React.createElement(perspectives.find(p => p.id === selectedPerspective)?.icon || Camera, { className: "w-6 h-6 text-blue-600" })}
+                  <div className="w-12 h-12 rounded-full bg-[#4A8EFF]/10 flex items-center justify-center">
+                    {React.createElement(perspectives.find(p => p.id === selectedPerspective)?.icon || Camera, { className: "w-6 h-6 text-[#4A8EFF]" })}
                   </div>
                   <div>
-                    <div className="font-bold text-blue-700">
+                    <div className="font-bold text-[#4A8EFF]">
                       {perspectives.find(p => p.id === selectedPerspective)?.name}
                     </div>
-                    <div className="text-xs text-gray-600 italic">
+                    <div className="text-xs text-muted-foreground italic">
                       "{perspectives.find(p => p.id === selectedPerspective)?.voice}"
                     </div>
                   </div>
@@ -252,23 +252,23 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
                 <div className="h-px bg-border" />
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="p-3 bg-purple-50 rounded border border-purple-200">
-                    <div className="font-medium text-purple-700 mb-1">Reviewing</div>
+                  <div className="p-3 bg-[#8C5CF6]/10 rounded border border-[#8C5CF6]/20">
+                    <div className="font-medium text-[#8C5CF6] mb-1">Reviewing</div>
                     <div className="text-xs">{scenarios.find(s => s.id === selectedScenario)?.name}</div>
                   </div>
-                  <div className="p-3 bg-green-50 rounded border border-green-200">
-                    <div className="font-medium text-green-700 mb-1">Focus</div>
+                  <div className="p-3 bg-[#1AC676]/10 rounded border border-[#1AC676]/20">
+                    <div className="font-medium text-[#1AC676] mb-1">Focus</div>
                     <div className="text-xs">{focuses.find(f => f.id === selectedFocus)?.name}</div>
                   </div>
                 </div>
               </div>
               
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-amber-600 font-mono">
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-primary font-mono">
                 PERSPECTIVE LOCKED
               </div>
             </div>
             
-            <div className="text-xs text-center text-gray-600 italic">
+            <div className="text-xs text-center text-muted-foreground italic">
               The same movie seen through different eyes tells a completely different story
             </div>
           </CardContent>
@@ -277,15 +277,15 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
 
       {/* Generated Prompt */}
       {isComplete && (
-        <Card className="border-2 border-green-500/20 bg-green-50/50">
+        <Card className="border-2 border-[#1AC676]/20 bg-[#1AC676]/5">
           <CardHeader>
-            <CardTitle className="text-lg text-green-700">Your Perspective-Shifting Prompt</CardTitle>
+            <CardTitle className="text-lg text-[#1AC676]">Your Perspective-Shifting Prompt</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="bg-background p-4 rounded-lg border">
               <code className="text-sm">{generatePrompt()}</code>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
+            <p className="text-sm text-muted-foreground mt-2">
               This prompt will generate a review that authentically captures the chosen perspective's voice and priorities!
             </p>
           </CardContent>
@@ -294,11 +294,11 @@ const PerspectiveShifterGame: React.FC<PerspectiveShifterGameProps> = ({ lesson,
 
       {/* Results */}
       {showResult && (
-        <Card className="border-2 border-green-500 bg-green-50">
+        <Card className="border-2 border-[#1AC676] bg-[#1AC676]/5">
           <CardContent className="text-center p-6">
-            <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-green-800 mb-2">Perspective Mastered!</h3>
-            <p className="text-green-700">You've learned how different viewpoints completely transform AI responses!</p>
+            <CheckCircle className="w-12 h-12 text-[#1AC676] mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">Perspective Mastered!</h3>
+            <p className="text-muted-foreground">You've learned how different viewpoints completely transform AI responses!</p>
           </CardContent>
         </Card>
       )}

@@ -56,7 +56,7 @@ export function MultiAttemptWrapper({
   return (
     <div className="space-y-4">
       {/* Attempt tracking header */}
-      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-primary/20">
+      <Card className="bg-gradient-to-r from-primary/5 to-[#8C5CF6]/5 border-primary/20">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg text-foreground">{lessonTitle}</CardTitle>
@@ -85,8 +85,8 @@ export function MultiAttemptWrapper({
                     key={idx}
                     className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs ${
                       attempt.success
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700'
+                        ? 'bg-[#1AC676]/10 text-[#1AC676]'
+                        : 'bg-destructive/10 text-destructive'
                     }`}
                   >
                     {attempt.success ? (
@@ -108,15 +108,15 @@ export function MultiAttemptWrapper({
 
           {/* Status message */}
           {!isComplete && attemptHistory.length > 0 && (
-            <div className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <AlertCircle className="w-4 h-4 text-blue-600 mt-0.5" />
+            <div className="flex items-start gap-2 p-3 bg-[#4A8EFF]/5 rounded-lg border border-[#4A8EFF]/20">
+              <AlertCircle className="w-4 h-4 text-[#4A8EFF] mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm text-blue-900 font-medium">
-                  {attemptsRemaining > 1 
+                <p className="text-sm text-foreground font-medium">
+                  {attemptsRemaining > 1
                     ? `You have ${attemptsRemaining} attempts remaining`
                     : 'This is your final attempt!'}
                 </p>
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Review the feedback and try again with improvements
                 </p>
               </div>
@@ -124,13 +124,13 @@ export function MultiAttemptWrapper({
           )}
 
           {isComplete && (
-            <div className="flex items-start gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
-              <CheckCircle className="w-4 h-4 text-green-600 mt-0.5" />
+            <div className="flex items-start gap-2 p-3 bg-[#1AC676]/5 rounded-lg border border-[#1AC676]/20">
+              <CheckCircle className="w-4 h-4 text-[#1AC676] mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm text-green-900 font-medium">
+                <p className="text-sm text-foreground font-medium">
                   Challenge Complete!
                 </p>
-                <p className="text-xs text-green-700 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Final Score: {bestScore}% • Attempts Used: {currentAttempt}
                 </p>
               </div>
@@ -138,7 +138,7 @@ export function MultiAttemptWrapper({
                 variant="ghost"
                 size="sm"
                 onClick={reset}
-                className="text-green-700 hover:text-green-900"
+                className="text-[#1AC676] hover:text-[#1AC676]/80"
               >
                 <RotateCcw className="w-4 h-4" />
               </Button>

@@ -124,13 +124,13 @@ export function PromptBuilder({ challenge, onComplete, onBack }: PromptBuilderPr
           </div>
 
           {feedback.type && (
-            <Card className={`border-2 ${feedback.type === 'good' ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10'}`}>
+            <Card className={`border-2 ${feedback.type === 'good' ? 'border-[#1AC676]/50 bg-[#1AC676]/10' : 'border-destructive/50 bg-destructive/10'}`}>
               <CardContent className="pt-4">
                 <div className="flex items-start gap-3">
                   {feedback.type === 'good' ? (
-                    <CheckCircle className="w-5 h-5 text-green-400 mt-1" />
+                    <CheckCircle className="w-5 h-5 text-[#1AC676] mt-1" />
                   ) : (
-                    <XCircle className="w-5 h-5 text-red-400 mt-1" />
+                    <XCircle className="w-5 h-5 text-destructive mt-1" />
                   )}
                   <div>
                     <p className="text-foreground">{feedback.message}</p>

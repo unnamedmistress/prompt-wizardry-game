@@ -20,9 +20,9 @@ interface SkillTreeProps {
 }
 
 const difficultyColors = {
-  Beginner: "bg-green-500/10 text-green-500",
-  Intermediate: "bg-yellow-500/10 text-yellow-500",
-  Advanced: "bg-red-500/10 text-red-500"
+  Beginner: "bg-[#1AC676]/10 text-[#1AC676]",
+  Intermediate: "bg-[#FFB200]/10 text-[#FFB200]",
+  Advanced: "bg-destructive/10 text-destructive"
 };
 
 export function SkillTree({ nodes, onNodeClick }: SkillTreeProps) {
@@ -62,7 +62,7 @@ export function SkillTree({ nodes, onNodeClick }: SkillTreeProps) {
           className={cn(
             "absolute -translate-x-1/2 -translate-y-1/2 w-32 cursor-pointer transition-all hover:scale-110",
             node.locked && "opacity-60 cursor-not-allowed hover:scale-100",
-            node.completed && "ring-2 ring-green-500/50"
+            node.completed && "ring-2 ring-[#1AC676]/50"
           )}
           style={{
             left: `${node.position.x}px`,
@@ -77,7 +77,7 @@ export function SkillTree({ nodes, onNodeClick }: SkillTreeProps) {
               {node.locked ? (
                 <Lock className="w-5 h-5 text-muted-foreground" />
               ) : node.completed ? (
-                <CheckCircle className="w-5 h-5 text-green-500" />
+                <CheckCircle className="w-5 h-5 text-[#1AC676]" />
               ) : (
                 <Circle className="w-5 h-5 text-primary" />
               )}

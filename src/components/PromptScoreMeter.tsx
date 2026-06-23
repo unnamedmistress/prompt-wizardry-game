@@ -59,9 +59,9 @@ export function PromptScoreMeter({ prompt, onScoreChange }: PromptScoreMeterProp
   }, [prompt, onScoreChange]);
 
   const getScoreColor = () => {
-    if (score >= 75) return "text-green-500";
-    if (score >= 50) return "text-yellow-500";
-    return "text-red-500";
+    if (score >= 75) return "text-[#1AC676]";
+    if (score >= 50) return "text-[#FFB200]";
+    return "text-destructive";
   };
 
   const getScoreLabel = () => {
@@ -90,8 +90,8 @@ export function PromptScoreMeter({ prompt, onScoreChange }: PromptScoreMeterProp
             <div
               key={idx}
               className={`flex items-center gap-2 text-xs px-2 py-1 rounded ${
-                item.met 
-                  ? 'bg-green-500/10 text-green-600 dark:text-green-400' 
+                item.met
+                  ? 'bg-[#1AC676]/10 text-[#1AC676]'
                   : 'bg-muted text-muted-foreground'
               }`}
             >

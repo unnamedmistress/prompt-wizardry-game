@@ -26,9 +26,9 @@ const difficultyRating = {
 };
 
 const difficultyColors = {
-  Beginner: "bg-green-500/10 text-green-500 border-green-500/20",
-  Intermediate: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20", 
-  Advanced: "bg-red-500/10 text-red-500 border-red-500/20"
+  Beginner: "bg-[#1AC676]/10 text-[#1AC676] border-[#1AC676]/20",
+  Intermediate: "bg-[#FFB200]/10 text-[#FFB200] border-[#FFB200]/20",
+  Advanced: "bg-destructive/10 text-destructive border-destructive/20"
 };
 
 export function GameCard({ 
@@ -98,7 +98,7 @@ export function GameCard({
               </h3>
             </div>
             {completed && (
-              <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+              <CheckCircle className="w-4 h-4 text-[#1AC676] flex-shrink-0" />
             )}
           </div>
 
@@ -111,7 +111,7 @@ export function GameCard({
               <Clock className="w-3 h-3" />
               {estimatedTime}
             </Badge>
-            <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 text-xs px-2 py-0 h-5 gap-1">
+            <Badge variant="outline" className="bg-[#FFB200]/10 text-[#FFB200] border-[#FFB200]/20 text-xs px-2 py-0 h-5 gap-1">
               <Star className="w-3 h-3 fill-current" />
               +{starsEarned}
             </Badge>

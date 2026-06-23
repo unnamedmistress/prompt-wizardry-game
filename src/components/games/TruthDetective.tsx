@@ -164,9 +164,9 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
                     : 'border-muted hover:border-primary/50 hover:scale-101'
                 } ${
                   showAsCorrect
-                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-green-200'
+                    ? 'border-[#1AC676] bg-[#1AC676]/5'
                     : showAsLie
-                      ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-red-200 animate-pulse-hint'
+                      ? 'border-destructive bg-destructive/5 animate-pulse-hint'
                       : ''
                 }`}
                 onClick={() => handleStatementSelect(index)}
@@ -183,7 +183,7 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
                 {/* Suspicion meter for lie statement */}
                 {!showExplanation && isLie && isHovered && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 animate-fade-in">
-                    <div className="bg-amber-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                    <div className="bg-[#FFB200] text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
                       <AlertTriangle className="w-3 h-3" />
                       Suspicious?
                     </div>
@@ -194,9 +194,9 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
                   <div className="flex-shrink-0 mt-1">
                     {showExplanation ? (
                       isCorrect ? (
-                        <CheckCircle className="w-6 h-6 text-green-600 animate-scale-in" />
+                        <CheckCircle className="w-6 h-6 text-[#1AC676] animate-scale-in" />
                       ) : (
-                        <XCircle className="w-6 h-6 text-red-600 animate-scale-in" />
+                        <XCircle className="w-6 h-6 text-destructive animate-scale-in" />
                       )
                     ) : (
                       <div className={`w-6 h-6 rounded-full border-2 transition-all ${
@@ -213,13 +213,13 @@ export const TruthDetective = ({ lesson, onComplete, onBack }: TruthDetectivePro
           })}
 
           {showExplanation && (
-            <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl animate-fade-in">
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+            <div className="mt-6 p-5 bg-[#4A8EFF]/5 border-2 border-[#4A8EFF]/20 rounded-xl animate-fade-in">
+              <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5" />
                 Why This Was a Hallucination:
               </h4>
-              <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">{currentHallucination.explanation}</p>
-              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800 text-xs text-blue-700 dark:text-blue-300">
+              <p className="text-sm text-foreground leading-relaxed">{currentHallucination.explanation}</p>
+              <div className="mt-4 pt-4 border-t border-[#4A8EFF]/20 text-xs text-muted-foreground">
                 <strong>💡 Detective Tip:</strong> Always verify claims that sound too specific or surprising. Real facts can usually be cross-referenced with multiple credible sources.
               </div>
             </div>

@@ -21,16 +21,16 @@ export const ProgressMeter = ({
   
   const colorClasses = {
     primary: "text-primary",
-    green: "text-green-600",
-    amber: "text-amber-600",
-    purple: "text-purple-600"
+    green: "text-[#1AC676]",
+    amber: "text-[#FFB200]",
+    purple: "text-[#8C5CF6]"
   };
 
   const strokeClasses = {
     primary: "stroke-primary",
-    green: "stroke-green-600",
-    amber: "stroke-amber-600",
-    purple: "stroke-purple-600"
+    green: "stroke-[#1AC676]",
+    amber: "stroke-[#FFB200]",
+    purple: "stroke-[#8C5CF6]"
   };
 
   const sizeClasses = {

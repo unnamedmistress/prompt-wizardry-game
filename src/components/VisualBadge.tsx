@@ -12,27 +12,27 @@ const badgeConfig = {
   verified: {
     icon: CheckCircle,
     label: "Verified",
-    className: "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400",
+    className: "bg-[#1AC676]/10 text-[#1AC676] border-[#1AC676]/30",
   },
   credible: {
     icon: Shield,
     label: "Credible",
-    className: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
+    className: "bg-[#4A8EFF]/10 text-[#4A8EFF] border-[#4A8EFF]/30",
   },
   biased: {
     icon: AlertTriangle,
     label: "Biased",
-    className: "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400",
+    className: "bg-[#FFB200]/10 text-[#FFB200] border-[#FFB200]/30",
   },
   unverified: {
     icon: XCircle,
     label: "Unverified",
-    className: "bg-red-100 text-red-800 border-red-300 dark:bg-red-900/30 dark:text-red-400",
+    className: "bg-destructive/10 text-destructive border-destructive/30",
   },
   "peer-reviewed": {
     icon: CheckCircle,
     label: "Peer-Reviewed",
-    className: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400",
+    className: "bg-[#8C5CF6]/10 text-[#8C5CF6] border-[#8C5CF6]/30",
   },
 };
 
