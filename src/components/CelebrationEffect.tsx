@@ -28,7 +28,7 @@ export const CelebrationEffect = ({ type, amount, onComplete }: CelebrationEffec
   }, [onComplete]);
 
   const Icon = type === "coins" ? Coins : Star;
-  const color = type === "coins" ? "text-amber-500" : "text-yellow-400";
+  const color = type === "coins" ? "text-[#FFB200]" : "text-[#FFB200]";
 
   return (
     <div className="fixed inset-0 pointer-events-none flex items-center justify-center z-50">

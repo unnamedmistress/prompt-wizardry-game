@@ -162,7 +162,7 @@ const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ lesson, onComplet
 
           {/* Live Document Preview */}
           {isComplete && (
-            <Card className="border-2 border-primary/20 bg-gradient-to-br from-blue-50 to-purple-50 animate-fade-in">
+            <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-[#8C5CF6]/5 animate-fade-in">
               <CardHeader>
                 <CardTitle className="text-lg text-primary flex items-center gap-2">
                   <FileText className="w-5 h-5" />
@@ -222,9 +222,9 @@ const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ lesson, onComplet
                           <span className="text-sm">75%</span>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-center">
-                          <div className="p-2 bg-blue-50 rounded"><div className="text-2xl font-bold">12</div><div className="text-xs">Total</div></div>
-                          <div className="p-2 bg-green-50 rounded"><div className="text-2xl font-bold">9</div><div className="text-xs">Done</div></div>
-                          <div className="p-2 bg-amber-50 rounded"><div className="text-2xl font-bold">3</div><div className="text-xs">Pending</div></div>
+                          <div className="p-2 bg-[#4A8EFF]/10 rounded"><div className="text-2xl font-bold">12</div><div className="text-xs">Total</div></div>
+                          <div className="p-2 bg-[#1AC676]/10 rounded"><div className="text-2xl font-bold">9</div><div className="text-xs">Done</div></div>
+                          <div className="p-2 bg-[#FFB200]/10 rounded"><div className="text-2xl font-bold">3</div><div className="text-xs">Pending</div></div>
                         </div>
                       </div>
                     )}
@@ -241,11 +241,11 @@ const FormatCrafterGame: React.FC<FormatCrafterGameProps> = ({ lesson, onComplet
 
           {/* Results */}
           {showResult && (
-            <Card className="border-2 border-green-500 bg-green-50">
+            <Card className="border-2 border-[#1AC676] bg-[#1AC676]/5">
               <CardContent className="text-center p-6">
-                <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-green-800 mb-2">Format Mastered!</h3>
-                <p className="text-green-700">You've learned how to make AI create professional business documents!</p>
+                <CheckCircle className="w-12 h-12 text-[#1AC676] mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-foreground mb-2">Format Mastered!</h3>
+                <p className="text-muted-foreground">You've learned how to make AI create professional business documents!</p>
               </CardContent>
             </Card>
           )}

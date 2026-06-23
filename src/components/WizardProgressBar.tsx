@@ -25,14 +25,14 @@ export function WizardProgressBar() {
     : 100;
 
   return (
-    <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-primary/20">
+    <Card className="bg-gradient-to-r from-primary/5 to-[#8C5CF6]/5 border-primary/20">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="text-2xl">{currentRank.icon}</span>
             <div>
-              <p className="font-semibold text-sm text-gray-900">{currentRank.title}</p>
-              <p className="text-xs text-gray-600">
+              <p className="font-semibold text-sm text-foreground">{currentRank.title}</p>
+              <p className="text-xs text-muted-foreground">
                 {xp} XP {nextRank && `• ${nextRank.minXP - xp} to ${nextRank.name}`}
               </p>
             </div>

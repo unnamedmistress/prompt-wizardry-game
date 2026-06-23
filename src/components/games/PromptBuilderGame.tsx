@@ -254,7 +254,7 @@ export function PromptBuilderGame({ lesson, onComplete, onBack }: PromptBuilderG
     return (
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-4">
-          <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+          <CheckCircle className="w-16 h-16 text-[#1AC676] mx-auto" />
           <h2 className="text-2xl font-bold text-foreground">Congratulations!</h2>
           <p className="text-muted-foreground">
             You've mastered the building blocks of prompting!
@@ -379,13 +379,13 @@ export function PromptBuilderGame({ lesson, onComplete, onBack }: PromptBuilderG
         </div>
 
         {showFeedback && (
-          <Card className={`border-2 ${score > 0 ? 'border-green-500/50 bg-green-500/10' : 'border-red-500/50 bg-red-500/10'}`}>
+          <Card className={`border-2 ${score > 0 ? 'border-[#1AC676]/50 bg-[#1AC676]/10' : 'border-destructive/50 bg-destructive/10'}`}>
             <CardContent className="pt-4">
               <div className="space-y-4">
                 {score > 0 ? (
                   <>
                     <div className="text-center">
-                      <CheckCircle className="w-8 h-8 text-green-400 mx-auto mb-2" />
+                      <CheckCircle className="w-8 h-8 text-[#1AC676] mx-auto mb-2" />
                       <p className="text-foreground font-semibold">Perfect! Here's your polished AI output:</p>
                     </div>
                      <div className="bg-background/50 border rounded-lg p-4">
@@ -634,7 +634,7 @@ Thank you for your `}
                   <span className="text-foreground">Helped</span>
                   <div className="flex items-center gap-2">
                     <div className="w-32 bg-secondary/30 rounded-full h-2">
-                      <div className="bg-green-500 h-2 rounded-full w-1/4" />
+                      <div className="bg-[#1AC676] h-2 rounded-full w-1/4" />
                     </div>
                     <span className="text-muted-foreground text-sm">25%</span>
                   </div>
@@ -643,7 +643,7 @@ Thank you for your `}
                   <span className="text-foreground">Neutral</span>
                   <div className="flex items-center gap-2">
                     <div className="w-32 bg-secondary/30 rounded-full h-2">
-                      <div className="bg-yellow-500 h-2 rounded-full w-1/2" />
+                      <div className="bg-[#FFB200] h-2 rounded-full w-1/2" />
                     </div>
                     <span className="text-muted-foreground text-sm">50%</span>
                   </div>
@@ -652,7 +652,7 @@ Thank you for your `}
                   <span className="text-foreground">Hurt</span>
                   <div className="flex items-center gap-2">
                     <div className="w-32 bg-secondary/30 rounded-full h-2">
-                      <div className="bg-red-500 h-2 rounded-full w-1/4" />
+                      <div className="bg-destructive h-2 rounded-full w-1/4" />
                     </div>
                     <span className="text-muted-foreground text-sm">25%</span>
                   </div>

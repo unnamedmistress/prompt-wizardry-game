@@ -191,9 +191,9 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">Trust Score</span>
               <span className={`font-bold ${
-                trustScore >= 80 ? 'text-green-600' : 
-                trustScore >= 50 ? 'text-amber-600' : 
-                'text-red-600'
+                trustScore >= 80 ? 'text-[#1AC676]' :
+                trustScore >= 50 ? 'text-[#FFB200]' :
+                'text-destructive'
               }`}>
                 {trustScore}%
               </span>
@@ -210,7 +210,7 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5 text-amber-500" />
+            <AlertCircle className="w-5 h-5 text-[#FFB200]" />
             Claim to Verify
           </CardTitle>
           <CardDescription className="text-lg font-medium">
@@ -249,9 +249,9 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
                       : 'border-muted hover:border-primary/50 hover:scale-101'
                   } ${
                     showAsCorrect
-                      ? 'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-green-200'
+                      ? 'border-[#1AC676] bg-[#1AC676]/5'
                       : showAsWrong
-                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20 shadow-red-200'
+                        ? 'border-destructive bg-destructive/5'
                         : ''
                   }`}
                   onClick={() => handleSourceClick(source.id)}
@@ -267,9 +267,9 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
                     <div className="flex-shrink-0 mt-1">
                       {showResults ? (
                         source.credible ? (
-                          <Shield className="w-6 h-6 text-green-600 animate-scale-in" />
+                          <Shield className="w-6 h-6 text-[#1AC676] animate-scale-in" />
                         ) : (
-                          <AlertTriangle className="w-6 h-6 text-red-600 animate-scale-in" />
+                          <AlertTriangle className="w-6 h-6 text-destructive animate-scale-in" />
                         )
                       ) : (
                         <div className={`w-6 h-6 rounded-full border-2 transition-all ${
@@ -288,12 +288,12 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
                       {!showResults && (
                         <div className="pt-2">
                           {source.credible ? (
-                            <div className="flex items-center gap-1 text-xs text-green-700 dark:text-green-400">
+                            <div className="flex items-center gap-1 text-xs text-[#1AC676]">
                               <Shield className="w-3 h-3" />
                               <span>Potentially credible</span>
                             </div>
                           ) : (
-                            <div className="flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400">
+                            <div className="flex items-center gap-1 text-xs text-[#FFB200]">
                               <AlertTriangle className="w-3 h-3" />
                               <span>Verify carefully</span>
                             </div>
@@ -308,34 +308,34 @@ export const SourceHunter = ({ lesson, onComplete, onBack }: SourceHunterProps) 
           </div>
 
           {showResults && (
-            <div className="mt-6 p-5 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl animate-fade-in">
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center gap-2">
+            <div className="mt-6 p-5 bg-[#4A8EFF]/5 border-2 border-[#4A8EFF]/20 rounded-xl animate-fade-in">
+              <h4 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                 <Search className="w-5 h-5" />
                 Source Analysis:
               </h4>
-              <div className="space-y-3 text-sm text-blue-800 dark:text-blue-200">
+              <div className="space-y-3 text-sm text-foreground">
                 <div className="flex items-start gap-2">
-                  <Shield className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <Shield className="w-4 h-4 text-[#1AC676] mt-0.5 flex-shrink-0" />
                   <p><strong>Credible Sources:</strong> Academic studies, peer-reviewed journals, medical organizations, government agencies, established institutions</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
+                  <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
                   <p><strong>Less Credible:</strong> Personal blogs, biased industry sources, unverified social media posts, marketing materials</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <CheckCircle className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#4A8EFF] mt-0.5 flex-shrink-0" />
                   <p><strong>Best Practice:</strong> Always cross-reference multiple credible sources and check publication dates!</p>
                 </div>
               </div>
-              
+
               {/* Trust score summary */}
-              <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-800">
+              <div className="mt-4 pt-4 border-t border-[#4A8EFF]/20">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-medium">Your Trust Score:</span>
                   <span className={`font-bold text-base ${
-                    trustScore >= 80 ? 'text-green-600' : 
-                    trustScore >= 50 ? 'text-amber-600' : 
-                    'text-red-600'
+                    trustScore >= 80 ? 'text-[#1AC676]' :
+                    trustScore >= 50 ? 'text-[#FFB200]' :
+                    'text-destructive'
                   }`}>
                     {trustScore}%
                   </span>

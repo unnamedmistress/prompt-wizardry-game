@@ -85,30 +85,30 @@ export function DailySpellTrial() {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+    <Card className="bg-gradient-to-br from-primary/5 to-[#FFB200]/5 border-primary/20">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2 text-gray-900">
-            <Calendar className="w-5 h-5 text-orange-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Calendar className="w-5 h-5 text-primary" />
             Daily Spell Trial
           </CardTitle>
           {dailyStreak > 0 && (
             <Badge variant="secondary" className="flex items-center gap-1">
-              <Flame className="w-3 h-3 text-orange-600" />
+              <Flame className="w-3 h-3 text-primary" />
               {dailyStreak} Day Streak
             </Badge>
           )}
         </div>
-        <CardDescription className="text-gray-600">
+        <CardDescription className="text-muted-foreground">
           Complete today's challenge to earn bonus XP and maintain your streak
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="p-4 bg-white rounded-lg border border-orange-200">
+        <div className="p-4 bg-card rounded-lg border border-border">
           <div className="flex items-start justify-between mb-3">
             <div>
-              <h3 className="font-semibold text-lg text-gray-900">{todaysChallenge.title}</h3>
-              <p className="text-sm text-gray-600 mt-1">{todaysChallenge.description}</p>
+              <h3 className="font-semibold text-lg text-foreground">{todaysChallenge.title}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{todaysChallenge.description}</p>
             </div>
             {isCompleted && (
               <Badge variant="default" className="flex items-center gap-1">
@@ -118,7 +118,7 @@ export function DailySpellTrial() {
             )}
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />
               <span>{Math.floor(todaysChallenge.timeLimit / 60)} min limit</span>
@@ -139,11 +139,11 @@ export function DailySpellTrial() {
         </div>
 
         {dailyStreak > 3 && (
-          <div className="p-3 bg-gradient-to-r from-orange-100 to-yellow-100 rounded-lg border border-orange-300">
-            <p className="text-sm text-orange-900 font-medium">
+          <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+            <p className="text-sm text-foreground font-medium">
               🔥 Amazing! You're on a {dailyStreak}-day streak!
             </p>
-            <p className="text-xs text-orange-700 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Keep it going to unlock special achievements
             </p>
           </div>

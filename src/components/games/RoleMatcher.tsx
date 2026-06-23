@@ -222,9 +222,9 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
                         : 'border-muted hover:border-primary/50 hover:scale-102'
                     } ${
                       showAsCorrect
-                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100 shadow-green-200'
+                        ? 'border-[#1AC676] bg-[#1AC676]/5 text-foreground'
                         : showAsWrong
-                          ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100'
+                          ? 'border-destructive bg-destructive/5 text-foreground'
                           : showExplanation && !isCorrect
                             ? 'opacity-50'
                             : 'text-foreground'
@@ -238,9 +238,9 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
                         isSelected && !showExplanation
                           ? 'bg-primary text-primary-foreground border-primary shadow-md scale-110'
                           : showAsCorrect
-                            ? 'bg-green-500 text-white border-green-500'
+                            ? 'bg-[#1AC676] text-white border-[#1AC676]'
                             : showAsWrong
-                              ? 'bg-red-500 text-white border-red-500'
+                              ? 'bg-destructive text-white border-destructive'
                               : 'border-muted-foreground text-muted-foreground'
                       }`}>
                         {showAsCorrect ? '✓' : showAsWrong ? '✗' : index + 1}
@@ -263,10 +263,10 @@ export const RoleMatcher = ({ lesson, onComplete, onBack }: RoleMatcherProps) =>
             </div>
 
             {showExplanation && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2">💡 Why this role works best:</h4>
-                <p className="text-sm text-blue-800">{scenario.explanation}</p>
-                <div className="mt-3 text-xs text-blue-700">
+              <div className="mt-6 p-4 bg-[#4A8EFF]/5 border border-[#4A8EFF]/20 rounded-lg">
+                <h4 className="font-medium text-foreground mb-2">💡 Why this role works best:</h4>
+                <p className="text-sm text-muted-foreground">{scenario.explanation}</p>
+                <div className="mt-3 text-xs text-muted-foreground">
                   <strong>Tip:</strong> Think about who knows the most about the topic and who can explain it to the right audience.
                 </div>
               </div>

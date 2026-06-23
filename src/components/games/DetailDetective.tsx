@@ -22,11 +22,11 @@ interface RoundOption {
 interface RoundData { id: number; prompt: string; options: RoundOption[] }
 
 const categoryColors = {
-  personality: "bg-blue-100 text-blue-800 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400",
-  constraints: "bg-green-100 text-green-800 border-green-300 dark:bg-green-900/30 dark:text-green-400",
-  tone: "bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400",
-  content: "bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400",
-  irrelevant: "bg-gray-100 text-gray-600 border-gray-300 dark:bg-gray-900/30 dark:text-gray-400",
+  personality: "bg-[#4A8EFF]/10 text-[#4A8EFF] border-[#4A8EFF]/30",
+  constraints: "bg-[#1AC676]/10 text-[#1AC676] border-[#1AC676]/30",
+  tone: "bg-[#8C5CF6]/10 text-[#8C5CF6] border-[#8C5CF6]/30",
+  content: "bg-[#FFB200]/10 text-[#FFB200] border-[#FFB200]/30",
+  irrelevant: "bg-muted text-muted-foreground border-border",
 };
 
 const prompts: RoundData[] = [
@@ -221,11 +221,11 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                           : 'border-muted hover:border-primary/50 hover:scale-101'
                       } ${
                         revealCorrect 
-                          ? 'border-green-500 bg-green-50 dark:bg-green-900/20 text-green-900 dark:text-green-100' 
-                          : ''
+                          ? 'border-[#1AC676] bg-[#1AC676]/5 text-foreground'
+: ''
                       } ${
                         revealWrong 
-                          ? 'border-red-500 bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100' 
+                          ? 'border-destructive bg-destructive/5 text-foreground'
                           : ''
                       } ${
                         !isSelected && showResults && !isCorrect ? 'opacity-50' : ''
@@ -242,9 +242,9 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                         <div className="flex-shrink-0 mt-0.5">
                           {showResults ? (
                             revealCorrect ? (
-                              <CheckCircle className="w-5 h-5 text-green-600" />
+                              <CheckCircle className="w-5 h-5 text-[#1AC676]" />
                             ) : revealWrong ? (
-                              <XCircle className="w-5 h-5 text-red-600" />
+                              <XCircle className="w-5 h-5 text-destructive" />
                             ) : (
                               <div className="w-5 h-5 rounded border-2 border-muted-foreground/40" />
                             )
@@ -275,8 +275,8 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
             </div>
 
             {showResults && (
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+              <div className="p-4 bg-[#4A8EFF]/5 border border-[#4A8EFF]/20 rounded-lg">
+                <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
                   <AlertTriangle className="w-4 h-4" />
                   🎯 Round Results:
                 </h4>
@@ -285,7 +285,7 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                   const incorrectSelections = selectedDetails.filter(i => !prompt.options[i].correct).length;
                   const totalSelected = selectedDetails.length;
                   return (
-                    <div className="text-sm text-blue-800 space-y-1">
+                    <div className="text-sm text-foreground space-y-1">
                       <div>✅ Correct details selected: {correctSelections} / {correctTotal} available</div>
                       <div>❌ Incorrect details selected: {incorrectSelections}</div>
                       <div>📊 Total selected: {totalSelected}</div>
@@ -294,7 +294,7 @@ export const DetailDetective = ({ lesson, onComplete, onBack }: DetailDetectiveP
                     </div>
                   );
                 })()}
-                <div className="mt-3 text-xs text-blue-700">
+                <div className="mt-3 text-xs text-muted-foreground">
                   <strong>💡 Pro Tip:</strong> Strong dating prompts specify tone, personality, interests, relationship intent, and constraints (length, style, quirks) for authentic results.
                 </div>
               </div>

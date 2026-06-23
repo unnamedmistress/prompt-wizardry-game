@@ -149,19 +149,19 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
     >
       {/* Escape Room Environment */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-amber-900/20 to-red-900/20 rounded-lg blur-xl" />
-        <Card className="relative border-4 border-amber-600 bg-gradient-to-br from-amber-50 to-red-50 shadow-2xl">
-          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-500 via-red-500 to-amber-500 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-destructive/10 rounded-lg blur-xl" />
+        <Card className="relative border-4 border-primary/60 bg-gradient-to-br from-primary/5 to-destructive/5 shadow-2xl">
+          <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-primary via-destructive to-primary animate-pulse" />
           
           <CardHeader className="text-center pb-4">
             <div className="flex items-center justify-center gap-3 mb-2">
-              <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
-              <CardTitle className="text-2xl font-bold text-amber-900">
+              <Lock className={`w-8 h-8 ${showExplanation ? 'text-[#1AC676]' : 'text-destructive animate-pulse'}`} />
+              <CardTitle className="text-2xl font-bold text-foreground">
                 {showExplanation ? '🔓 Door Unlocked!' : '🔒 Prompt Escape Room'}
               </CardTitle>
-              <Lock className={`w-8 h-8 ${showExplanation ? 'text-green-600' : 'text-red-600 animate-pulse'}`} />
+              <Lock className={`w-8 h-8 ${showExplanation ? 'text-[#1AC676]' : 'text-destructive animate-pulse'}`} />
             </div>
-              <CardDescription className="text-base font-medium text-amber-800">
+              <CardDescription className="text-base font-medium text-muted-foreground">
                 Find the problematic prompt before time runs out!
               </CardDescription>
             
@@ -173,11 +173,11 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
               </div>
               <div className="flex items-center gap-2 px-3 py-1 bg-background text-foreground rounded-full">
                 <span className="font-medium">Score</span>
-                <span className="font-bold text-green-600">{score}</span>
+                <span className="font-bold text-[#1AC676]">{score}</span>
               </div>
               <div className={`flex items-center gap-2 px-3 py-1 rounded-full transition-all text-foreground ${
-                timeLeft <= 10 ? 'bg-red-100 text-red-700 animate-pulse' : 
-                timeLeft <= 30 ? 'bg-amber-100 text-amber-700' :
+                timeLeft <= 10 ? 'bg-destructive/10 text-destructive animate-pulse' :
+                timeLeft <= 30 ? 'bg-[#FFB200]/10 text-[#FFB200]' :
                 'bg-background'
               }`}>
                 <Timer className="w-4 h-4" />
@@ -189,9 +189,9 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
             <div className="w-full h-2 bg-background rounded-full overflow-hidden mt-3">
               <div 
                 className={`h-full transition-all duration-1000 ${
-                  timeLeft <= 10 ? 'bg-red-500' :
-                  timeLeft <= 30 ? 'bg-amber-500' :
-                  'bg-green-500'
+                  timeLeft <= 10 ? 'bg-destructive' :
+                  timeLeft <= 30 ? 'bg-[#FFB200]' :
+                  'bg-[#1AC676]'
                 }`}
                 style={{ width: `${(timeLeft / 60) * 100}%` }}
               />
@@ -200,23 +200,23 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
         </Card>
       </div>
 
-      <Card className="border-2 border-amber-400 bg-amber-50 shadow-xl">
+      <Card className="border-2 border-primary/40 bg-card shadow-xl">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-amber-900">
-            <Lock className="w-5 h-5 text-amber-600" />
+          <CardTitle className="flex items-center gap-2 text-foreground">
+            <Lock className="w-5 h-5 text-primary" />
             {room.title}
           </CardTitle>
-          <CardDescription className="text-amber-800 font-medium">
+          <CardDescription className="text-muted-foreground font-medium">
             {room.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="p-4 bg-white border-2 border-red-300 rounded-lg mb-6">
-            <h4 className="font-medium text-red-800 mb-2">⚠️ Problematic AI Response:</h4>
-            <p className="text-sm text-red-700 italic">"{room.aiResponse}"</p>
+          <div className="p-4 bg-background border-2 border-destructive/30 rounded-lg mb-6">
+            <h4 className="font-medium text-destructive mb-2">⚠️ Problematic AI Response:</h4>
+            <p className="text-sm text-destructive/80 italic">"{room.aiResponse}"</p>
           </div>
 
-          <h4 className="font-medium mb-4 text-amber-900">Which prompt likely caused this response?</h4>
+          <h4 className="font-medium mb-4 text-foreground">Which prompt likely caused this response?</h4>
           
           <div className="grid gap-3">
             {room.prompts.map((prompt, index) => (
@@ -229,9 +229,9 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
                 } ${
                   showExplanation
                     ? index === room.correctAnswer
-                      ? 'border-green-500 bg-green-50'
+                      ? 'border-[#1AC676] bg-[#1AC676]/5'
                       : selectedPrompt === index && index !== room.correctAnswer
-                        ? 'border-red-500 bg-red-50'
+                        ? 'border-destructive bg-destructive/5'
                         : 'opacity-60'
                     : ''
                 }`}
@@ -240,27 +240,27 @@ export const PromptEscape = ({ lesson, onComplete, onBack }: PromptEscapeProps) 
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0 mt-1">
                     {showExplanation && index === room.correctAnswer ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <CheckCircle className="w-5 h-5 text-[#1AC676]" />
                     ) : (
                       <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold ${
                         selectedPrompt === index
-                          ? 'bg-primary text-white border-primary'
-                          : 'border-slate-400 text-slate-700'
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'border-muted-foreground text-muted-foreground'
                       }`}>
                         {index + 1}
                       </div>
                     )}
                   </div>
-                  <p className="text-sm text-slate-800">{prompt}</p>
+                  <p className="text-sm text-foreground">{prompt}</p>
                 </div>
               </div>
             ))}
           </div>
 
           {showExplanation && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">🔍 Analysis:</h4>
-              <p className="text-sm text-blue-800">{room.explanation}</p>
+            <div className="mt-6 p-4 bg-[#4A8EFF]/5 border border-[#4A8EFF]/20 rounded-lg">
+              <h4 className="font-medium text-foreground mb-2">🔍 Analysis:</h4>
+              <p className="text-sm text-muted-foreground">{room.explanation}</p>
             </div>
           )}
 

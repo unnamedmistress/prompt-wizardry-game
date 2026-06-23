@@ -206,10 +206,10 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
               <p className="text-xs text-muted-foreground mb-3">AI Prediction Likelihood:</p>
               <div className="space-y-2">
                 {[
-                  { word: "Policy", probability: 94, color: "bg-green-500" },
-                  { word: "Banana", probability: 2, color: "bg-red-400" },
-                  { word: "Spaceship", probability: 1, color: "bg-red-500" },
-                  { word: "Revenge", probability: 3, color: "bg-amber-500" }
+                  { word: "Policy", probability: 94, color: "bg-[#1AC676]" },
+                  { word: "Banana", probability: 2, color: "bg-destructive/70" },
+                  { word: "Spaceship", probability: 1, color: "bg-destructive" },
+                  { word: "Revenge", probability: 3, color: "bg-[#FFB200]" }
                 ].map(opt => (
                   <div key={opt.word} className="flex items-center gap-2">
                     <span className="text-xs w-20 font-medium">{opt.word}</span>
@@ -241,7 +241,7 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                   >
                     <div className="flex items-center gap-2">
                       <span>{opt.word}</span>
-                      <div className={`w-2 h-2 rounded-full animate-pulse ${opt.prob > 50 ? 'bg-green-500' : 'bg-red-400'}`} />
+                      <div className={`w-2 h-2 rounded-full animate-pulse ${opt.prob > 50 ? 'bg-[#1AC676]' : 'bg-destructive/70'}`} />
                     </div>
                   </Button>
                 </InsightTooltip>
@@ -300,7 +300,7 @@ export function AIIntroGame({ onComplete, onBack }: AIIntroGameProps) {
                 onDragLeave={handleDragLeave}
                 className={
                   `mx-2 inline-flex min-w-[120px] items-center justify-center px-3 py-1 rounded-md border-2 text-sm font-semibold transition-colors select-none
-                  ${isDragOver ? 'border-primary bg-primary/10' : selectedTone ? 'border-green-500 bg-green-50 text-green-800' : 'border-dashed border-muted-foreground/40 bg-muted/30'}
+                  ${isDragOver ? 'border-primary bg-primary/10' : selectedTone ? 'border-[#1AC676] bg-[#1AC676]/5 text-[#1AC676]' : 'border-dashed border-muted-foreground/40 bg-muted/30'}
                   `
                 }
                 role="button"

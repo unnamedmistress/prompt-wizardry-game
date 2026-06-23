@@ -182,24 +182,24 @@ const Index = () => {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Beginner": return "bg-green-100 text-green-800 border-green-200";
-      case "Intermediate": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Advanced": return "bg-red-100 text-red-800 border-red-200";
-      default: return "bg-gray-100 text-gray-800 border-gray-200";
+      case "Beginner": return "bg-[#1AC676]/10 text-[#1AC676] border-[#1AC676]/20";
+      case "Intermediate": return "bg-[#FFB200]/10 text-[#FFB200] border-[#FFB200]/20";
+      case "Advanced": return "bg-destructive/10 text-destructive border-destructive/20";
+      default: return "bg-muted text-muted-foreground border-border";
     }
   };
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      "Prompting Fundamentals": "bg-blue-100 text-blue-800",
-      "Format & Output Control": "bg-purple-100 text-purple-800",
-      "Precision & Constraints": "bg-orange-100 text-orange-800",
-      "Perspective & Viewpoint": "bg-indigo-100 text-indigo-800",
-      "Creative Writing": "bg-pink-100 text-pink-800",
-      "Fact-Checking & Verification": "bg-teal-100 text-teal-800",
-      "Prompt Analysis": "bg-gray-100 text-gray-800"
+      "Prompting Fundamentals": "bg-[#4A8EFF]/10 text-[#4A8EFF]",
+      "Format & Output Control": "bg-[#8C5CF6]/10 text-[#8C5CF6]",
+      "Precision & Constraints": "bg-primary/10 text-primary",
+      "Perspective & Viewpoint": "bg-[#4A8EFF]/10 text-[#4A8EFF]",
+      "Creative Writing": "bg-[#8C5CF6]/10 text-[#8C5CF6]",
+      "Fact-Checking & Verification": "bg-[#00C5C7]/10 text-[#00C5C7]",
+      "Prompt Analysis": "bg-muted text-muted-foreground"
     };
-    return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
+    return colors[category as keyof typeof colors] || "bg-muted text-muted-foreground";
   };
 
   // Welcome Screen
@@ -222,9 +222,9 @@ const Index = () => {
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="font-semibold text-primary">{wizardRank}</span>
-                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-blue-500" />{xp}</span>
-                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-[#4A8EFF]" />{xp}</span>
+                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-[#FFB200]" />{coins}</span>
+                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-[#FFB200]" />{stars}</span>
               </span>
             </div>
           </div>
@@ -350,9 +350,9 @@ const Index = () => {
               </Button>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
                 <span className="font-semibold text-primary">{wizardRank}</span>
-                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-blue-500" />{xp}</span>
-                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+                <span className="flex items-center gap-1" title="Experience Points"><Sparkles className="w-4 h-4 text-[#4A8EFF]" />{xp}</span>
+                <span className="flex items-center gap-1" title="Coins"><Coins className="w-4 h-4 text-[#FFB200]" />{coins}</span>
+                <span className="flex items-center gap-1" title="Stars"><Star className="w-4 h-4 text-[#FFB200]" />{stars}</span>
               </span>
             </div>
           </div>
@@ -372,7 +372,7 @@ const Index = () => {
               </Button>
               <div className="flex justify-center gap-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#1AC676]"></div>
                   <span className="text-muted-foreground">{completedExperienceIds.length} Completed</span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -424,7 +424,7 @@ const Index = () => {
                           aria-disabled={isLocked}
                           className={`relative transition-all border-2 ${
                             isCompleted
-                              ? 'border-green-500 bg-green-50/50'
+                              ? 'border-[#1AC676] bg-[#1AC676]/5'
                               : 'border-border'
                           } ${
                             isLocked
@@ -458,7 +458,7 @@ const Index = () => {
                                 </div>
                               </div>
                               {isCompleted && !isLocked && (
-                                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                                <CheckCircle className="w-5 h-5 text-[#1AC676] flex-shrink-0" />
                               )}
                             </div>
                             <CardDescription className="text-sm">{experience.description}</CardDescription>
@@ -549,8 +549,8 @@ const Index = () => {
               </span>
               <span className="text-sm text-muted-foreground flex items-center gap-2">
                 <span>Level {level}</span>
-                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+                <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-[#FFB200]" />{coins}</span>
+                <span className="flex items-center gap-1"><Star className="w-4 h-4 text-[#FFB200]" />{stars}</span>
               </span>
             </div>
             <div className="sm:hidden">
@@ -625,12 +625,12 @@ const Index = () => {
                   <Star
                     key={i}
                     fill="currentColor"
-                    className={`w-8 h-8 ${i < lastResult.stars ? 'text-yellow-500' : 'text-muted-foreground'} star-pop`}
+                    className={`w-8 h-8 ${i < lastResult.stars ? 'text-[#FFB200]' : 'text-muted-foreground'} star-pop`}
                     style={{ animationDelay: `${i * 0.2}s` }}
                   />
                 ))}
               </div>
-              <div className="flex items-center gap-1 text-yellow-500 font-semibold coin-pop" style={{ animationDelay: '0.6s' }}>
+              <div className="flex items-center gap-1 text-[#FFB200] font-semibold coin-pop" style={{ animationDelay: '0.6s' }}>
                 <Coins className="w-5 h-5" />
                 <span>+{lastResult.coins}</span>
               </div>
@@ -674,8 +674,8 @@ const Index = () => {
             </Button>
             <span className="text-sm text-muted-foreground flex items-center gap-2">
               <span>Level {level}</span>
-              <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-yellow-500" />{coins}</span>
-              <span className="flex items-center gap-1"><Star className="w-4 h-4 text-yellow-500" />{stars}</span>
+              <span className="flex items-center gap-1"><Coins className="w-4 h-4 text-[#FFB200]" />{coins}</span>
+              <span className="flex items-center gap-1"><Star className="w-4 h-4 text-[#FFB200]" />{stars}</span>
             </span>
           </div>
         </div>

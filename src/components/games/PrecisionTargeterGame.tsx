@@ -77,7 +77,7 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <Card className="border-2 border-primary/20 bg-gradient-to-r from-green-50 to-blue-50">
+      <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-[#4A8EFF]/5">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-primary flex items-center justify-center gap-2">
             <Target className="w-6 h-6" />
@@ -91,13 +91,13 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
           {(selectedConstraints.length > 0 || selectedDelimiters.length > 0 || selectedScope) && (
             <div className="mt-4 flex items-center justify-center gap-8">
               <div className="relative w-32 h-32">
-                <div className="absolute inset-0 rounded-full border-4 border-red-300 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-full border-4 border-amber-300 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full border-4 border-green-300 flex items-center justify-center">
+                <div className="absolute inset-0 rounded-full border-4 border-destructive/30 flex items-center justify-center">
+                  <div className="w-24 h-24 rounded-full border-4 border-[#FFB200]/40 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-full border-4 border-[#1AC676]/40 flex items-center justify-center">
                       <div className={`w-8 h-8 rounded-full transition-all ${
-                        precisionScore >= 80 ? 'bg-green-500 animate-pulse' :
-                        precisionScore >= 50 ? 'bg-amber-500' :
-                        'bg-red-500'
+                        precisionScore >= 80 ? 'bg-[#1AC676] animate-pulse' :
+                        precisionScore >= 50 ? 'bg-[#FFB200]' :
+                        'bg-destructive'
                       }`}>
                         <div className="w-full h-full rounded-full flex items-center justify-center text-white text-xs font-bold">
                           {precisionScore}
@@ -141,7 +141,7 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
                 onClick={() => toggleConstraint(constraint.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedConstraints.includes(constraint.id)
-                    ? 'border-green-500 bg-green-50 text-green-700'
+                    ? 'border-[#1AC676] bg-[#1AC676]/5 text-[#1AC676]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -171,7 +171,7 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
                 onClick={() => toggleDelimiter(delimiter.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedDelimiters.includes(delimiter.id)
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    ? 'border-[#4A8EFF] bg-[#4A8EFF]/5 text-[#4A8EFF]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -196,7 +196,7 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
                 onClick={() => setSelectedScope(scope.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedScope === scope.id
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
+                    ? 'border-[#8C5CF6] bg-[#8C5CF6]/5 text-[#8C5CF6]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -210,26 +210,26 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
 
       {/* Selection Summary */}
       {(selectedConstraints.length > 0 || selectedDelimiters.length > 0 || selectedScope) && (
-        <Card className="border-2 border-amber-500/20 bg-amber-50/50">
+        <Card className="border-2 border-primary/20 bg-primary/5">
           <CardHeader>
-            <CardTitle className="text-lg text-amber-700">Your Precision Setup</CardTitle>
+            <CardTitle className="text-lg text-primary">Your Precision Setup</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {selectedConstraints.length > 0 && (
               <div>
-                <span className="font-medium text-green-700">Constraints: </span>
+                <span className="font-medium text-[#1AC676]">Constraints: </span>
                 {selectedConstraints.map(id => constraints.find(c => c.id === id)?.name).join(', ')}
               </div>
             )}
             {selectedDelimiters.length > 0 && (
               <div>
-                <span className="font-medium text-blue-700">Delimiters: </span>
+                <span className="font-medium text-[#4A8EFF]">Delimiters: </span>
                 {selectedDelimiters.map(id => delimiters.find(d => d.id === id)?.name).join(', ')}
               </div>
             )}
             {selectedScope && (
               <div>
-                <span className="font-medium text-purple-700">Scope: </span>
+                <span className="font-medium text-[#8C5CF6]">Scope: </span>
                 {scopes.find(s => s.id === selectedScope)?.name}
               </div>
             )}
@@ -239,9 +239,9 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
 
       {/* Generated Prompt */}
       {isComplete && (
-        <Card className="border-2 border-green-500/20 bg-green-50/50">
+        <Card className="border-2 border-[#1AC676]/20 bg-[#1AC676]/5">
           <CardHeader>
-            <CardTitle className="text-lg text-green-700">Your Precision Prompt</CardTitle>
+            <CardTitle className="text-lg text-[#1AC676]">Your Precision Prompt</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="bg-background p-4 rounded-lg border">
@@ -256,11 +256,11 @@ const PrecisionTargeterGame: React.FC<PrecisionTargeterGameProps> = ({ lesson, o
 
       {/* Results */}
       {showResult && (
-        <Card className="border-2 border-green-500 bg-green-50">
+        <Card className="border-2 border-[#1AC676] bg-[#1AC676]/5">
           <CardContent className="text-center p-6">
-            <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-green-800 mb-2">Precision Achieved!</h3>
-            <p className="text-green-700">You've mastered using constraints and delimiters for laser-focused AI responses!</p>
+            <CheckCircle className="w-12 h-12 text-[#1AC676] mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">Precision Achieved!</h3>
+            <p className="text-muted-foreground">You've mastered using constraints and delimiters for laser-focused AI responses!</p>
           </CardContent>
         </Card>
       )}

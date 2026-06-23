@@ -189,7 +189,7 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
                 onClick={() => setSelectedGenre(genre.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedGenre === genre.id
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    ? 'border-[#4A8EFF] bg-[#4A8EFF]/5 text-[#4A8EFF]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -218,7 +218,7 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
                 onClick={() => setSelectedStructure(structure.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedStructure === structure.id
-                    ? 'border-green-500 bg-green-50 text-green-700'
+                    ? 'border-[#1AC676] bg-[#1AC676]/5 text-[#1AC676]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -242,7 +242,7 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
                 onClick={() => toggleElement(element.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedElements.includes(element.id)
-                    ? 'border-purple-500 bg-purple-50 text-purple-700'
+                    ? 'border-[#8C5CF6] bg-[#8C5CF6]/5 text-[#8C5CF6]'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -267,7 +267,7 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
                 onClick={() => setSelectedTone(tone.id)}
                 className={`w-full p-3 text-left rounded-lg border-2 transition-all ${
                   selectedTone === tone.id
-                    ? 'border-orange-500 bg-orange-50 text-orange-700'
+                    ? 'border-primary bg-primary/5 text-primary'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
@@ -281,9 +281,9 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
 
       {/* Story Arc Visualization */}
       {isComplete && (
-        <Card className="border-2 border-purple-500/20 bg-gradient-to-br from-purple-50 to-pink-50 animate-fade-in">
+        <Card className="border-2 border-[#8C5CF6]/20 bg-gradient-to-br from-[#8C5CF6]/5 to-primary/5 animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-lg text-purple-700 flex items-center gap-2">
+            <CardTitle className="text-lg text-[#8C5CF6] flex items-center gap-2">
               <BookOpen className="w-5 h-5" />
               Story Arc Blueprint
             </CardTitle>
@@ -298,30 +298,30 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
                   stroke="currentColor"
                   strokeWidth="3"
                   fill="none"
-                  className="text-purple-500"
+                  className="text-[#8C5CF6]"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
                 
                 {/* Dots with labels */}
                 <g>
-                  <circle cx="20" cy="130" r="5" className="fill-blue-500" />
+                  <circle cx="20" cy="130" r="5" className="fill-[#4A8EFF]" />
                   <text x="20" y="145" className="text-xs fill-current" textAnchor="middle">Setup</text>
                 </g>
                 <g>
-                  <circle cx="140" cy="70" r="5" className="fill-green-500" />
+                  <circle cx="140" cy="70" r="5" className="fill-[#1AC676]" />
                   <text x="140" y="65" className="text-xs fill-current" textAnchor="middle">Rising</text>
                 </g>
                 <g>
-                  <circle cx="200" cy="30" r="6" className="fill-red-500 animate-pulse" />
+                  <circle cx="200" cy="30" r="6" className="fill-destructive animate-pulse" />
                   <text x="200" y="20" className="text-xs fill-current font-bold" textAnchor="middle">Climax</text>
                 </g>
                 <g>
-                  <circle cx="260" cy="70" r="5" className="fill-amber-500" />
+                  <circle cx="260" cy="70" r="5" className="fill-[#FFB200]" />
                   <text x="260" y="65" className="text-xs fill-current" textAnchor="middle">Falling</text>
                 </g>
                 <g>
-                  <circle cx="380" cy="130" r="5" className="fill-purple-500" />
+                  <circle cx="380" cy="130" r="5" className="fill-[#8C5CF6]" />
                   <text x="380" y="145" className="text-xs fill-current" textAnchor="middle">Resolution</text>
                 </g>
               </svg>
@@ -329,20 +329,20 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
 
             {/* Narrative Building Blocks */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="p-3 bg-blue-100 rounded-lg border-2 border-blue-300 animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
-                <div className="font-bold text-blue-700 text-xs mb-1">Genre</div>
+              <div className="p-3 bg-[#4A8EFF]/10 rounded-lg border-2 border-[#4A8EFF]/30 animate-slide-in-right" style={{ animationDelay: '0.1s' }}>
+                <div className="font-bold text-[#4A8EFF] text-xs mb-1">Genre</div>
                 <div className="text-xs">{genres.find(g => g.id === selectedGenre)?.name}</div>
               </div>
-              <div className="p-3 bg-green-100 rounded-lg border-2 border-green-300 animate-slide-in-right" style={{ animationDelay: '0.2s' }}>
-                <div className="font-bold text-green-700 text-xs mb-1">Structure</div>
+              <div className="p-3 bg-[#1AC676]/10 rounded-lg border-2 border-[#1AC676]/30 animate-slide-in-right" style={{ animationDelay: '0.2s' }}>
+                <div className="font-bold text-[#1AC676] text-xs mb-1">Structure</div>
                 <div className="text-xs">{structures.find(s => s.id === selectedStructure)?.name}</div>
               </div>
-              <div className="p-3 bg-purple-100 rounded-lg border-2 border-purple-300 animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
-                <div className="font-bold text-purple-700 text-xs mb-1">Elements</div>
+              <div className="p-3 bg-[#8C5CF6]/10 rounded-lg border-2 border-[#8C5CF6]/30 animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
+                <div className="font-bold text-[#8C5CF6] text-xs mb-1">Elements</div>
                 <div className="text-xs">{selectedElements.length} added</div>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg border-2 border-orange-300 animate-slide-in-right" style={{ animationDelay: '0.4s' }}>
-                <div className="font-bold text-orange-700 text-xs mb-1">Tone</div>
+              <div className="p-3 bg-primary/10 rounded-lg border-2 border-primary/30 animate-slide-in-right" style={{ animationDelay: '0.4s' }}>
+                <div className="font-bold text-primary text-xs mb-1">Tone</div>
                 <div className="text-xs">{tones.find(t => t.id === selectedTone)?.name}</div>
               </div>
             </div>
@@ -352,9 +352,9 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
 
       {/* Generated Prompt */}
       {isComplete && (
-        <Card className="border-2 border-green-500/20 bg-green-50/50">
+        <Card className="border-2 border-[#1AC676]/20 bg-[#1AC676]/5">
           <CardHeader>
-            <CardTitle className="text-lg text-green-700">Your Story Engine Prompt</CardTitle>
+            <CardTitle className="text-lg text-[#1AC676]">Your Story Engine Prompt</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="bg-background p-4 rounded-lg border">
@@ -369,11 +369,11 @@ const StoryEngineGame: React.FC<StoryEngineGameProps> = ({ lesson, onComplete })
 
       {/* Results */}
       {showResult && (
-        <Card className="border-2 border-green-500 bg-green-50">
+        <Card className="border-2 border-[#1AC676] bg-[#1AC676]/5">
           <CardContent className="text-center p-6">
-            <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-green-800 mb-2">Story Engine Mastered!</h3>
-            <p className="text-green-700">You've learned how to build narrative prompts with plot, structure, and tone!</p>
+            <CheckCircle className="w-12 h-12 text-[#1AC676] mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">Story Engine Mastered!</h3>
+            <p className="text-muted-foreground">You've learned how to build narrative prompts with plot, structure, and tone!</p>
           </CardContent>
         </Card>
       )}
